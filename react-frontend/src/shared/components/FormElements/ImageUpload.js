@@ -9,6 +9,7 @@ const ImageUpload = (props) => {
   const [isValid, setIsValid] = useState(false);
 
 
+
   const filePickerRef = useRef();
 
   useEffect(() => {
@@ -54,8 +55,8 @@ const ImageUpload = (props) => {
       <div className={`image-upload ${props.center && "center"}`}>
         {/*an piasis center pou props vale je center class vasika*/}
         <div onClick={pickImageHandler} className="image-upload__preview">
-          {<img src={previewUrl} alt="Preview" />}
-         
+          {previewUrl && <img src={previewUrl} alt="Preview" />}
+          {!previewUrl && <p>Please pick an image.</p>}
         </div>
         <Button type="button" onClick={pickImageHandler}>
           PICK IMAGE
