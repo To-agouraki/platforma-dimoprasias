@@ -1,0 +1,30 @@
+.error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f32b1d;
+    color: white;
+    padding: 5px 5px;
+  }
+  
+.error-message:hover {
+  background: #f40707;
+}
+  
+  .error-message .message {
+    flex: 1;
+    margin-right: 5px;
+    padding-left: 20px;
+  }
+  
+  .error-message .close-button {
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  
+  
+  
+  
