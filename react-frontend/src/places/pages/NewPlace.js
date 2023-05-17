@@ -13,6 +13,7 @@ import {
 } from "../../shared/util/validators";
 import "./PlaceForm.css";
 import { AuthContext } from "../../shared/components/context/auth-context";
+import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 
 const NewPlace = () => {
   const auth = useContext(AuthContext);
@@ -88,6 +89,8 @@ const navigate = useNavigate();
           errorText="Please enter a valid address."
           onInput={inputHandler}
         />
+        <CountdownPage/>
+        <br/>
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE
         </Button>

@@ -5,7 +5,7 @@ import "./ImageUpload.css";
 
 const ImageUpload = (props) => {
   const [file, setFile] = useState();
-  const [previewUrl, setPreviewUrl] = useState(`http://localhost:5000/${props.existingimage}`);
+  const [previewUrl, setPreviewUrl] = useState(`http://localhost:5000/${props.existingimage}`|| null);
   const [isValid, setIsValid] = useState(false);
 
 

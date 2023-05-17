@@ -12,6 +12,7 @@ import {
 } from "../../shared/util/validators";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
+import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 import "./Auth.css";
 
 const Auth = () => {
@@ -150,7 +151,9 @@ const Auth = () => {
       <Button inverse onClick={switchModeHandler}>
         {isLoginMode ? "Change to Sign Up" : "Change to Log in "}
       </Button>
+      <CountdownPage/>
     </Card>
+    
   );
 };
 
