@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
@@ -16,6 +16,13 @@ import { AuthContext } from "../../shared/components/context/auth-context";
 import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 
 const NewPlace = () => {
+  const [newVal, setNewVal] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
+  let datevar;
+  const handleDateTimeChange = (dateTime) => {
+    datevar = dateTime;
+    setNewVal(!!dateTime);
+  };
   const auth = useContext(AuthContext);
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
 
@@ -37,26 +44,32 @@ const NewPlace = () => {
     false
   );
 
-const navigate = useNavigate();
+  useEffect(() => {
+    setFormIsValid(formState.isValid && newVal);
+  }, [formState.isValid, newVal]);
+
+  const navigate = useNavigate();
 
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
-    //console.log(formState.inputs); // send this to the backend!
+    console.log(formState.inputs); // send this to the backend!
+    console.log(datevar);
+    console.log(formIsValid);
 
-    try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        }),
-        { "content-Type": "application/json" }
-      );
-      navigate('/');
-    } catch (error) {}
+    // try {
+    //   await sendRequest(
+    //     "http://localhost:5000/api/places",
+    //     "POST",
+    //     JSON.stringify({
+    //       title: formState.inputs.title.value,
+    //       description: formState.inputs.description.value,
+    //       address: formState.inputs.address.value,
+    //       creator: auth.userId,
+    //     }),
+    //     { "content-Type": "application/json" }
+    //   );
+    //   navigate('/');
+    // } catch (error) {}
   };
 
   return (
@@ -89,9 +102,9 @@ const navigate = useNavigate();
           errorText="Please enter a valid address."
           onInput={inputHandler}
         />
-        <CountdownPage/>
-        <br/>
-        <Button type="submit" disabled={!formState.isValid}>
+        <CountdownPage getDateTime={handleDateTimeChange} />
+        <br />
+        <Button type="submit" disabled={!formIsValid}>
           ADD PLACE
         </Button>
       </form>
