@@ -5,6 +5,7 @@ import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import BidInput from "./BidInput";
 import Modal from "../../shared/components/UIElements/Modal";
 import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 import { useHttpClient } from "../../shared/hooks/http-hook";
@@ -134,6 +135,7 @@ const PlaceItem = (props) => {
                 Delete
               </Button>
             )}
+            {auth.userId !== props.creatorId && auth.isLoggedIn && (<BidInput itemId={props.id}/>)}
           </div>
         </Card>
       </li>

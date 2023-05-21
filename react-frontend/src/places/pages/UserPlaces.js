@@ -5,6 +5,7 @@ import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import Card from "../../shared/components/UIElements/Card";
 
 const UserPlaces = () => {
   const [loadedPlaces, setLoadedPlaces] = useState();
@@ -38,6 +39,7 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
+      {!loadedPlaces && <Card>No places were loaded.</Card>}
       {!isLoading && loadedPlaces && (
         <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler} />
       )}
