@@ -3,13 +3,15 @@ import CountdownTimer from "./CountDownTimer";
 
 const CountdownPage = (props) => {
   const [selectedDateTime, setSelectedDateTime] = useState(null);
+ //let inDateTime=props.initialDateTime;//valida meta etsi oste na me eni poio mikro pou tin simerini
+
 
   const handleDateTimeChange = (dateTime) => {
     setSelectedDateTime(dateTime);
   };
 
   useEffect(() => {
-    if (selectedDateTime) {
+    if (selectedDateTime !== null) { // Check for null explicitly
       props.getDateTime(selectedDateTime);
     }
   }, [selectedDateTime, props]);
@@ -17,12 +19,13 @@ const CountdownPage = (props) => {
   return (
     <div>
       <h3>Countdown Timer</h3>
-      <CountdownTimer onDateTimeChange={handleDateTimeChange} />
+      <CountdownTimer 
+        
+        initialDateTime={props.initialDateTime} // Pass initialDateTime as string
+        onDateTimeChange={handleDateTimeChange}
+      />
       <br />
-      <p>
-        Selected Date/Time:{" "}
-        {selectedDateTime ? selectedDateTime.toString() : "None"}
-      </p>
+      {/* Additional content */}
     </div>
   );
 };

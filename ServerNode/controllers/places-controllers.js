@@ -89,16 +89,14 @@ const createPlace = async (req, res, next) => {
     );
   }
 
-  const { title, description, address, creator } = req.body;
-
-  let coordinates = { lat: 12, lng: 32 };
+  const { title, description, address, dateTime, creator } = req.body;
 
   // const title = req.body.title;
   const createdPlace = new Place({
     title,
     description,
     address,
-    location: coordinates,
+    dateTime,
     image:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg",
     creator,

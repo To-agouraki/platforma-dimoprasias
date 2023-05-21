@@ -1,35 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-const CountdownTimer = ({ onDateTimeChange }) => {
-  const [targetDateTime, setTargetDateTime] = useState(null);
-  const [remainingTime, setRemainingTime] = useState('');
+const CountdownTimer = ({ initialDateTime, onDateTimeChange }) => {
+  const [targetDateTime, setTargetDateTime] = useState(initialDateTime ? new Date(initialDateTime) : null);
+  const [remainingTime, setRemainingTime] = useState("");
 
   useEffect(() => {
     let intervalId;
 
+    const updateTime = () => {
+      const now = new Date().getTime();
+      const distance = targetDateTime.getTime() - now;
+
+      if (distance <= 0) {
+        // Countdown reached zero, stop the timer
+        clearInterval(intervalId);
+        setRemainingTime("");
+      } else {
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (distance % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        setRemainingTime(
+          `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`
+        );
+      }
+    };
+
     if (targetDateTime) {
-      const updateTime = () => {
-        const now = new Date().getTime();
-        const distance = targetDateTime.getTime() - now;
-
-        if (distance <= 0) {
-          // Countdown reached zero, stop the timer
-          clearInterval(intervalId);
-          setRemainingTime('');
-        } else {
-          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-          setRemainingTime(
-            `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`
-          );
-        }
-      };
-
       intervalId = setInterval(updateTime, 1000);
     }
 
@@ -44,16 +46,28 @@ const CountdownTimer = ({ onDateTimeChange }) => {
 
     if (selectedDateTime > today) {
       setTargetDateTime(selectedDateTime);
-      onDateTimeChange(selectedDateTime);
+      if (onDateTimeChange) {
+        onDateTimeChange(selectedDateTime);
+      }
     } else {
-      alert('Please select a date and time later than the current date and time.');
+      alert("Please select a date and time later than the current date and time.");
     }
   };
 
   return (
     <div>
-      <input type="datetime-local" min={new Date().toISOString().slice(0, 16)}  onChange={handleDateTimeChange} />
-      {remainingTime && <div>{remainingTime}</div>}
+      {initialDateTime ? (
+        <div>{remainingTime}</div>
+      ) : (
+        <>
+          <input
+            type="datetime-local"
+            min={new Date().toISOString().slice(0, 16)}
+            onChange={handleDateTimeChange}
+          />
+          {remainingTime && <div>{remainingTime}</div>}
+        </>
+      )}
     </div>
   );
 };

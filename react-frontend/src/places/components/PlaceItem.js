@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import "./PlaceItem.css";
 import Card from "../../shared/components/UIElements/Card";
@@ -6,13 +6,31 @@ import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import Modal from "../../shared/components/UIElements/Modal";
+import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [theDateTime, setTheDateTime] = useState("");
 
   const auth = useContext(AuthContext);
+
+  //  let initialDateTimeString = "2023-06-02T18:43:00.000Z";//props.dateTime;
+  // let initialDateTime = new Date(initialDateTimeString);
+  let initialDateTime;
+  useEffect(() => {
+    if (props.dateTime) {
+      const originalDateTimeString = props.dateTime;
+      const convertedDateTimeString = originalDateTimeString.replace(
+        "+00:00",
+        "Z"
+      );
+      initialDateTime = convertedDateTimeString;
+      setTheDateTime(initialDateTime);
+    }
+  }, [props.dateTime, initialDateTime, theDateTime]);
+
 
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -90,11 +108,19 @@ const PlaceItem = (props) => {
           <div className="place-item__image">
             <img src={props.image} alt={props.title}></img>
           </div>
+
           <div className="place-item__info">
             <h2>{props.title}</h2>
             <h3>{props.address}</h3>
             <p>{props.description}</p>
+
+            {theDateTime ? (
+              <CountdownPage className="center" initialDateTime={theDateTime} />
+            ) : (
+              <p>loading....</p>
+            )}
           </div>
+
           <div className="place-item__actions">
             <Button inverse onClick={openMapHandler}>
               View On Map
