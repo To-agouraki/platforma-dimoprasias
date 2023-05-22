@@ -8,6 +8,7 @@ const placeSchema = new Schema({
   image: { type: String, require: true },
   address: { type: String, require: true },
   dateTime:{type:Date, require: true},
+  bids: [{ type: mongoose.Types.ObjectId, required: true, ref: "Bidding" }],
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 

@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
+const Place = require('../models/place');
 
 // const DUMMY_USERS = [
 //   {
@@ -171,8 +172,34 @@ const login = async (req, res, next) => {
   });
 };
 
+const getUserBids = async (req, res, next) => {
+  const  userId  = req.params.uid;
+
+  try {
+    // Retrieve the user document and populate the 'bids' field
+    const user = await User.findById(userId).populate('bids');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Extract the bid IDs from the populated 'bids' field
+    const bidIds = user.bids.map(bid => bid._id);
+
+    // Query the BidJunctionTable collection using the bid IDs
+    const items = await Place.find({ _id: { $in: bidIds } });
+
+    res.status(200).json({items: items });
+  } catch (error) {
+    console.log(error);
+    return next(new HttpError('Fetching user bids failed, please try again', 500));
+  }
+};
+
+
 exports.getUsers = getUsers;
 exports.signup = signup;
 exports.login = login;
 exports.getOnetUsers = getOnetUsers;
 exports.updateUser = updateUser;
+exports.getUserBids = getUserBids;

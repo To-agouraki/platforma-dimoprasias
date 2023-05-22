@@ -29,37 +29,31 @@ const BidInput = (props) => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("input number", number);
-    console.log("items id=", props.itemId);
-    console.log("use id", auth.userId);
-    // sendRequest('/validate-number', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ number }),
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     const { isValid } = data;
-    //     if (isValid) {
-    //       // Perform actions with the submitted positive number
-    //       console.log(number);
-    //     } else {
-    //       setError('Invalid number. Please enter a positive value.');
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.error('Validation error:', error);
-    //   });
+    //console.log("input number", number);
+   // console.log("items id=", props.itemId);
+   // console.log("use id", auth.userId);
+    try {
+      await sendRequest(
+        "http://localhost:5000/api/places/biditem",
+        "POST",
+        JSON.stringify({
+          userId: auth.userId,
+          itemId: props.itemId,
+          amount: number,
+        }),
+        { "content-Type": "application/json" }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <form className="form-control" onSubmit={handleSubmit}>
       <label>
-        Enter a number:
+        Enter you bidding amount:
         <input
           className="bid"
           type="number"

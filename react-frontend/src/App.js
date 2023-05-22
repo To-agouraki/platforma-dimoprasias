@@ -8,6 +8,7 @@ import UserPlaces from "./places/pages/UserPlaces";
 import UpdatePlace from "./places/pages/UpdatePlace";
 import Auth from "./user/pages/Auth";
 import UserProfile from "./user/pages/UserProfile";
+import BiddedItems from './places/pages/BiddedItems';
 import { AuthContext } from "./shared/components/context/auth-context";
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/places/new" exact element={<NewPlace />} />
         <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
         <Route path="/user/profile" element={<UserProfile/>}></Route>
+        <Route path="/:userId/biddedItems" element={<BiddedItems/>}></Route>
       </React.Fragment>
     );
   } else {

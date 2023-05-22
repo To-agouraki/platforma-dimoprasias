@@ -25,13 +25,17 @@ router.patch(
   placesControllers.updatePlace
 );
 
-router.patch("/biditem/:pid", [
-  check("amount")
-    .notEmpty()
-    .withMessage("Number is required")
-    .isFloat({ gt: 0 })
-    .withMessage("Number must be positive"),
-]);
+router.post(
+  "/biditem",
+  [
+    check("amount")
+      .notEmpty()
+      .withMessage("Number is required")
+      .isFloat({ gt: 0 })
+      .withMessage("Number must be positive"),
+  ],
+  placesControllers.bidItem
+);
 
 router.delete("/:pid", placesControllers.deletePlace);
 

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
 const User = require("../models/user");
+const BidJunctionTable = require("../models/bidding");
 
 // let DUMMY_PLACES = [
 //   {
@@ -216,8 +217,58 @@ const deletePlace = async (req, res, next) => {
   res.status(200).json({ message: "Deleted place." });
 };
 
+
+
+
+const bidItem = async (req, res, next) => {
+  const { amount, itemId, userId } = req.body;
+  let bid;
+
+  try {
+    // Find the existing highest bid for the same item by the current bidder
+    const existingBid = await BidJunctionTable.findOne({ place: itemId, bidder: userId }).sort({ amount: -1 });
+
+    if (existingBid) {
+      // If existing bid is found, check if the new bid amount is greater
+      if (amount > existingBid.amount) {
+        // Update the existing bid with the new amount
+        existingBid.amount = amount;
+        await existingBid.save();
+        bid = existingBid; // Assign the existing bid to the 'bid' variable
+      } else {
+        return res.status(400).json({ message: "The bid amount must be greater than the existing highest bid." });
+      }
+    } else {
+      // Create a new bid
+      bid = new BidJunctionTable({
+        amount,
+        place: itemId,
+        bidder: userId,
+      });
+
+      // Save the new bid to the database
+      await bid.save();
+    }
+
+    // Populate the 'places' field of the user with the items they have bid on
+    await User.findByIdAndUpdate(userId, { $push: { bids: bid._id } }, { new: true })
+      .populate("bids")
+      .exec();
+
+    res.status(201).json({ message: "Bid created successfully", bid });
+  } catch (error) {
+    console.log(error);
+    return next(new HttpError("Creating bid failed, please try again", 500));
+  }
+};
+
+
+
+
+
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
+exports.bidItem = bidItem;
