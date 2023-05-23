@@ -19,8 +19,18 @@ const UserPlaces = () => {
         const responseData = await sendRequest(
           `http://localhost:5000/api/users/getuserbids/${userId}`
         );
-        console.log(responseData.items)
-        setLoadedPlaces(responseData.items);
+        //console.log(responseData.items);
+
+        const items = responseData.items;
+        let place = [];
+
+        items.forEach((item) => {
+          place.push(item.place);
+          //place = item.place to access them seperately
+        });
+        console.log(place);
+
+        setLoadedPlaces(place);
       } catch (err) {}
     };
     fetchPlaces();
