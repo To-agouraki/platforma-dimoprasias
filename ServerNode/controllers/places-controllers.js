@@ -248,12 +248,10 @@ const bidItem = async (req, res, next) => {
 
       // Save the new bid to the database
       await bid.save();
-    }
 
-    // Populate the 'places' field of the user with the items they have bid on
-    await User.findByIdAndUpdate(userId, { $push: { bids: bid._id } }, { new: true })
-      .populate("bids")
-      .exec();
+      // Update the user's bids field only when a new bid is created
+      await User.findByIdAndUpdate(userId, { $push: { bids: bid._id } }, { new: true });
+    }
 
     res.status(201).json({ message: "Bid created successfully", bid });
   } catch (error) {
@@ -261,7 +259,6 @@ const bidItem = async (req, res, next) => {
     return next(new HttpError("Creating bid failed, please try again", 500));
   }
 };
-
 
 
 

@@ -41,6 +41,6 @@ router.patch(
 router.post('/login', usersController.login);
 
 router.get('/getuser/:uid', usersController.getOnetUsers);
-router.get('/getuserbids/:uid', usersController.getUserBids);
+router.get('/getuserbids/:uid', usersController.getBiddersItems);
 
 module.exports = router;

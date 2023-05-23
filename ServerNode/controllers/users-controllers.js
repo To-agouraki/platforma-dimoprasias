@@ -3,7 +3,8 @@ const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
-const Place = require('../models/place');
+const Place = require("../models/place");
+const BidJunctionTable = require("../models/bidding");
 
 // const DUMMY_USERS = [
 //   {
@@ -29,7 +30,7 @@ const getOnetUsers = async (req, res, next) => {
   let user;
   try {
     //users = await User.find(u=>u.id === userId)
-    user = await User.findById(userId, "-id -_id");
+    user = await User.findById(userId, "-id -_id -email");
   } catch (error) {
     return next(new HttpError("getting user data failed", 500));
   }
@@ -53,7 +54,6 @@ const updateUser = async (req, res, next) => {
   const { name, password } = req.body;
   const userId = req.params.uid;
 
-
   let user;
   try {
     user = await User.findById(userId);
@@ -71,7 +71,6 @@ const updateUser = async (req, res, next) => {
   user.name = name;
   user.password = password;
   user.image = req.file.path;
-
 
   try {
     await user.save();
@@ -121,8 +120,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image:
-      "../uploads/images/6cf1e270-f28f-11ed-a28b-170f2a4af830.png",
+    image: "../uploads/images/6cf1e270-f28f-11ed-a28b-170f2a4af830.png",
     password,
     places: [],
   });
@@ -172,34 +170,24 @@ const login = async (req, res, next) => {
   });
 };
 
-const getUserBids = async (req, res, next) => {
-  const  userId  = req.params.uid;
-
+const getBiddersItems = async (req, res, next) => {
+  let userId = req.params.uid;
   try {
-    // Retrieve the user document and populate the 'bids' field
-    const user = await User.findById(userId).populate('bids');
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Extract the bid IDs from the populated 'bids' field
-    const bidIds = user.bids.map(bid => bid._id);
-
-    // Query the BidJunctionTable collection using the bid IDs
-    const items = await Place.find({ _id: { $in: bidIds } });
-
-    res.status(200).json({items: items });
+    // Retrieve the bidded items for the user
+    const biddedItems = await BidJunctionTable.find({
+      bidder: userId,
+    }).populate("place");
+    res.json({ items: biddedItems });
   } catch (error) {
     console.log(error);
-    return next(new HttpError('Fetching user bids failed, please try again', 500));
+    const err = new HttpError("getting item failed.", 500);
+    return next(err);
   }
 };
-
 
 exports.getUsers = getUsers;
 exports.signup = signup;
 exports.login = login;
 exports.getOnetUsers = getOnetUsers;
 exports.updateUser = updateUser;
-exports.getUserBids = getUserBids;
+exports.getBiddersItems = getBiddersItems;
