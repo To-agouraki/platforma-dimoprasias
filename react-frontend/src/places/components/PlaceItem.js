@@ -12,12 +12,23 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
 
 const PlaceItem = (props) => {
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const [theDateTime, setTheDateTime] = useState("");
+  const [bidAmount, setBidAmount] = useState(props.amount); // when the bid amount chancges
 
+  useEffect(() => {
+    // Update bid amount when props.amount changes
+    setBidAmount(props.amount);
+  }, [props.amount]);
+
+  const handleBidAmountChange = (newAmount) => {
+    setBidAmount(newAmount);
+  };
+
+  //console.log(props.amount);
   const auth = useContext(AuthContext);
   
-
+ 
   //  let initialDateTimeString = "2023-06-02T18:43:00.000Z";//props.dateTime;
   // let initialDateTime = new Date(initialDateTimeString);
   let initialDateTime;
@@ -66,7 +77,7 @@ const PlaceItem = (props) => {
 
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={clearError} />
+      <ErrorModal error={nError} onClear={clearError} />
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
@@ -106,6 +117,7 @@ const PlaceItem = (props) => {
       <li className="place-item">
         {/* item ikona me koumpia kai description */}
         <Card className="place-item__content">
+
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
             <img src={props.image} alt={props.title}></img>
@@ -136,7 +148,8 @@ const PlaceItem = (props) => {
                 Delete
               </Button>
             )}
-            {auth.userId !== props.creatorId && auth.isLoggedIn && (<BidInput itemId={props.id}/>)}
+            {props.amount && <h3>The amount you have bid is {bidAmount}</h3>}
+            {auth.userId !== props.creatorId && auth.isLoggedIn && (<BidInput itemId={props.id} onBidAmountChange={handleBidAmountChange}/>)}
           </div>
         </Card>
       </li>

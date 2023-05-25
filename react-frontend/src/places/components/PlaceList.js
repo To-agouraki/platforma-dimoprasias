@@ -8,8 +8,26 @@ import Button from "../../shared/components/FormElements/Button";
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
 
-
   console.log(props.items);
+  console.log(props.biddingamounts);
+
+  let combinedData = [];
+
+  if (Array.isArray(props.items) && props.items.length > 0) {
+    if (Array.isArray(props.biddingamounts) && props.biddingamounts.length > 0) {
+      const amounts = props.biddingamounts;
+  
+      combinedData = props.items.map((place, index) => ({
+        ...place,
+        amount: amounts[index],
+      }));
+    } else {
+      combinedData = props.items;
+    }
+  }
+
+  
+  console.log(combinedData);
 
   if (props.frombid) {
     if (props.items.length === 0) {
@@ -43,9 +61,10 @@ const PlaceList = (props) => {
       </div>
     );
   }
+
   return (
     <ul className="place-list">
-      {props.items.map(
+      {combinedData.map(
         (
           item //from db
         ) => (
@@ -60,6 +79,7 @@ const PlaceList = (props) => {
             dateTime={item.dateTime}
             onDelete={props.onDeletePlace}
             frombid={props.frombid}
+            amount={item.amount}
           ></PlaceItem>
         )
       )}

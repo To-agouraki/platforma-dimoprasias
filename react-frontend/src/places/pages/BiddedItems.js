@@ -31,8 +31,7 @@ const UserPlaces = () => {
           amount.push(item.amount);
           //place = item.place to access them seperately
         });
-        console.log(place);
-        console.log(amount);
+        
 
         setLoadedPlaces(place);
         setLoadedAmounts(amount);

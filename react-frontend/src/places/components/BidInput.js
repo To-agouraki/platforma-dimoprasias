@@ -1,14 +1,18 @@
 import React, { useState, useContext } from "react";
 import Button from "../../shared/components/FormElements/Button";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorMessage from "../../shared/components/FormElements/ErrorMessage";
 import { AuthContext } from "../../shared/components/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import "./BidInput.css";
 
 const BidInput = (props) => {
+  const [errorMessageShow, setErrorMessageShow] = useState(false);
+
   const auth = useContext(AuthContext);
 
-  const { isLoading, nError, sendRequest, clearError } = useHttpClient();
+  const { isLoading, nError, sendRequest } = useHttpClient();
   const [number, setNumber] = useState("");
   const [error, setError] = useState("");
 
@@ -25,6 +29,7 @@ const BidInput = (props) => {
     } else if (inputValue === "") {
       setNumber("");
     } else {
+      setError("no a number");
       console.log("not a number");
     }
   };
@@ -32,8 +37,8 @@ const BidInput = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     //console.log("input number", number);
-   // console.log("items id=", props.itemId);
-   // console.log("use id", auth.userId);
+    // console.log("items id=", props.itemId);
+    // console.log("use id", auth.userId);
     try {
       await sendRequest(
         "http://localhost:5000/api/places/biditem",
@@ -45,7 +50,13 @@ const BidInput = (props) => {
         }),
         { "content-Type": "application/json" }
       );
+      const newBidAmount = number;
+      props.onBidAmountChange(newBidAmount);
+      setErrorMessageShow(false);
+      props.onError(errorMessageShow);
     } catch (error) {
+      setErrorMessageShow(true);
+      props.onError(errorMessageShow);
       console.log(error);
     }
   };
@@ -62,7 +73,9 @@ const BidInput = (props) => {
         />
       </label>
       <Button type="submit">Submit</Button>
-      {error && <p>{error}</p>}
+      {isLoading && <LoadingSpinner />}
+      {error && <ErrorMessage message={error} />}
+      {nError && <ErrorMessage message={nError} />}
     </form>
   );
 };

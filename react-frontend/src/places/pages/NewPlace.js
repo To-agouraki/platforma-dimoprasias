@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { useForm } from "../../shared/hooks/form-hook";
@@ -37,6 +38,10 @@ const NewPlace = () => {
         isValid: false,
       },
       address: {
+        value: "",
+        isValid: false,
+      },
+      image: {
         value: "",
         isValid: false,
       },
@@ -74,6 +79,8 @@ const NewPlace = () => {
       <ErrorModal error={nError} onClear={clearError} />
       <form className="place-form" onSubmit={placeSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
+        <h3>Image Upload</h3>
+        <ImageUpload center id="image" onInput={inputHandler} />
         <Input
           id="title"
           element="input"
