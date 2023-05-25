@@ -58,20 +58,25 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:5000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          dateTime: datevar,
-          creator: auth.userId,
-        }),
-        { "content-Type": "application/json" }
-      );
-      navigate("/");
-    } catch (error) {}
+      const formData = new FormData();
+      formData.append("title", formState.inputs.tile.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("dateTime", datevar);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+
+      // await sendRequest(
+      //   "http://localhost:5000/api/places",
+      //   "POST",
+      //   formData,
+      //   //{ "content-Type": "application/json" }
+      // );
+      // navigate("/");
+      console.log(formData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

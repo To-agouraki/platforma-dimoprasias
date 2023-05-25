@@ -91,18 +91,17 @@ const createPlace = async (req, res, next) => {
   }
 
   const { title, description, address, dateTime, creator } = req.body;
-
+  let image = req.file.path;
   // const title = req.body.title;
   const createdPlace = new Place({
     title,
     description,
     address,
     dateTime,
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Empire_State_Building_%28aerial_view%29.jpg/400px-Empire_State_Building_%28aerial_view%29.jpg",
+    image: image,
     creator,
   });
-
+  //'../uploads/images/c5b29fd0-fb40-11ed-aebe-35ddc5059fee.png'
   let user;
 
   try {
@@ -217,16 +216,16 @@ const deletePlace = async (req, res, next) => {
   res.status(200).json({ message: "Deleted place." });
 };
 
-
-
-
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
   let bid;
 
   try {
     // Find the existing highest bid for the same item by the current bidder
-    const existingBid = await BidJunctionTable.findOne({ place: itemId, bidder: userId }).sort({ amount: -1 });
+    const existingBid = await BidJunctionTable.findOne({
+      place: itemId,
+      bidder: userId,
+    }).sort({ amount: -1 });
 
     if (existingBid) {
       // If existing bid is found, check if the new bid amount is greater
@@ -236,7 +235,10 @@ const bidItem = async (req, res, next) => {
         await existingBid.save();
         bid = existingBid; // Assign the existing bid to the 'bid' variable
       } else {
-        return res.status(400).json({ message: "The bid amount must be greater than the existing highest bid." });
+        return res.status(400).json({
+          message:
+            "The bid amount must be greater than the existing highest bid.",
+        });
       }
     } else {
       // Create a new bid
@@ -250,7 +252,11 @@ const bidItem = async (req, res, next) => {
       await bid.save();
 
       // Update the user's bids field only when a new bid is created
-      await User.findByIdAndUpdate(userId, { $push: { bids: bid._id } }, { new: true });
+      await User.findByIdAndUpdate(
+        userId,
+        { $push: { bids: bid._id } },
+        { new: true }
+      );
     }
 
     res.status(201).json({ message: "Bid created successfully", bid });
@@ -259,9 +265,6 @@ const bidItem = async (req, res, next) => {
     return next(new HttpError("Creating bid failed, please try again", 500));
   }
 };
-
-
-
 
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
