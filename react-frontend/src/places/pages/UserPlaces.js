@@ -5,10 +5,9 @@ import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
-import Card from "../../shared/components/UIElements/Card";
 
 const UserPlaces = () => {
-  const [loadedPlaces, setLoadedPlaces] = useState();
+  const [loadedPlaces, setLoadedPlaces] = useState('');
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const userId = useParams().userId;
@@ -20,7 +19,7 @@ const UserPlaces = () => {
           `http://localhost:5000/api/places/user/${userId}`
         );
         setLoadedPlaces(responseData.places);
-        console.log(responseData.places);
+        //console.log(responseData.places);
       } catch (err) {}
     };
     fetchPlaces();
@@ -40,9 +39,9 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!loadedPlaces && <Card>No places were loaded.</Card>}
-      {!isLoading && loadedPlaces && (
-        <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler} />
+      
+      {!isLoading &&  (
+        <PlaceList items={loadedPlaces} userId={userId} onDeletePlace={placeDeletedHandler} />
       )}
     </React.Fragment>
   );

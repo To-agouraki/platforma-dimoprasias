@@ -16,6 +16,7 @@ const PlaceItem = (props) => {
   const [theDateTime, setTheDateTime] = useState("");
 
   const auth = useContext(AuthContext);
+  
 
   //  let initialDateTimeString = "2023-06-02T18:43:00.000Z";//props.dateTime;
   // let initialDateTime = new Date(initialDateTimeString);

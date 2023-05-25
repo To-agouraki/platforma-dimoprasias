@@ -177,7 +177,9 @@ const getBiddersItems = async (req, res, next) => {
     const biddedItems = await BidJunctionTable.find({
       bidder: userId,
     }).populate("place");
-    res.json({ items: biddedItems });
+    res.json({
+      items: biddedItems.map((items) => items.toObject({ getters: true })),
+    });
   } catch (error) {
     console.log(error);
     const err = new HttpError("getting item failed.", 500);

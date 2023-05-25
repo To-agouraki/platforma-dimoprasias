@@ -5,10 +5,10 @@ import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
-import Card from "../../shared/components/UIElements/Card";
 
 const UserPlaces = () => {
-  const [loadedPlaces, setLoadedPlaces] = useState();
+  const [loadedPlaces, setLoadedPlaces] = useState('');
+  const [loadedAmounts, setLoadedAmounts] = useState('');
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const userId = useParams().userId;
@@ -19,18 +19,23 @@ const UserPlaces = () => {
         const responseData = await sendRequest(
           `http://localhost:5000/api/users/getuserbids/${userId}`
         );
-        //console.log(responseData.items);
+        console.log(responseData.items);
 
         const items = responseData.items;
         let place = [];
+        let amount= [];
 
         items.forEach((item) => {
+          
           place.push(item.place);
+          amount.push(item.amount);
           //place = item.place to access them seperately
         });
         console.log(place);
+        console.log(amount);
 
         setLoadedPlaces(place);
+        setLoadedAmounts(amount);
       } catch (err) {}
     };
     fetchPlaces();
@@ -50,9 +55,8 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!loadedPlaces && <Card>No places were loaded.</Card>}
-      {!isLoading && loadedPlaces && (
-        <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler} />
+      {!isLoading && (
+        <PlaceList items={loadedPlaces} biddingamounts={loadedAmounts} userId={userId} frombid={true} onDeletePlace={placeDeletedHandler} />
       )}
     </React.Fragment>
   );
