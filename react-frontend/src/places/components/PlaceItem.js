@@ -27,8 +27,7 @@ const PlaceItem = (props) => {
 
   //console.log(props.amount);
   const auth = useContext(AuthContext);
-  
- 
+
   //  let initialDateTimeString = "2023-06-02T18:43:00.000Z";//props.dateTime;
   // let initialDateTime = new Date(initialDateTimeString);
   let initialDateTime;
@@ -43,7 +42,6 @@ const PlaceItem = (props) => {
       setTheDateTime(initialDateTime);
     }
   }, [props.dateTime, initialDateTime, theDateTime]);
-
 
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -69,7 +67,9 @@ const PlaceItem = (props) => {
     try {
       await sendRequest(
         `http://localhost:5000/api/places/${props.id}`,
-        "DELETE"
+        "DELETE",
+        null,
+        { Authorization: "Bearer " + auth.token }
       );
       props.onDelete(props.id);
     } catch (err) {}
@@ -117,10 +117,12 @@ const PlaceItem = (props) => {
       <li className="place-item">
         {/* item ikona me koumpia kai description */}
         <Card className="place-item__content">
-
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={props.image} alt={props.title}></img>
+            <img
+              src={`http://localhost:5000/${props.image}`}
+              alt={props.title}
+            ></img>
           </div>
 
           <div className="place-item__info">
@@ -137,7 +139,7 @@ const PlaceItem = (props) => {
 
           <div className="place-item__actions">
             <Button inverse onClick={openMapHandler}>
-              View On Map
+              Additional info
             </Button>
             {/* inverse class from button css*/}
             {auth.userId === props.creatorId && (
@@ -149,7 +151,12 @@ const PlaceItem = (props) => {
               </Button>
             )}
             {props.amount && <h3>The amount you have bid is {bidAmount}</h3>}
-            {auth.userId !== props.creatorId && auth.isLoggedIn && (<BidInput itemId={props.id} onBidAmountChange={handleBidAmountChange}/>)}
+            {auth.userId !== props.creatorId && auth.isLoggedIn && (
+              <BidInput
+                itemId={props.id}
+                onBidAmountChange={handleBidAmountChange}
+              />
+            )}
           </div>
         </Card>
       </li>

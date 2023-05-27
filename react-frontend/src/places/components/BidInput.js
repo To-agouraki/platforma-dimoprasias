@@ -9,6 +9,7 @@ import "./BidInput.css";
 
 const BidInput = (props) => {
   const [errorMessageShow, setErrorMessageShow] = useState(false);
+  const [empty, setEmpty] = useState(true);
 
   const auth = useContext(AuthContext);
 
@@ -26,11 +27,16 @@ const BidInput = (props) => {
 
     if (isNumber(inputValue)) {
       setNumber(inputValue);
+      setErrorMessageShow(false);
+      setEmpty(false);
     } else if (inputValue === "") {
       setNumber("");
+      setEmpty(true);
+      setError("cannot bid with empty field");
     } else {
       setError("no a number");
-      console.log("not a number");
+      setEmpty(false);//to deactivate button
+      setErrorMessageShow(true);
     }
   };
 
@@ -53,10 +59,8 @@ const BidInput = (props) => {
       const newBidAmount = number;
       props.onBidAmountChange(newBidAmount);
       setErrorMessageShow(false);
-      props.onError(errorMessageShow);
     } catch (error) {
       setErrorMessageShow(true);
-      props.onError(errorMessageShow);
       console.log(error);
     }
   };
@@ -72,10 +76,10 @@ const BidInput = (props) => {
           onChange={handleChange}
         />
       </label>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" disabled={empty}>Submit</Button>
       {isLoading && <LoadingSpinner />}
-      {error && <ErrorMessage message={error} />}
-      {nError && <ErrorMessage message={nError} />}
+      {errorMessageShow && error && <ErrorMessage message={error} />}
+      {errorMessageShow && nError && <ErrorMessage message={nError} />}
     </form>
   );
 };

@@ -59,21 +59,17 @@ const NewPlace = () => {
     event.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("title", formState.inputs.tile.value);
+      formData.append("title", formState.inputs.title.value);
       formData.append("description", formState.inputs.description.value);
       formData.append("address", formState.inputs.address.value);
       formData.append("dateTime", datevar);
       formData.append("creator", auth.userId);
       formData.append("image", formState.inputs.image.value);
 
-      // await sendRequest(
-      //   "http://localhost:5000/api/places",
-      //   "POST",
-      //   formData,
-      //   //{ "content-Type": "application/json" }
-      // );
-      // navigate("/");
-      console.log(formData);
+      await sendRequest("http://localhost:5000/api/places", "POST", formData, {
+        Authorization: "Bearer " + auth.token,
+      });
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

@@ -54,7 +54,7 @@ const Auth = () => {
         );
         setErrorMessageShow(false);
 
-        authObj.login(responeData.user.id);
+        authObj.login(responeData.userId, responeData.token);
       } catch (err) {
         setErrorMessageShow(true);
       }
@@ -74,7 +74,7 @@ const Auth = () => {
         );
         setErrorMessageShow(false);
 
-        authObj.login(responeData.user.id);
+        authObj.login(responeData.userId, responeData.token);
       } catch (err) {
         setErrorMessageShow(true);
       }

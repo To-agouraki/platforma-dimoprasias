@@ -1,6 +1,7 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const Authchecking = require('../middleware/check-auth');
 const placesControllers = require("../controllers/places-controllers");
 
 const router = express.Router();
@@ -9,6 +10,8 @@ const ImageUpload = require("../middleware/file-upload");
 router.get("/:pid", placesControllers.getPlaceById);
 
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
+
+router.use(Authchecking);
 
 router.post(
   "/",
@@ -41,4 +44,5 @@ router.post(
 
 router.delete("/:pid", placesControllers.deletePlace);
 
+router.get("/market/:uid", placesControllers.getPlacesMarket);
 module.exports = router;

@@ -2,6 +2,8 @@ const uuid = require("uuid").v4;
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
+const fs = require("fs");
+
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
 const User = require("../models/user");
@@ -160,6 +162,14 @@ const updatePlace = async (req, res, next) => {
   // updatedPlace.description = description;
   //DUMMY_PLACES[placeIndex] = updatedPlace;
 
+  if (place.creator.toString() !== req.userData.userId) {
+    const error = new HttpError(
+      'Not authorized!.',
+      401
+    );
+    return next(error);
+  }
+
   place.title = title;
   place.description = description;
   place.testing = testing;
@@ -195,6 +205,16 @@ const deletePlace = async (req, res, next) => {
   if (!place) {
     return next(new HttpError("could not find this id", 404));
   }
+ 
+  if (place.creator.id !== req.userData.userId) {
+    const error = new HttpError(
+      'Not authorized!.',
+      401
+    );
+    return next(error);
+  }
+
+  const imagePath = place.image;
 
   try {
     //await place.deleteOne();
@@ -212,6 +232,10 @@ const deletePlace = async (req, res, next) => {
     );
     return next(err);
   }
+
+  fs.unlink(imagePath, (error) => {
+    console.log(error);
+  });
 
   res.status(200).json({ message: "Deleted place." });
 };
@@ -257,6 +281,12 @@ const bidItem = async (req, res, next) => {
         { $push: { bids: bid._id } },
         { new: true }
       );
+
+      await Place.findByIdAndUpdate(
+        userId,
+        { $push: { bids: bid._id } },
+        { new: true }
+      );
     }
 
     res.status(201).json({ message: "Bid created successfully", bid });
@@ -266,6 +296,20 @@ const bidItem = async (req, res, next) => {
   }
 };
 
+
+const getPlacesMarket = async (req, res, next) => {
+  const userIdToExclude = req.params.userId; // Assuming you pass the user ID as a parameter
+
+  let place;
+  try {
+    place = await Place.findOne({ creator: { $ne: userIdToExclude } });
+  } catch (error) {
+    return next(new HttpError('Failed to fetch places.', 500));
+  }
+  res.json({ place: place.toObject({ getters: true }) });
+};
+
+exports.getPlacesMarket = getPlacesMarket;
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;

@@ -18,7 +18,7 @@ const CountdownPage = (props) => {
 
   return (
     <div>
-      <h3>Countdown Timer</h3>
+      <h3>Time remaining:</h3>
       <CountdownTimer 
         
         initialDateTime={props.initialDateTime} // Pass initialDateTime as string
