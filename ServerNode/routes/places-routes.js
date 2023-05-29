@@ -11,6 +11,9 @@ router.get("/:pid", placesControllers.getPlaceById);
 
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
 
+router.get("/market/:uid", placesControllers.getPlacesMarket);
+
+
 router.use(Authchecking);
 
 router.post(
@@ -44,5 +47,4 @@ router.post(
 
 router.delete("/:pid", placesControllers.deletePlace);
 
-router.get("/market/:uid", placesControllers.getPlacesMarket);
 module.exports = router;

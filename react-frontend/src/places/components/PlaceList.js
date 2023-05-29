@@ -8,8 +8,10 @@ import Button from "../../shared/components/FormElements/Button";
 const PlaceList = (props) => {
   const auth = useContext(AuthContext);
 
-  console.log(props.items);
-  console.log(props.biddingamounts);
+  //console.log(props.items);
+  //console.log(props.biddingamounts);
+
+console.log(props.items);
 
   let combinedData = [];
 

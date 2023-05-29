@@ -245,25 +245,26 @@ const bidItem = async (req, res, next) => {
   let bid;
 
   try {
-    // Find the existing highest bid for the same item by the current bidder
+    // Find the existing highest bid for the same item
+    const existingHighestBid = await BidJunctionTable.findOne({ place: itemId }).sort({ amount: -1 });
+
+    if (existingHighestBid && amount <= existingHighestBid.amount) {
+      return res.status(400).json({
+        message: "The bid amount must be greater than the existing highest bid.",
+      });
+    }
+
+    // Find the existing bid by the current bidder
     const existingBid = await BidJunctionTable.findOne({
       place: itemId,
       bidder: userId,
-    }).sort({ amount: -1 });
+    });
 
     if (existingBid) {
-      // If existing bid is found, check if the new bid amount is greater
-      if (amount > existingBid.amount) {
-        // Update the existing bid with the new amount
-        existingBid.amount = amount;
-        await existingBid.save();
-        bid = existingBid; // Assign the existing bid to the 'bid' variable
-      } else {
-        return res.status(400).json({
-          message:
-            "The bid amount must be greater than the existing highest bid.",
-        });
-      }
+      // Update the existing bid with the new amount
+      existingBid.amount = amount;
+      await existingBid.save();
+      bid = existingBid; // Assign the existing bid to the 'bid' variable
     } else {
       // Create a new bid
       bid = new BidJunctionTable({
@@ -282,9 +283,10 @@ const bidItem = async (req, res, next) => {
         { new: true }
       );
 
+      // Update the place's highest bid and bidder fields
       await Place.findByIdAndUpdate(
-        userId,
-        { $push: { bids: bid._id } },
+        itemId,
+        { highestBid: bid.amount, highestBidder: userId },
         { new: true }
       );
     }
@@ -298,16 +300,26 @@ const bidItem = async (req, res, next) => {
 
 
 const getPlacesMarket = async (req, res, next) => {
-  const userIdToExclude = req.params.userId; // Assuming you pass the user ID as a parameter
-
-  let place;
+  const userId = req.params.uid;
+  let places;
   try {
-    place = await Place.findOne({ creator: { $ne: userIdToExclude } });
+    places = await Place.find({ creator: { $ne: userId } });
   } catch (error) {
-    return next(new HttpError('Failed to fetch places.', 500));
+    const err = new HttpError("Fetching places failed.", 404);
+    return next(err);
   }
-  res.json({ place: place.toObject({ getters: true }) });
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
 };
+
 
 exports.getPlacesMarket = getPlacesMarket;
 exports.getPlaceById = getPlaceById;

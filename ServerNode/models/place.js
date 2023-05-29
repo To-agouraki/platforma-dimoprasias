@@ -7,7 +7,15 @@ const placeSchema = new Schema({
   description: { type: String, require: true },
   image: { type: String, require: true },
   address: { type: String, require: true },
-  dateTime:{type:Date, require: true},
+  dateTime: { type: Date, require: true },
+  highestBid: {
+    type: Number,
+    default: 0,
+  },
+  highestBidder: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   bids: [{ type: mongoose.Types.ObjectId, required: true, ref: "Bidding" }],
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });

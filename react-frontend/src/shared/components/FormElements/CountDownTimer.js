@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const CountdownTimer = ({ initialDateTime, onDateTimeChange }) => {
+const CountdownTimer = ({ initialDateTime, onDateTimeChange ,onCountdownEnd}) => {
   const [targetDateTime, setTargetDateTime] = useState(initialDateTime ? new Date(initialDateTime) : null);
   const [remainingTime, setRemainingTime] = useState("");
 
@@ -15,6 +15,9 @@ const CountdownTimer = ({ initialDateTime, onDateTimeChange }) => {
         // Countdown reached zero, stop the timer
         clearInterval(intervalId);
         setRemainingTime("");
+        if(onCountdownEnd){
+          //function() change hte countdown to the highest bidder
+        }
       } else {
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor(

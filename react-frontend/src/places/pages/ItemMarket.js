@@ -1,3 +1,5 @@
+
+//userPlaces  pale
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -6,9 +8,8 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
-const UserPlaces = () => {
-  const [loadedPlaces, setLoadedPlaces] = useState(' ');
-  const [loadedAmounts, setLoadedAmounts] = useState('');
+const ItemMarket = () => {
+  const [loadedPlaces, setLoadedPlaces] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const userId = useParams().userId;
@@ -17,24 +18,10 @@ const UserPlaces = () => {
     const fetchPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/users/getuserbids/${userId}`
+          `http://localhost:5000/api/places/market/${userId}`
         );
-        console.log(responseData.items);
-
-        const items = responseData.items;
-        let place = [];
-        let amount= [];
-
-        items.forEach((item) => {
-          
-          place.push(item.place);
-          amount.push(item.amount);
-          //place = item.place to access them seperately
-        });
-        
-
-        setLoadedPlaces(place);
-        setLoadedAmounts(amount);
+        setLoadedPlaces(responseData.places);
+        console.log(responseData.places);
       } catch (err) {}
     };
     fetchPlaces();
@@ -54,11 +41,12 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && (
-        <PlaceList items={loadedPlaces} biddingamounts={loadedAmounts} userId={userId} frombid={true} onDeletePlace={placeDeletedHandler} />
+      
+      {!isLoading &&  (
+        <PlaceList items={loadedPlaces} userId={userId} onDeletePlace={placeDeletedHandler} />
       )}
     </React.Fragment>
   );
 };
 
-export default UserPlaces;
+export default ItemMarket;

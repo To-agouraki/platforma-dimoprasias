@@ -1,0 +1,25 @@
+.success-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2fb32f; /* Green color */
+  color: white;
+  padding: 5px 5px;
+}
+
+.success-message:hover {
+  background: #23a623; /* Darker green color on hover */
+}
+
+.success-message .message {
+  flex: 1;
+  margin-right: 5px;
+  padding-left: 20px;
+}
+
+.success-message .close-button {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}

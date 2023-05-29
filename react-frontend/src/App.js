@@ -9,6 +9,7 @@ import UpdatePlace from "./places/pages/UpdatePlace";
 import Auth from "./user/pages/Auth";
 import UserProfile from "./user/pages/UserProfile";
 import BiddedItems from "./places/pages/BiddedItems";
+import ItemMarket from "./places/pages/ItemMarket";
 import { AuthContext } from "./shared/components/context/auth-context";
 
 let logoutTimer;
@@ -79,6 +80,7 @@ const App = () => {
         <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
         <Route path="/user/profile" element={<UserProfile />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
+        <Route path="/:userId/market" element={<ItemMarket />}></Route>
       </React.Fragment>
     );
   } else {

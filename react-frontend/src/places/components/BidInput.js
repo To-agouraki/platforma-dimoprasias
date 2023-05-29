@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import Button from "../../shared/components/FormElements/Button";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorMessage from "../../shared/components/FormElements/ErrorMessage";
+import SuccessMessage from "../../shared/components/FormElements/SuccessMessage";
 import { AuthContext } from "../../shared/components/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
@@ -9,6 +10,8 @@ import "./BidInput.css";
 
 const BidInput = (props) => {
   const [errorMessageShow, setErrorMessageShow] = useState(false);
+  const [successMessageShow, setSuccessMessageShow] = useState(false);
+
   const [empty, setEmpty] = useState(true);
 
   const auth = useContext(AuthContext);
@@ -35,7 +38,7 @@ const BidInput = (props) => {
       setError("cannot bid with empty field");
     } else {
       setError("no a number");
-      setEmpty(false);//to deactivate button
+      setEmpty(false); //to deactivate button
       setErrorMessageShow(true);
     }
   };
@@ -54,12 +57,17 @@ const BidInput = (props) => {
           itemId: props.itemId,
           amount: number,
         }),
-        { "content-Type": "application/json" }
+        {
+          "content-Type": "application/json",
+          Authorization: "Bearer " + auth.token,
+        }
       );
       const newBidAmount = number;
       props.onBidAmountChange(newBidAmount);
+      setSuccessMessageShow(true);
       setErrorMessageShow(false);
     } catch (error) {
+      setSuccessMessageShow(false);
       setErrorMessageShow(true);
       console.log(error);
     }
@@ -76,8 +84,13 @@ const BidInput = (props) => {
           onChange={handleChange}
         />
       </label>
-      <Button type="submit" disabled={empty}>Submit</Button>
+      <Button type="submit" disabled={empty}>
+        Submit
+      </Button>
       {isLoading && <LoadingSpinner />}
+      {successMessageShow && (
+        <SuccessMessage message="You have added a bid successfully and will be listed in the BIDS tab" />
+      )}
       {errorMessageShow && error && <ErrorMessage message={error} />}
       {errorMessageShow && nError && <ErrorMessage message={nError} />}
     </form>

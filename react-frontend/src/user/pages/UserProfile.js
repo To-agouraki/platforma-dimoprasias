@@ -44,7 +44,6 @@ const UserProfile = () => {
     try {
       const formData = new FormData();
       formData.append("name", formState.inputs.name.value);
-      formData.append("password", formState.inputs.password.value);
       formData.append("image", formState.inputs.image.value);
       await sendRequest(
         //fetch adds header if you use FormData api
