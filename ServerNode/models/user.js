@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true, minlength: 6 },
+  password: { type: String, required: false, minlength: 6 },
   image: { type: String, required: false },
   bids: [{ type: mongoose.Types.ObjectId, ref: "Bidding" }],
   places: [{ type: mongoose.Types.ObjectId, required: true, ref: "Place" }], //establish connections in place==> we can use populate()

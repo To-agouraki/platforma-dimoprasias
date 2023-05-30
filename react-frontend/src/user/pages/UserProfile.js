@@ -45,6 +45,7 @@ const UserProfile = () => {
       const formData = new FormData();
       formData.append("name", formState.inputs.name.value);
       formData.append("image", formState.inputs.image.value);
+      formData.append("imagepath", loadedUser.image);
       await sendRequest(
         //fetch adds header if you use FormData api
         `http://localhost:5000/api/users/updateuser/${authObj.userId}`,
@@ -124,7 +125,7 @@ const UserProfile = () => {
               initialValid={true}
             ></Input>
 
-            <Input
+            {/* <Input
               element="input"
               type="password"
               label="Password"
@@ -134,7 +135,7 @@ const UserProfile = () => {
               onInput={inputHandler}
               initialValue={loadedUser.password}
               initialValid={true}
-            />
+            /> */}
             <Button type="submit" disabled={!formState.isValid}>
               UPDATE
             </Button>

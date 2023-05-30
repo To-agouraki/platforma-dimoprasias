@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-const CountdownTimer = ({ initialDateTime, onDateTimeChange ,onCountdownEnd}) => {
-  const [targetDateTime, setTargetDateTime] = useState(initialDateTime ? new Date(initialDateTime) : null);
+const CountdownTimer = ({
+  initialDateTime,
+  onDateTimeChange,
+  onCountdownEnd,
+}) => {
+  const [targetDateTime, setTargetDateTime] = useState(
+    initialDateTime ? new Date(initialDateTime) : null
+  );
   const [remainingTime, setRemainingTime] = useState("");
 
   useEffect(() => {
@@ -15,17 +21,15 @@ const CountdownTimer = ({ initialDateTime, onDateTimeChange ,onCountdownEnd}) =>
         // Countdown reached zero, stop the timer
         clearInterval(intervalId);
         setRemainingTime("");
-        if(onCountdownEnd){
-          //function() change hte countdown to the highest bidder
+        if (onCountdownEnd) {
+          onCountdownEnd();
         }
       } else {
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
           (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
         );
-        const minutes = Math.floor(
-          (distance % (1000 * 60 * 60)) / (1000 * 60)
-        );
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         setRemainingTime(
@@ -53,7 +57,9 @@ const CountdownTimer = ({ initialDateTime, onDateTimeChange ,onCountdownEnd}) =>
         onDateTimeChange(selectedDateTime);
       }
     } else {
-      alert("Please select a date and time later than the current date and time.");
+      alert(
+        "Please select a date and time later than the current date and time."
+      );
     }
   };
 

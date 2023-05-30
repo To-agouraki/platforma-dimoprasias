@@ -240,31 +240,32 @@ const deletePlace = async (req, res, next) => {
   res.status(200).json({ message: "Deleted place." });
 };
 
+
+
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
   let bid;
-
+///moni mlkia pou emine eni aman valun idiio bid price jiame enkro genika ti ipotethete prepi na gini
   try {
-    // Find the existing highest bid for the same item
-    const existingHighestBid = await BidJunctionTable.findOne({ place: itemId }).sort({ amount: -1 });
-
-    if (existingHighestBid && amount <= existingHighestBid.amount) {
-      return res.status(400).json({
-        message: "The bid amount must be greater than the existing highest bid.",
-      });
-    }
-
-    // Find the existing bid by the current bidder
+    // Find the existing highest bid for the same item by the current bidder
     const existingBid = await BidJunctionTable.findOne({
       place: itemId,
       bidder: userId,
-    });
+    }).sort({ amount: -1 });
 
     if (existingBid) {
-      // Update the existing bid with the new amount
-      existingBid.amount = amount;
-      await existingBid.save();
-      bid = existingBid; // Assign the existing bid to the 'bid' variable
+      // If existing bid is found, check if the new bid amount is greater
+      if (amount > existingBid.amount) {
+        // Update the existing bid with the new amount
+        existingBid.amount = amount;
+        await existingBid.save();
+        bid = existingBid; // Assign the existing bid to the 'bid' variable
+      } else {
+        return res.status(400).json({
+          message:
+            "The bid amount must be greater than the existing highest bid.",
+        });
+      }
     } else {
       // Create a new bid
       bid = new BidJunctionTable({
@@ -283,12 +284,35 @@ const bidItem = async (req, res, next) => {
         { new: true }
       );
 
-      // Update the place's highest bid and bidder fields
       await Place.findByIdAndUpdate(
-        itemId,
-        { highestBid: bid.amount, highestBidder: userId },
+        userId,
+        { $push: { bids: bid._id } },
         { new: true }
       );
+    }
+
+    // Find the existing highest bid for the item
+    const existingHighestBid = await BidJunctionTable.findOne({ place: itemId })
+      .sort({ amount: -1 })
+      .exec();
+
+    let highestBid = existingHighestBid ? existingHighestBid.amount : 0;
+    let highestBidder = existingHighestBid ? existingHighestBid.bidder : null;
+
+    if (amount > highestBid) {
+      highestBid = amount;
+      highestBidder = userId;
+    }
+
+    // Update the place's highest bid and bidder fields
+    try {
+      await Place.findByIdAndUpdate(
+        itemId,
+        { highestBid, highestBidder },
+        { new: true }
+      );
+    } catch (error) {
+      console.log(error);
     }
 
     res.status(201).json({ message: "Bid created successfully", bid });
@@ -297,6 +321,9 @@ const bidItem = async (req, res, next) => {
     return next(new HttpError("Creating bid failed, please try again", 500));
   }
 };
+
+
+
 
 
 const getPlacesMarket = async (req, res, next) => {

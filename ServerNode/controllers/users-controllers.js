@@ -53,9 +53,9 @@ const updateUser = async (req, res, next) => {
     );
   }
 
-  const { name, password } = req.body;
+  const { name, imagepath } = req.body;
   const userId = req.params.uid;
-
+  //console.log(imagepath);
   let user;
   try {
     user = await User.findById(userId);
@@ -71,8 +71,10 @@ const updateUser = async (req, res, next) => {
   //DUMMY_PLACES[placeIndex] = updatedPlace;
 
   user.name = name;
-  user.password = password;
-  user.image = req.file.path;
+  if (typeof req.file !== 'undefined' && typeof req.file.path !== 'undefined') {
+    user.image = req.file.path;
+  }
+  //user.image = req.file.path;
 
   try {
     await user.save();
