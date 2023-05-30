@@ -102,7 +102,7 @@ const NewPlace = () => {
         <Input
           id="address"
           element="input"
-          label="Address"
+          label="Category"
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Please enter a valid address."
           onInput={inputHandler}

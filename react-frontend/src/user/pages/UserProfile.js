@@ -10,7 +10,6 @@ import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import {
-  VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
 import { useNavigate } from "react-router-dom";

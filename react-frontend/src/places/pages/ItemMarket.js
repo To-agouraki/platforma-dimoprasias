@@ -1,4 +1,3 @@
-
 //userPlaces  pale
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -41,9 +40,14 @@ const ItemMarket = () => {
           <LoadingSpinner />
         </div>
       )}
-      
-      {!isLoading &&  (
-        <PlaceList items={loadedPlaces} userId={userId} onDeletePlace={placeDeletedHandler} />
+
+      {!isLoading && (
+        <PlaceList
+          items={loadedPlaces}
+          userId={userId}
+          fromMarket={true}
+          onDeletePlace={placeDeletedHandler}
+        />
       )}
     </React.Fragment>
   );

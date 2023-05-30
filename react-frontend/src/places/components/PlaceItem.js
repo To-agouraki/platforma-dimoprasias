@@ -15,6 +15,44 @@ const PlaceItem = (props) => {
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const [theDateTime, setTheDateTime] = useState("");
   const [bidAmount, setBidAmount] = useState(props.amount); // when the bid amount chancges
+  const [counterExpire, setCounterExpire] = useState(false);
+  const [highestBidder, setHighestBidder] = useState("");
+
+  if (props.highestBidder) {
+    useEffect(() => {
+      const fetchPlaces = async () => {
+        try {
+          const responseData = await sendRequest(
+            `http://localhost:5000/api/users/getuser/${props.highestBidder}`
+          );
+          setHighestBidder(responseData.user.name);
+        } catch (err) {}
+      };
+      fetchPlaces();
+    }, [sendRequest, props.highestBidder]);
+  }
+
+
+  console.log(props.highestBidder);
+
+  let sentence;
+
+  if (props.highestBid === 0) {
+    sentence = (
+      <h3>No one won the item, the item will remain with its creator</h3>
+    );
+  } else {
+    sentence = (
+      <h3>
+        The item was won by the user {highestBidder} for the amount of{" "}
+        {props.highestBid}
+      </h3>
+    );
+  }
+
+  const handleCounterExpire = () => {
+    setCounterExpire(true);
+  };
 
   useEffect(() => {
     // Update bid amount when props.amount changes
@@ -129,9 +167,19 @@ const PlaceItem = (props) => {
             <h2>{props.title}</h2>
             <h3>{props.address}</h3>
             <p>{props.description}</p>
-
+            {counterExpire ? (
+              <h3 className="red-text">
+                The Bid is closed, you cannot bid anymore.
+              </h3>
+            ) : (
+              <h3 className="green-text">You may proceed with bid process.</h3>
+            )}
             {theDateTime ? (
-              <CountdownPage className="center" initialDateTime={theDateTime} />
+              <CountdownPage
+                className="center"
+                getFromCount={handleCounterExpire}
+                initialDateTime={theDateTime}
+              />
             ) : (
               <p>loading....</p>
             )}
@@ -142,7 +190,7 @@ const PlaceItem = (props) => {
               Additional info
             </Button>
             {/* inverse class from button css*/}
-            {auth.userId === props.creatorId && (
+            {!counterExpire && auth.userId === props.creatorId && (
               <Button to={`/places/${props.id}`}>Edit</Button>
             )}
             {auth.userId === props.creatorId && (
@@ -151,12 +199,16 @@ const PlaceItem = (props) => {
               </Button>
             )}
             {props.amount && <h3>The amount you have bid is {bidAmount}</h3>}
-            {auth.userId !== props.creatorId && auth.isLoggedIn && (
-              <BidInput
-                itemId={props.id}
-                onBidAmountChange={handleBidAmountChange}
-              />
-            )}
+            {counterExpire && sentence }
+
+            {!counterExpire &&
+              auth.userId !== props.creatorId &&
+              auth.isLoggedIn && (
+                <BidInput
+                  itemId={props.id}
+                  onBidAmountChange={handleBidAmountChange}
+                />
+              )}
           </div>
         </Card>
       </li>

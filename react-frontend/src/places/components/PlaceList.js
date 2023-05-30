@@ -11,14 +11,15 @@ const PlaceList = (props) => {
   //console.log(props.items);
   //console.log(props.biddingamounts);
 
-console.log(props.items);
-
   let combinedData = [];
 
   if (Array.isArray(props.items) && props.items.length > 0) {
-    if (Array.isArray(props.biddingamounts) && props.biddingamounts.length > 0) {
+    if (
+      Array.isArray(props.biddingamounts) &&
+      props.biddingamounts.length > 0
+    ) {
       const amounts = props.biddingamounts;
-  
+
       combinedData = props.items.map((place, index) => ({
         ...place,
         amount: amounts[index],
@@ -28,7 +29,6 @@ console.log(props.items);
     }
   }
 
-  
   console.log(combinedData);
 
   if (props.frombid) {
@@ -38,6 +38,21 @@ console.log(props.items);
           {/*2 classes */}
           <Card>
             <h2>No Bids found</h2>
+          </Card>
+        </div>
+      );
+    }
+  }
+
+  if (props.fromMarket) {
+    if (props.items.length === 0) {
+      return (
+        <div className="place-list center">
+          {/*2 classes */}
+          <Card>
+            <h2>
+              No Items found in the Market, wait for users to add items for bid
+            </h2>
           </Card>
         </div>
       );
@@ -82,6 +97,8 @@ console.log(props.items);
             onDelete={props.onDeletePlace}
             frombid={props.frombid}
             amount={item.amount}
+            highestBid={item.highestBid}
+            highestBidder={item.highestBidder}
           ></PlaceItem>
         )
       )}

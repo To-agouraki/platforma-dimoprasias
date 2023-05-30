@@ -20,9 +20,9 @@ const CountdownTimer = ({
       if (distance <= 0) {
         // Countdown reached zero, stop the timer
         clearInterval(intervalId);
-        setRemainingTime("");
+        setRemainingTime("Time has expired!");
         if (onCountdownEnd) {
-          onCountdownEnd();
+          onCountdownEnd(true); // Pass true to indicate countdown end
         }
       } else {
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
