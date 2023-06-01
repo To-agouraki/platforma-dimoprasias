@@ -39,7 +39,7 @@ router.post(
     check("amount")
       .notEmpty()
       .withMessage("Number is required")
-      .isFloat({ gt: 0, min:0 })
+      .isFloat({ gt: 0, min:0  })
       .withMessage("Number must be positive"),
   ],
   placesControllers.bidItem

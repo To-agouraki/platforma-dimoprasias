@@ -19,7 +19,7 @@ const NavLinks = (props) => {
       )}
       {auth.isLoggedIn && (
         <li>
-          <NavLink to={`/${auth.userId}/places`}>MY PLACES</NavLink>
+          <NavLink to={`/${auth.userId}/places`}>MY ITEMS</NavLink>
         </li>
       )}
       {auth.isLoggedIn && (
@@ -27,14 +27,14 @@ const NavLinks = (props) => {
           <NavLink to={`/${auth.userId}/biddedItems`}>BIDS</NavLink>
         </li>
       )}
-       {auth.isLoggedIn && (
+      {auth.isLoggedIn && (
         <li>
-          <NavLink to={'/user/profile'}>PROFILE</NavLink>
+          <NavLink to={"/user/profile"}>PROFILE</NavLink>
         </li>
       )}
       {auth.isLoggedIn && (
         <li>
-          <NavLink to="/places/new">NEW PLACE</NavLink>
+          <NavLink to="/places/new">NEW ITEM</NavLink>
         </li>
       )}
       {!auth.isLoggedIn && (
@@ -42,7 +42,11 @@ const NavLinks = (props) => {
           <NavLink to="/auth">AUTHENTICATE</NavLink>
         </li>
       )}
-      {auth.isLoggedIn && (<li><button onClick={auth.logout}>LogOut</button></li>)}
+      {auth.isLoggedIn && (
+        <li>
+          <button className="logout-button " onClick={auth.logout}>Log Out</button>
+        </li>
+      )}
     </ul>
   );
 };

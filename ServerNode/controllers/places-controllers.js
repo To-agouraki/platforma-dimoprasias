@@ -245,6 +245,10 @@ const deletePlace = async (req, res, next) => {
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
   let bid;
+
+  if(amount<0){
+    return next(new HttpError("Please bid with a positive amount", 500));
+  }
 ///moni mlkia pou emine eni aman valun idiio bid price jiame enkro genika ti ipotethete prepi na gini
   try {
     // Find the existing highest bid for the same item by the current bidder

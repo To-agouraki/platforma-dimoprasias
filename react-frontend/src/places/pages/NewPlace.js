@@ -100,17 +100,17 @@ const NewPlace = () => {
           onInput={inputHandler}
         />
         <Input
-          id="address"
+          id="address"//no implemented to to point were it matters
           element="input"
           label="Category"
           validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid address."
+          errorText="Please enter a valid category."
           onInput={inputHandler}
         />
         <CountdownPage getDateTime={handleDateTimeChange} />
         <br />
         <Button type="submit" disabled={!formIsValid}>
-          ADD PLACE
+          ADD ITEM
         </Button>
       </form>
     </React.Fragment>
