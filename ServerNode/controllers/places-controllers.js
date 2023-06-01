@@ -249,7 +249,7 @@ const bidItem = async (req, res, next) => {
   if(amount<0){
     return next(new HttpError("Please bid with a positive amount", 500));
   }
-///moni mlkia pou emine eni aman valun idiio bid price jiame enkro genika ti ipotethete prepi na gini
+
   try {
     // Find the existing highest bid for the same item by the current bidder
     const existingBid = await BidJunctionTable.findOne({
@@ -258,12 +258,12 @@ const bidItem = async (req, res, next) => {
     }).sort({ amount: -1 });
 
     if (existingBid) {
-      // If existing bid is found, check if the new bid amount is greater
+      // If existing bid is found, checkaro if the new bid amount is greater
       if (amount > existingBid.amount) {
         // Update the existing bid with the new amount
         existingBid.amount = amount;
         await existingBid.save();
-        bid = existingBid; // Assign the existing bid to the 'bid' variable
+        bid = existingBid; // Assign the existing bid to the 
       } else {
         return res.status(400).json({
           message:
