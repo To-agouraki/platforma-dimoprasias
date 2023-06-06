@@ -59,13 +59,34 @@ const PlaceList = (props) => {
     }
   }
 
+  if (typeof props.items === "undefined" && props.userId === auth.userId) {
+    return (
+      <div className="place-list center">
+        <Card>
+          <h2>No Items found .</h2>
+          <Button to="/places/new">Share an Item</Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (typeof props.items === "undefined") {
+    return (
+      <div className="place-list center">
+        <Card>
+          <h2>User has not added any item yet .</h2>
+        </Card>
+      </div>
+    );
+  }
+
   if (props.items.length === 0 && props.userId === auth.userId) {
     return (
       <div className="place-list center">
         {/*2 classes */}
         <Card>
-          <h2>No Places found .</h2>
-          <Button to="/places/new">Share a place</Button>
+          <h2>No Items found .</h2>
+          <Button to="/places/new">Share an Item</Button>
         </Card>
       </div>
     );

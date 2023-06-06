@@ -35,9 +35,6 @@ const UserPlaces = () => {
   }, [sendRequest, userId]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
-    setLoadedPlaces((prevPlaces) =>
-      prevPlaces.filter((place) => place.id !== deletedPlaceId)
-    );
     setFilteredData((prevFilteredData) =>
       prevFilteredData.filter((place) => place.id !== deletedPlaceId)
     );
