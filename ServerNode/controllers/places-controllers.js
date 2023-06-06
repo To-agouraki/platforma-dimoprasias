@@ -163,10 +163,7 @@ const updatePlace = async (req, res, next) => {
   //DUMMY_PLACES[placeIndex] = updatedPlace;
 
   if (place.creator.toString() !== req.userData.userId) {
-    const error = new HttpError(
-      'Not authorized!.',
-      401
-    );
+    const error = new HttpError("Not authorized!.", 401);
     return next(error);
   }
 
@@ -205,12 +202,9 @@ const deletePlace = async (req, res, next) => {
   if (!place) {
     return next(new HttpError("could not find this id", 404));
   }
- 
+
   if (place.creator.id !== req.userData.userId) {
-    const error = new HttpError(
-      'Not authorized!.',
-      401
-    );
+    const error = new HttpError("Not authorized!.", 401);
     return next(error);
   }
 
@@ -240,13 +234,11 @@ const deletePlace = async (req, res, next) => {
   res.status(200).json({ message: "Deleted place." });
 };
 
-
-
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
   let bid;
 
-  if(amount<0){
+  if (amount < 0) {
     return next(new HttpError("Please bid with a positive amount", 500));
   }
 
@@ -263,7 +255,7 @@ const bidItem = async (req, res, next) => {
         // Update the existing bid with the new amount
         existingBid.amount = amount;
         await existingBid.save();
-        bid = existingBid; // Assign the existing bid to the 
+        bid = existingBid; // Assign the existing bid to the
       } else {
         return res.status(400).json({
           message:
@@ -326,10 +318,6 @@ const bidItem = async (req, res, next) => {
   }
 };
 
-
-
-
-
 const getPlacesMarket = async (req, res, next) => {
   const userId = req.params.uid;
   let places;
@@ -351,6 +339,28 @@ const getPlacesMarket = async (req, res, next) => {
   });
 };
 
+const getAllItemsMarket = async (req, res, next) => {
+  let places;
+
+  try {
+    places = await Place.find();
+  } catch (error) {
+    console.log(error);
+    console.log("fail");
+    const err = new HttpError("Fetching places failed.", 404);
+    return next(err);
+  }
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
+};
 
 exports.getPlacesMarket = getPlacesMarket;
 exports.getPlaceById = getPlaceById;
@@ -359,3 +369,4 @@ exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
 exports.bidItem = bidItem;
+exports.getAllItemsMarket = getAllItemsMarket;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import UsersList from "../components/UsersList";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import RatingBar from "../../shared/components/SharedComponent/RatingBar";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
@@ -32,6 +33,7 @@ const Users = () => {
         </div>
       )}
       {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
+      <RatingBar/>
     </React.Fragment>
   );
 };

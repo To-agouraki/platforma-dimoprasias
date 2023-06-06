@@ -12,11 +12,11 @@ const NavLinks = (props) => {
           ALL USERS
         </NavLink>
       </li>
-      {auth.isLoggedIn && (
-        <li>
-          <NavLink to={`/${auth.userId}/market`}>MARKET</NavLink>
-        </li>
-      )}
+
+      <li>
+        <NavLink to={`/market`}>MARKET</NavLink>
+      </li>
+
       {auth.isLoggedIn && (
         <li>
           <NavLink to={`/${auth.userId}/places`}>MY ITEMS</NavLink>
@@ -44,7 +44,9 @@ const NavLinks = (props) => {
       )}
       {auth.isLoggedIn && (
         <li>
-          <button className="logout-button " onClick={auth.logout}>Log Out</button>
+          <button className="logout-button " onClick={auth.logout}>
+            Log Out
+          </button>
         </li>
       )}
     </ul>

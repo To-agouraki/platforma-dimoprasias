@@ -80,7 +80,7 @@ const App = () => {
         <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
         <Route path="/user/profile" element={<UserProfile />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
-        <Route path="/:userId/market" element={<ItemMarket />}></Route>
+        <Route path="/market" element={<ItemMarket />}></Route>
       </React.Fragment>
     );
   } else {
@@ -91,6 +91,7 @@ const App = () => {
         <Route path="*" exact element={<Navigate to="/auth" replace />} />
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/auth" element={<Auth />}></Route>
+        <Route path="/market" element={<ItemMarket />}></Route>
       </React.Fragment>
     );
   }

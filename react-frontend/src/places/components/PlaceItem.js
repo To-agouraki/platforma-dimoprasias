@@ -7,6 +7,7 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import BidInput from "./BidInput";
 import Modal from "../../shared/components/UIElements/Modal";
+import RatingBar from "../../shared/components/SharedComponent/RatingBar";
 import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
@@ -210,7 +211,9 @@ const PlaceItem = (props) => {
                 />
               )}
           </div>
+          <RatingBar/>
         </Card>
+       
       </li>
     </React.Fragment>
   );

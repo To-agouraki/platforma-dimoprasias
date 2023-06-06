@@ -1,11 +1,12 @@
 //userPlaces  pale
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState ,useContext} from "react";
+//import { useParams } from "react-router-dom";
 
 import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import SearchBar from "../../shared/components/SharedComponent/SearchBar";
+import { AuthContext } from "../../shared/components/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const ItemMarket = () => {
@@ -13,18 +14,22 @@ const ItemMarket = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [filteredData, setFilteredData] = useState([]); //serach bar
 
+  const authObj = useContext(AuthContext);
+
+
   const handleFilter = (filteredData) => {
     //sreearch bar
     setFilteredData(filteredData);
   };
 
-  const userId = useParams().userId;
+  const userId = authObj.userId;
 
+ if(authObj.isLoggedIn){
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/market/${userId}`
+          `http://localhost:5000/api/places/market/${authObj.userId}`
         );
         setLoadedPlaces(responseData.places);
         setFilteredData(responseData.places);
@@ -34,6 +39,22 @@ const ItemMarket = () => {
     };
     fetchPlaces();
   }, [sendRequest, userId]);
+ }else if(!authObj.isLoggedIn){
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/market/loggedout/general`
+        );
+        setLoadedPlaces(responseData.places);
+        setFilteredData(responseData.places);
+
+        console.log(responseData.places);
+      } catch (err) {}
+    };
+    fetchPlaces();
+  }, [sendRequest]);
+ }
 
   const placeDeletedHandler = (deletedPlaceId) => {
     setLoadedPlaces((prevPlaces) =>
