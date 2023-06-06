@@ -20,9 +20,6 @@ const UserPlaces = () => {
 
   const userId = useParams().userId;
 
-  
-
-
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
@@ -40,6 +37,9 @@ const UserPlaces = () => {
   const placeDeletedHandler = (deletedPlaceId) => {
     setLoadedPlaces((prevPlaces) =>
       prevPlaces.filter((place) => place.id !== deletedPlaceId)
+    );
+    setFilteredData((prevFilteredData) =>
+      prevFilteredData.filter((place) => place.id !== deletedPlaceId)
     );
   };
 
