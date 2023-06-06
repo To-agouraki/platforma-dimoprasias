@@ -4,13 +4,24 @@ import { useParams } from "react-router-dom";
 import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import SearchBar from "../../shared/components/SharedComponent/SearchBar";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const UserPlaces = () => {
-  const [loadedPlaces, setLoadedPlaces] = useState('');
+  const [loadedPlaces, setLoadedPlaces] = useState("");
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
+  const [filteredData, setFilteredData] = useState([]); //serach bar
+
+  const handleFilter = (filteredData) => {
+    //sreearch bar
+    setFilteredData(filteredData);
+  };
+
   const userId = useParams().userId;
+
+  
+
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -19,6 +30,7 @@ const UserPlaces = () => {
           `http://localhost:5000/api/places/user/${userId}`
         );
         setLoadedPlaces(responseData.places);
+        setFilteredData(responseData.places);
         //console.log(responseData.places);
       } catch (err) {}
     };
@@ -31,6 +43,8 @@ const UserPlaces = () => {
     );
   };
 
+  console.log(filteredData);
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
@@ -39,9 +53,18 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      
-      {!isLoading &&  (
-        <PlaceList items={loadedPlaces} userId={userId} onDeletePlace={placeDeletedHandler} />
+
+      {!isLoading && (
+        <div>
+          <div className="search-container">
+            <SearchBar data={loadedPlaces} onFilter={handleFilter} />
+          </div>
+          <PlaceList
+            items={filteredData}
+            userId={userId}
+            onDeletePlace={placeDeletedHandler}
+          />
+        </div>
       )}
     </React.Fragment>
   );

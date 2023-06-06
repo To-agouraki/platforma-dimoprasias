@@ -33,7 +33,7 @@ const PlaceItem = (props) => {
   }
 
 
-  console.log(props.highestBidder);
+ // console.log(props.highestBidder);
 
   let sentence;
 

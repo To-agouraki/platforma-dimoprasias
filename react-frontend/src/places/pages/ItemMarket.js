@@ -5,11 +5,18 @@ import { useParams } from "react-router-dom";
 import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import SearchBar from "../../shared/components/SharedComponent/SearchBar";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const ItemMarket = () => {
   const [loadedPlaces, setLoadedPlaces] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [filteredData, setFilteredData] = useState([]); //serach bar
+
+  const handleFilter = (filteredData) => {
+    //sreearch bar
+    setFilteredData(filteredData);
+  };
 
   const userId = useParams().userId;
 
@@ -20,6 +27,8 @@ const ItemMarket = () => {
           `http://localhost:5000/api/places/market/${userId}`
         );
         setLoadedPlaces(responseData.places);
+        setFilteredData(responseData.places);
+
         console.log(responseData.places);
       } catch (err) {}
     };
@@ -42,12 +51,17 @@ const ItemMarket = () => {
       )}
 
       {!isLoading && (
-        <PlaceList
-          items={loadedPlaces}
-          userId={userId}
-          fromMarket={true}
-          onDeletePlace={placeDeletedHandler}
-        />
+        <div>
+          <div className="search-container">
+            <SearchBar data={loadedPlaces} onFilter={handleFilter} />
+          </div>
+          <PlaceList
+            items={filteredData}
+            userId={userId}
+            fromMarket={true}
+            onDeletePlace={placeDeletedHandler}
+          />
+        </div>
       )}
     </React.Fragment>
   );

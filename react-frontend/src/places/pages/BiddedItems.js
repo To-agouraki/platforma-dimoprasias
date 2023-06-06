@@ -4,12 +4,19 @@ import { useParams } from "react-router-dom";
 import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import SearchBar from "../../shared/components/SharedComponent/SearchBar";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const UserPlaces = () => {
-  const [loadedPlaces, setLoadedPlaces] = useState(' ');
-  const [loadedAmounts, setLoadedAmounts] = useState('');
+  const [loadedPlaces, setLoadedPlaces] = useState(" ");
+  const [loadedAmounts, setLoadedAmounts] = useState("");
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [filteredData, setFilteredData] = useState([]); //serach bar
+
+  const handleFilter = (filteredData) => {
+    //sreearch bar
+    setFilteredData(filteredData);
+  };
 
   const userId = useParams().userId;
 
@@ -23,17 +30,16 @@ const UserPlaces = () => {
 
         const items = responseData.items;
         let place = [];
-        let amount= [];
+        let amount = [];
 
         items.forEach((item) => {
-          
           place.push(item.place);
           amount.push(item.amount);
           //place = item.place to access them seperately
         });
-        
 
         setLoadedPlaces(place);
+        setFilteredData(place);
         setLoadedAmounts(amount);
       } catch (err) {}
     };
@@ -55,7 +61,18 @@ const UserPlaces = () => {
         </div>
       )}
       {!isLoading && (
-        <PlaceList items={loadedPlaces} biddingamounts={loadedAmounts} userId={userId} frombid={true} onDeletePlace={placeDeletedHandler} />
+        <div>
+          <div className="search-container">
+            <SearchBar data={loadedPlaces} onFilter={handleFilter} />
+          </div>
+          <PlaceList
+            items={filteredData}
+            biddingamounts={loadedAmounts}
+            userId={userId}
+            frombid={true}
+            onDeletePlace={placeDeletedHandler}
+          />
+        </div>
       )}
     </React.Fragment>
   );

@@ -29,7 +29,7 @@ const PlaceList = (props) => {
     }
   }
 
-  console.log(combinedData);
+  //console.log(combinedData);
 
   if (props.frombid) {
     if (props.items.length === 0) {

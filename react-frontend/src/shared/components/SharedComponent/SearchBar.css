@@ -1,0 +1,31 @@
+/* CSS for the search bar */
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .search-bar {
+    display: flex;
+    align-items: center;
+    width: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .search-bar input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .search-bar input[type="text"]::placeholder {
+    color: #aaa;
+  }
+  
+  .search-bar input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
