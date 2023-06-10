@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import UsersList from "../components/UsersList";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
-import RatingBar from "../../shared/components/SharedComponent/RatingBar";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
   //const [isLoading, setIsLoading] = useState(false);
   //const [nError, setNError] = useState();
-  const {isLoading, nError, sendRequest, clearError} = useHttpClient();//gia kapio logo liturga {} anti gia []
+  const { isLoading, nError, sendRequest, clearError } = useHttpClient(); //gia kapio logo liturga {} anti gia []
   const [loadedUsers, setLoadedUsers] = useState();
 
   useEffect(() => {
@@ -23,7 +22,6 @@ const Users = () => {
     fetchUsers();
   }, [sendRequest]);
 
-
   return (
     <React.Fragment>
       <ErrorModal error={nError} onClear={clearError} />
@@ -33,7 +31,6 @@ const Users = () => {
         </div>
       )}
       {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
-      <RatingBar/>
     </React.Fragment>
   );
 };

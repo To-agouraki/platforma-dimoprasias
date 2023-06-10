@@ -2,6 +2,7 @@
   margin: 1rem;
   width: calc(45% - 2rem);
   min-width: 17.5rem;
+ 
 }
 
 .user-item a {
@@ -22,6 +23,8 @@
 
 .user-item__content {
   padding: 0;
+  border-radius: 10px; /* Adjust the value as needed */
+  border: 2px solid #292929;
 }
 
 .user-item__image {
@@ -37,13 +40,16 @@
   color: #ffd900;
 }
 
-.user-item:hover h2,
-.user-item:active h2,
-.user-item:hover h3,
-.user-item:active h3 {
+.user-item > .user-item__content > a:hover > .user-item__info h2,
+.user-item > .user-item__content > a:active > .user-item__info h2,
+.user-item > .user-item__content > a:hover > .user-item__info h3,
+.user-item > .user-item__content > a:active > .user-item__info h3 {
   color: #292929;
 }
 
 .user-item__info h3 {
   margin: 0;
+}
+.user-item__settings-icon {
+  margin-left: 1rem;
 }

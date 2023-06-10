@@ -7,13 +7,15 @@
   
   .rating-value {
     font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+    
   }
   
   .stars {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 0.7rem;
+
   }
   
   .stars span {
