@@ -2,7 +2,6 @@
   margin: 1rem;
   width: calc(45% - 2rem);
   min-width: 17.5rem;
- 
 }
 
 .user-item a {
@@ -24,7 +23,7 @@
 .user-item__content {
   padding: 0;
   border-radius: 10px; /* Adjust the value as needed */
-  border: 2px solid #292929;
+  border: 0.1px solid #292929;
 }
 
 .user-item__image {
