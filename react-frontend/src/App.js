@@ -11,6 +11,7 @@ import UserProfile from "./user/pages/UserProfile";
 import BiddedItems from "./places/pages/BiddedItems";
 import ItemMarket from "./places/pages/ItemMarket";
 import { AuthContext } from "./shared/components/context/auth-context";
+import AdminLogIn from "./user/pages/AdminLogIn";
 
 let logoutTimer;
 
@@ -92,6 +93,8 @@ const App = () => {
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/auth" element={<Auth />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
+        <Route path="/adminAuth" element={<AdminLogIn />}></Route>
+
       </React.Fragment>
     );
   }

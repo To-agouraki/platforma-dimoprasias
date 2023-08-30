@@ -32,6 +32,20 @@
   background: #ff0055;
 }
 
+.button--inverse2 {
+  background: transparent;
+  color: #00ff40;
+  border-color: #00ff40;
+}
+
+.button--inverse2:hover,
+.button--inverse2:active {
+  color: white;
+  background: #00ff40;
+  border-color: #00ff40;
+
+}
+
 .button--danger {
   background: #830000;
   border-color: #830000;

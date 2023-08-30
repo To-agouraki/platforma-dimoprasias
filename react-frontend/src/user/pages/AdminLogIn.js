@@ -14,7 +14,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
 import "./Auth.css";
 
-const Auth = () => {
+const AdminLogIn = () => {
   const authObj = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   // const [isLoading, setIsLoading] = useState(false);
@@ -147,8 +147,8 @@ const Auth = () => {
           Submit
         </Button>
       </form>
-      <Button inverse onClick={switchModeHandler}>
-        {isLoginMode ? "Change to Sign Up" : "Change to Log in "}
+      <Button inverse to="/auth">
+        Back
       </Button>
      
     </Card>
@@ -157,4 +157,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default AdminLogIn;
