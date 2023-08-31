@@ -7,6 +7,7 @@ const fs = require("fs"); //file system module
 
 const placesRoutes = require("./routes/places-routes");
 const userRoutes = require("./routes/users-routes");
+const adminRoutes = require("./routes/admin-routes");
 const HttpError = require("./models/http-error");
 
 const app = express();
@@ -29,6 +30,8 @@ app.use((req, res, next) => {
 app.use("/api/places", placesRoutes);
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/admin", adminRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError("could not find this route", 404);

@@ -5,3 +5,7 @@ const adminOperationsController = require("../controllers/admin_operations-contr
 
 const ImageUpload = require("../middleware/file-upload");
 const router = express.Router();
+
+router.post("/login", adminOperationsController.login);
+
+module.exports= router;

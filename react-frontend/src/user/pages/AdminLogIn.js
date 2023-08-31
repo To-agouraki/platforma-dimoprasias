@@ -8,7 +8,7 @@ import ErrorMessage from "../../shared/components/FormElements/ErrorMessage";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
-  VALIDATOR_REQUIRE,
+  
 } from "../../shared/util/validators";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
@@ -16,14 +16,13 @@ import "./Auth.css";
 
 const AdminLogIn = () => {
   const authObj = useContext(AuthContext);
-  const [isLoginMode, setIsLoginMode] = useState(true);
   // const [isLoading, setIsLoading] = useState(false);
   //const [nError, setNError] = useState();
 
   const { isLoading, nError, sendRequest } = useHttpClient();
 
   const [errorMessageShow, setErrorMessageShow] = useState(false);
-  const [formState, inputHandler, setFormData] = useForm(
+  const [formState, inputHandler] = useForm(
     {
       email: {
         value: "",
@@ -40,90 +39,34 @@ const AdminLogIn = () => {
   /////////////////////////////////////////////
   const authentSubmitHandler = async (event) => {
     event.preventDefault();
+    try {
+      const responeData = await sendRequest(
+        "http://localhost:5000/api/admin/login",
+        "POST",
+        JSON.stringify({
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        }),
+        { "Content-Type": "application/json" }
+      );
+      setErrorMessageShow(false);
 
-    if (isLoginMode) {
-      try {
-        const responeData = await sendRequest(
-          "http://localhost:5000/api/users/login",
-          "POST",
-          JSON.stringify({
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          { "Content-Type": "application/json" }
-        );
-        setErrorMessageShow(false);
-
-        authObj.login(responeData.userId, responeData.token);
-      } catch (err) {
-        setErrorMessageShow(true);
-      }
-    } else {
-      try {
-        const responeData = await sendRequest(
-          "http://localhost:5000/api/users/signup",
-          "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
-        );
-        setErrorMessageShow(false);
-
-        authObj.login(responeData.userId, responeData.token);
-      } catch (err) {
-        setErrorMessageShow(true);
-      }
+      authObj.login(responeData.userId, responeData.token);
+    } catch (err) {
+      setErrorMessageShow(true);
     }
   };
+
   //////////////////////////////////////////////////////
-  const switchModeHandler = () => {
-    if (!isLoginMode) {
-      setFormData(
-        {
-          ...formState.inputs,
-          name: undefined,
-        },
-        formState.inputs.email.isValid && formState.inputs.password.isValid
-      );
-    } else {
-      setFormData(
-        {
-          ...formState.inputs,
-          name: {
-            value: "",
-            isValid: false,
-          },
-        },
-        false
-      );
-    }
 
-    setIsLoginMode((prev) => !prev);
-  };
 
   return (
     <Card className="authentication">
       {isLoading && <LoadingSpinner asOverlay />}
       {errorMessageShow && <ErrorMessage message={nError} />}
-      <h2>{isLoginMode ? "Log in" : "Sign up"}</h2>
+      <h2>Administrator Login</h2>
       <hr />
       <form onSubmit={authentSubmitHandler}>
-        {!isLoginMode && (
-          <Input
-            id="name"
-            element="input"
-            label="Name"
-            type="text"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter valid name"
-            onInput={inputHandler}
-          ></Input>
-        )}
         <Input
           element="input"
           type="email"
@@ -150,10 +93,7 @@ const AdminLogIn = () => {
       <Button inverse to="/auth">
         Back
       </Button>
-     
     </Card>
-   
-    
   );
 };
 
