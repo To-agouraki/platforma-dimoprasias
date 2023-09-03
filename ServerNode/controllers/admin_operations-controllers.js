@@ -104,6 +104,6 @@ const getAdmins = async () => {
     }
   };
 
-getAdmins();
+//getAdmins();
 
 exports.login = login;

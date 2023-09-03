@@ -7,11 +7,11 @@ const NavLinks = (props) => {
 
   return (
     <ul className="nav-links">
-      <li>
+      { <li>
         <NavLink to="/" exact>
-          ALL USERS
+          Dashboard
         </NavLink>
-      </li>
+      </li> }
 
       <li>
         <NavLink to={`/market`}>MARKET</NavLink>

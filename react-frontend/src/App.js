@@ -12,6 +12,7 @@ import BiddedItems from "./places/pages/BiddedItems";
 import ItemMarket from "./places/pages/ItemMarket";
 import { AuthContext } from "./shared/components/context/auth-context";
 import AdminLogIn from "./user/pages/AdminLogIn";
+import AdminMainPage from "./user/pages/AdminMainPage";
 
 let logoutTimer;
 
@@ -19,8 +20,13 @@ const App = () => {
   const [token, setToken] = useState(false);
   const [userId, setUserId] = useState(false);
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  const logIn = useCallback((uid, token, expirationDate) => {
+  
+
+
+  const logIn = useCallback((uid, token, expirationDate, adminIsLogged = false) => {
+    setIsAdminLoggedIn(adminIsLogged);
     setToken(token);
     setUserId(uid);
     const tokenExpirationDate =
@@ -35,6 +41,10 @@ const App = () => {
       })
     );
   }, []);
+
+  const adminLogIn = useCallback((uid, token, expirationDate) => {
+    logIn(uid, token, expirationDate, true);
+  }, [logIn]);
 
   const logOut = useCallback(() => {
     setToken(null);
@@ -70,11 +80,12 @@ const App = () => {
 
   let routes;
 
-  if (token) {
+  if (token && isAdminLoggedIn) {
     //routes when logged in
     routes = (
       <React.Fragment>
-        <Route path="/" element={<Users />} />
+        <Route path="/" exact element={<AdminMainPage />}></Route>
+        <Route path="/users" element={<Users />} />
         <Route path="*" exact element={<Navigate to="/" replace />} />
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/places/new" exact element={<NewPlace />} />
@@ -84,11 +95,26 @@ const App = () => {
         <Route path="/market" element={<ItemMarket />}></Route>
       </React.Fragment>
     );
-  } else {
-    //route when not logged in
+  } else if(token) {
+    //route when user is logged in
     routes = (
       <React.Fragment>
-        <Route path="/" element={<Users />} />
+        <Route path="/" element={<ItemMarket />} />
+        <Route path="*" exact element={<Navigate to="/" replace />} />
+        <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
+        <Route path="/places/new" exact element={<NewPlace />} />
+        <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
+        <Route path="/user/profile" element={<UserProfile />}></Route>
+        <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
+        <Route path="/market" element={<ItemMarket />}></Route>
+      </React.Fragment>
+    );
+   
+  } else {
+    //noone is logged in
+    routes = (
+      <React.Fragment>
+        <Route path="/" element={<ItemMarket />} />
         <Route path="*" exact element={<Navigate to="/auth" replace />} />
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/auth" element={<Auth />}></Route>
@@ -103,6 +129,7 @@ const App = () => {
     <AuthContext.Provider
       value={{
         isLoggedIn: !!token,
+        isAdmin : adminLogIn,
         token: token,
         userId: userId,
         login: logIn,
