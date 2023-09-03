@@ -13,6 +13,7 @@ import ItemMarket from "./places/pages/ItemMarket";
 import { AuthContext } from "./shared/components/context/auth-context";
 import AdminLogIn from "./user/pages/AdminLogIn";
 import AdminMainPage from "./user/pages/AdminMainPage";
+import Categories from "../src/adminOnly/pages/Categories";
 
 let logoutTimer;
 
@@ -93,6 +94,9 @@ const App = () => {
         <Route path="/user/profile" element={<UserProfile />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
+        <Route path="/categories" element={<Categories />}></Route>
+
+        
       </React.Fragment>
     );
   } else if(token) {
