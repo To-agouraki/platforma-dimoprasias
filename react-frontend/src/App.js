@@ -13,7 +13,7 @@ import ItemMarket from "./places/pages/ItemMarket";
 import { AuthContext } from "./shared/components/context/auth-context";
 import AdminLogIn from "./user/pages/AdminLogIn";
 import AdminMainPage from "./user/pages/AdminMainPage";
-import Categories from "../src/adminOnly/pages/Categories";
+import CategoriesPage from "./adminOnly/pages/CategoriesPage";
 
 let logoutTimer;
 
@@ -80,6 +80,7 @@ const App = () => {
   }, [logIn]);
 
   let routes;
+  console.log(isAdminLoggedIn);
 
   if (token && isAdminLoggedIn) {
     //routes when logged in
@@ -91,10 +92,9 @@ const App = () => {
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/places/new" exact element={<NewPlace />} />
         <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
-        <Route path="/user/profile" element={<UserProfile />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
-        <Route path="/categories" element={<Categories />}></Route>
+        <Route path="/categories" element={<CategoriesPage />}></Route>
 
         
       </React.Fragment>

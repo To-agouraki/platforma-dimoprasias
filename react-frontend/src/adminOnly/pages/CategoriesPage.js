@@ -2,8 +2,8 @@ import React from "react";
 
 import CategoriesSettings from "../components/CategoriesSettings";
 
-const Categories = () => {
+const CategoriesPage = () => {
   return <CategoriesSettings/>
 };
 
-export default Categories;
+export default CategoriesPage;
