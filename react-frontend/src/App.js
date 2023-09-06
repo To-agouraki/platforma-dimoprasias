@@ -14,6 +14,8 @@ import { AuthContext } from "./shared/components/context/auth-context";
 import AdminLogIn from "./user/pages/AdminLogIn";
 import AdminMainPage from "./user/pages/AdminMainPage";
 import CategoriesPage from "./adminOnly/pages/CategoriesPage";
+import NewCategory from "./adminOnly/pages/NewCategory";
+import UpdateCategory from "./adminOnly/pages/UpdateCategory";
 
 let logoutTimer;
 
@@ -100,7 +102,11 @@ const App = () => {
         <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
+        <Route path="/categories/new" element={<NewCategory />}></Route>
+        <Route path="/categories/:categoryId" element={<UpdateCategory />}></Route>
         <Route path="/categories" element={<CategoriesPage />}></Route>
+        
+
       </React.Fragment>
     );
   } else if (token) {

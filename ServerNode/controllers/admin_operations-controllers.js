@@ -108,8 +108,31 @@ const getCategories = async (req, res, next) => {
   } catch (error) {
     return next(new HttpError("return categories failed", 500));
   }
-  res.json({ categories: categories.map((categories) => categories.toObject({ getters: true })) });
+  res.json({
+    categories: categories.map((categories) =>
+      categories.toObject({ getters: true })
+    ),
+  });
 };
+
+const getCategoryById = async (req, res, next) => {
+  const categoryId = req.params.categoryId;
+
+  let category;
+  try {
+    category = await Category.findById(categoryId);
+  } catch (error) {
+    return next(new HttpError("Fetching category failed", 500));
+  }
+
+  if (!category) {
+    return next(new HttpError("Category not found", 404));
+  }
+
+  res.json({ category: category.toObject({ getters: true }) });
+};
+
+exports.getCategoryById = getCategoryById;
 
 //getAdmins();
 
@@ -125,6 +148,7 @@ const createCategory = async (req, res, next) => {
   }
 
   const { name, description } = req.body;
+  console.log(name, description);
 
   const createdCategory = new Category({
     name,
@@ -166,6 +190,17 @@ const deleteCategory = async (req, res, next) => {
 };
 
 const updateCategory = async (req, res, next) => {
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError(
+        "Invalid inputs passed for update, make sure name is not empty and the description is not too big.",
+        422
+      )
+    );
+  }
+
   const categoryId = req.params.categoryId; // Assuming you pass the categoryId as a route parameter
   const { name, description } = req.body;
 
@@ -195,3 +230,4 @@ exports.deleteCategory = deleteCategory;
 exports.login = login;
 exports.createCategory = createCategory;
 exports.getCategories = getCategories;
+exports.getCategoryById = getCategoryById;

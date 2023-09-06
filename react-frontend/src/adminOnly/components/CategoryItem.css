@@ -1,0 +1,74 @@
+.category-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  .has-description {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .no-description {
+    color: red;
+    font-style: italic;
+  }
+  
+  .category-item {
+  position: relative; /* Create a positioning context for child elements */
+}
+
+.category-item {
+    position: relative;
+  }
+  
+  .category-header {
+    display: flex; /* Use flexbox to make children inline */
+    align-items: center; /* Vertically align children */
+    justify-content: space-between; /* Add space between children (name and button) */
+    padding: 10px; /* Adjust padding for spacing */
+  }
+  
+  .update-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .update-button:hover {
+    background-color: #0056b3;
+  }
+
+  .categories-title {
+    font-size: 35px; /* Adjust the font size as needed */
+    font-weight: bold; /* Make the text bold */
+    color: #050404; /* Choose a color for the title */
+    margin-bottom: 20px; /* Add some spacing at the bottom */
+  }
+  
+  /* Add any other styles for the card as needed */
+  
+  .new-category-button {
+    display: inline-block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .new-category-button:hover {
+    background-color: #0056b3;
+  }
+  
