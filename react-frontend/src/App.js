@@ -23,29 +23,33 @@ const App = () => {
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
-  
+  const logIn = useCallback(
+    (uid, token, expirationDate, adminIsLogged = false) => {
+      setIsAdminLoggedIn(adminIsLogged);
+      setToken(token);
+      setUserId(uid);
+      const tokenExpirationDate =
+        expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60); //an den piaso dimiourgoo neo
+      setTokenExpirationDate(tokenExpirationDate);
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          userId: uid,
+          token: token,
+          expiration: tokenExpirationDate.toISOString(),
+          isAdminLoggedIn: adminIsLogged,
+        })
+      );
+    },
+    []
+  );
 
-
-  const logIn = useCallback((uid, token, expirationDate, adminIsLogged = false) => {
-    setIsAdminLoggedIn(adminIsLogged);
-    setToken(token);
-    setUserId(uid);
-    const tokenExpirationDate =
-      expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60); //an den piaso dimiourgoo neo
-    setTokenExpirationDate(tokenExpirationDate);
-    localStorage.setItem(
-      "userData",
-      JSON.stringify({
-        userId: uid,
-        token: token,
-        expiration: tokenExpirationDate.toISOString(),
-      })
-    );
-  }, []);
-
-  const adminLogIn = useCallback((uid, token, expirationDate) => {
-    logIn(uid, token, expirationDate, true);
-  }, [logIn]);
+  const adminLogIn = useCallback(
+    (uid, token, expirationDate) => {
+      logIn(uid, token, expirationDate, true);
+    },
+    [logIn]
+  );
 
   const logOut = useCallback(() => {
     setToken(null);
@@ -69,12 +73,14 @@ const App = () => {
     if (
       storedData &&
       storedData.token &&
-      new Date(storedData.expiration) > new Date() //an en pio megali pou tin torasini sirno nea
+      new Date(storedData.expiration) > new Date()
+      //an en pio megali pou tin torasini sirno nea
     ) {
       logIn(
         storedData.userId,
         storedData.token,
-        new Date(storedData.expiration) //
+        new Date(storedData.expiration),
+        storedData.isAdminLoggedIn //
       );
     }
   }, [logIn]);
@@ -95,11 +101,9 @@ const App = () => {
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
         <Route path="/categories" element={<CategoriesPage />}></Route>
-
-        
       </React.Fragment>
     );
-  } else if(token) {
+  } else if (token) {
     //route when user is logged in
     routes = (
       <React.Fragment>
@@ -113,7 +117,6 @@ const App = () => {
         <Route path="/market" element={<ItemMarket />}></Route>
       </React.Fragment>
     );
-   
   } else {
     //noone is logged in
     routes = (
@@ -124,7 +127,6 @@ const App = () => {
         <Route path="/auth" element={<Auth />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
         <Route path="/adminAuth" element={<AdminLogIn />}></Route>
-
       </React.Fragment>
     );
   }
@@ -133,7 +135,7 @@ const App = () => {
     <AuthContext.Provider
       value={{
         isLoggedIn: !!token,
-        isAdmin : adminLogIn,
+        isAdmin: adminLogIn,
         token: token,
         userId: userId,
         login: logIn,

@@ -12,7 +12,6 @@ const BidJunctionTable = require("../models/bidding");
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  console.log(email, password);
   let existingUser;
   try {
     existingUser = await Admin.findOne({ email: email });
