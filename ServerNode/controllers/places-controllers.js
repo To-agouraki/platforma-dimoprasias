@@ -8,6 +8,7 @@ const HttpError = require("../models/http-error");
 const Place = require("../models/place");
 const User = require("../models/user");
 const BidJunctionTable = require("../models/bidding");
+const Category = require("../models/category");
 
 // let DUMMY_PLACES = [
 //   {
@@ -92,18 +93,41 @@ const createPlace = async (req, res, next) => {
     );
   }
 
-  const { title, description, address, dateTime, creator } = req.body;
+  const { title, description, category, dateTime, creator } = req.body;
   let image = req.file.path;
-  // const title = req.body.title;
+
+  // Retrieve all categories from the database
+  let categories;
+  try {
+    categories = await Category.find({}, 'name'); // Assuming your category schema has a 'name' field
+  } catch (error) {
+    return next(
+      new HttpError(
+        "Fetching categories failed, please try again later.",
+        500
+      )
+    );
+  }
+
+  // Extract category names into an array
+  const validCategoryNames = categories.map((category) => category.name);
+
+  // Check if the submitted category exists in the valid category names
+  if (!validCategoryNames.includes(category)) {
+    return next(
+      new HttpError("Invalid category. Please select a valid category.", 422)
+    );
+  }
+
   const createdPlace = new Place({
     title,
     description,
-    address,
+    category,
     dateTime,
-    image: image,
+    image,
     creator,
   });
-  //'../uploads/images/c5b29fd0-fb40-11ed-aebe-35ddc5059fee.png'
+
   let user;
 
   try {
@@ -111,31 +135,31 @@ const createPlace = async (req, res, next) => {
   } catch (error) {
     return next(
       new HttpError(
-        "creating a new place failed, please check your inputs(user error)",
+        "Creating a new place failed, please check your inputs (user error)",
         500
       )
     );
   }
 
   if (!user) {
-    return next(new HttpError("creating place failed, userid error", 404));
+    return next(new HttpError("Creating place failed, user ID error", 404));
   }
 
-  //DUMMY_PLACES.push(createdPlace); //unshift(createdPlace)
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
     await createdPlace.save({ session: sess });
-    user.places.push(createdPlace); //pushes place id to user mongoosepush, places and user are the collections
+    user.places.push(createdPlace);
     await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (error) {
-    const err = new HttpError("creating place failed", 500);
+    const err = new HttpError("Creating place failed", 500);
     return next(err);
   }
 
   res.status(201).json({ place: createdPlace });
 };
+
 
 const updatePlace = async (req, res, next) => {
   const errors = validationResult(req);

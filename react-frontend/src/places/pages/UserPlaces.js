@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import PlaceList from "../components/PlaceList";
@@ -11,10 +11,10 @@ const UserPlaces = () => {
   const [loadedPlaces, setLoadedPlaces] = useState("");
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
-  const [filteredData, setFilteredData] = useState([]); //serach bar
+  const [filteredData, setFilteredData] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(""); // Maintain selected category
 
   const handleFilter = (filteredData) => {
-    //sreearch bar
     setFilteredData(filteredData);
   };
 
@@ -28,7 +28,6 @@ const UserPlaces = () => {
         );
         setLoadedPlaces(responseData.places);
         setFilteredData(responseData.places);
-        //console.log(responseData.places);
       } catch (err) {}
     };
     fetchPlaces();
@@ -40,7 +39,7 @@ const UserPlaces = () => {
     );
   };
 
-  console.log(filteredData);
+  const categories = ["Category1", "Category2", "Category3"]; // Replace with your actual category data
 
   return (
     <React.Fragment>
@@ -53,6 +52,25 @@ const UserPlaces = () => {
 
       {!isLoading && (
         <div>
+          <div className="category-list">
+            <span
+              className={`category ${selectedCategory === "" ? "active" : ""}`}
+              onClick={() => setSelectedCategory("")}
+            >
+              All
+            </span>
+            {categories.map((category) => (
+              <span
+                key={category}
+                className={`category ${
+                  selectedCategory === category ? "active" : ""
+                }`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </span>
+            ))}
+          </div>
           <div className="search-container">
             <SearchBar data={loadedPlaces} onFilter={handleFilter} />
           </div>
@@ -60,6 +78,7 @@ const UserPlaces = () => {
             items={filteredData}
             userId={userId}
             onDeletePlace={placeDeletedHandler}
+            selectedCategory={selectedCategory} // Pass selectedCategory as prop
           />
         </div>
       )}

@@ -114,6 +114,17 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
+  const handleCategoryClick = (category) => {
+    // You can implement your filtering logic here.
+    // For example, you can call a function passed from the parent component
+    // to handle the filtering based on the clicked category.
+    // This function could update the state to display only items with the selected category.
+  
+    // Assuming you have a function called filterItemsByCategory in your parent component:
+   // filterItemsByCategory(category);
+  };
+
+
   return (
     <React.Fragment>
       <ErrorModal error={nError} onClear={clearError} />
@@ -184,6 +195,17 @@ const PlaceItem = (props) => {
             ) : (
               <p>loading....</p>
             )}
+             {props.category && (
+        <p className="place-item__category">
+          Category:{" "}
+          <button
+            className="category-button"
+            onClick={() => handleCategoryClick(props.category)}
+          >
+            {props.category}
+          </button>
+        </p>
+      )}
           </div>
 
           <div className="place-item__actions">

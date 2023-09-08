@@ -100,29 +100,29 @@ const PlaceList = (props) => {
     );
   }
 
+  const filteredItems = props.selectedCategory
+    ? props.items.filter((item) => item.category === props.selectedCategory)
+    : props.items;
+
   return (
     <ul className="place-list">
-      {combinedData.map(
-        (
-          item //from db
-        ) => (
-          <PlaceItem
-            key={item.id}
-            id={item.id}
-            image={item.image}
-            title={item.title}
-            description={item.description}
-            address={item.address}
-            creatorId={item.creator}
-            dateTime={item.dateTime}
-            onDelete={props.onDeletePlace}
-            frombid={props.frombid}
-            amount={item.amount}
-            highestBid={item.highestBid}
-            highestBidder={item.highestBidder}
-          ></PlaceItem>
-        )
-      )}
+      {filteredItems.map((item) => (
+        <PlaceItem
+          key={item.id}
+          id={item.id}
+          image={item.image}
+          title={item.title}
+          description={item.description}
+          category={item.category}
+          creatorId={item.creator}
+          dateTime={item.dateTime}
+          onDelete={props.onDeletePlace}
+          frombid={props.frombid}
+          amount={item.amount}
+          highestBid={item.highestBid}
+          highestBidder={item.highestBidder}
+        />
+      ))}
     </ul>
   );
 };
