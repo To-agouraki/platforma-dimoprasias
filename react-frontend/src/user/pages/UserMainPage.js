@@ -1,8 +1,7 @@
 import React from "react";
-import AdminDashboard from "../components/UserDashboardDashboard";
-
+import UserDashboard from "../components/UserDashboard";
 const UserMainPage = () => {
-  return <AdminDashboard />;
+  return <UserDashboard />;
 };
 
 export default UserMainPage;

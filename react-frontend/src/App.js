@@ -16,6 +16,7 @@ import AdminMainPage from "./user/pages/AdminMainPage";
 import CategoriesPage from "./adminOnly/pages/CategoriesPage";
 import NewCategory from "./adminOnly/pages/NewCategory";
 import UpdateCategory from "./adminOnly/pages/UpdateCategory";
+import UserMainPage from "./user/pages/UserMainPage";
 
 let logoutTimer;
 
@@ -113,7 +114,7 @@ const App = () => {
     //route when user is logged in
     routes = (
       <React.Fragment>
-        <Route path="/" element={<ItemMarket />} />
+        <Route path="/" element={<UserMainPage />} />
         <Route path="*" exact element={<Navigate to="/" replace />} />
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/places/new" exact element={<NewPlace />} />
