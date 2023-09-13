@@ -1,32 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import SearchBar from "../../shared/components/SharedComponent/SearchBar";
+import CategoryFilter from "../../shared/components/SharedComponent/CategoryFilter";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
-import "./UserPlaces.css"; // Import your CSS file for styling
+import "./UserPlaces.css";
 
 const UserPlaces = () => {
-  const [loadedPlaces, setLoadedPlaces] = useState(""); // Only loadedPlaces is used
+  const [loadedPlaces, setLoadedPlaces] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [filteredData, setFilteredData] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); // Category filter state
-  const [categoriess, setCategoriess] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-console.log(filteredData);
-
-
-  // Fetcgin categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const responseData = await sendRequest(
           "http://localhost:5000/api/admin/categories"
         );
-        setCategoriess(responseData.categories);
+        setCategories(responseData.categories);
       } catch (error) {
         console.log(error);
       }
@@ -34,20 +32,22 @@ console.log(filteredData);
     fetchCategories();
   }, [sendRequest]);
 
-  const options = categoriess.map((category) => ({
-    //dame en ta categories
+  const options = categories.map((category) => ({
     name: category.name,
     key: category._id,
   }));
 
-  const handleFilter = (filteredData) => {
-    setFilteredData(filteredData);
+  const handleCategoryFilter = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleSearchFilter = (searchTerm) => {
+    setSearchTerm(searchTerm);
   };
 
   const userId = useParams().userId;
 
   useEffect(() => {
-    //Fetch Items
     const fetchPlaces = async () => {
       try {
         const responseData = await sendRequest(
@@ -61,27 +61,28 @@ console.log(filteredData);
   }, [sendRequest, userId]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
-    //Delete Handler
     setFilteredData((prevFilteredData) =>
       prevFilteredData.filter((place) => place.id !== deletedPlaceId)
     );
   };
 
-  // Function to handle category filter
-  const handleCategoryFilter = (category) => {
-    setSelectedCategory(category);
-    if (category === "") {
-      setFilteredData(loadedPlaces);
+  useEffect(() => {
+    let filteredPlaces = loadedPlaces;
 
-      // Show all places if no category selected
-    } else {
-      // Filter places based on the selected category
-      const filteredPlaces = loadedPlaces.filter(
-        (place) => place.category === category
+    if (selectedCategory) {
+      filteredPlaces = filteredPlaces.filter(
+        (place) => place.category === selectedCategory
       );
-      setFilteredData(filteredPlaces);
     }
-  };
+
+    if (searchTerm) {
+      filteredPlaces = filteredPlaces.filter((place) =>
+        place.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredData(filteredPlaces);
+  }, [selectedCategory, searchTerm, loadedPlaces]);
 
   return (
     <React.Fragment>
@@ -89,27 +90,11 @@ console.log(filteredData);
       <div className="user-places">
         <div className="sidebar">
           <h3>Filter by Category</h3>
-          <ul>
-            <li
-              onClick={() => handleCategoryFilter("")}
-              className={selectedCategory === "" ? "active" : ""}
-            >
-              All
-            </li>
-            {options.map(
-              (
-                option //Category Filter
-              ) => (
-                <li
-                  key={option.key}
-                  onClick={() => handleCategoryFilter(option.name)}
-                  className={selectedCategory === option.name ? "active" : ""}
-                >
-                  {option.name}
-                </li>
-              )
-            )}
-          </ul>
+          <CategoryFilter
+            categories={options}
+            selectedCategory={selectedCategory}
+            onCategoryFilter={handleCategoryFilter}
+          />
         </div>
         <div className="places">
           {isLoading && (
@@ -120,7 +105,7 @@ console.log(filteredData);
           {!isLoading && (
             <div>
               <div className="search-container">
-                <SearchBar data={filteredData} onFilter={handleFilter} />
+                <SearchBar onFilter={handleSearchFilter} />
               </div>
               <PlaceList
                 items={filteredData}

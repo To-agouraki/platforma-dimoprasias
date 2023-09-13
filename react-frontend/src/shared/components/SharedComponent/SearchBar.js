@@ -1,24 +1,15 @@
 import React, { useState } from "react";
 import "./SearchBar.css";
 
-const SearchBar = ({ data, onFilter }) => {
+const SearchBar = ({ onFilter }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (event) => {
-    if (event.target.value === "") {
-      onFilter(data);
-    }
     const searchTerm = event.target.value.toLowerCase();
     setSearchTerm(searchTerm);
-    let filteredData;
-    if (data) {
-      filteredData = data.filter((item) =>
-        item.title.toLowerCase().includes(searchTerm)
-      );
-    }
 
-    // Call the onFilter function with the filteredData
-    onFilter(filteredData);
+    // Call the onFilter function with the search term
+    onFilter(searchTerm);
   };
 
   return (

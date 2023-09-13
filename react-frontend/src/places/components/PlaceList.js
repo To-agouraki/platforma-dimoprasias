@@ -3,17 +3,13 @@ import { AuthContext } from "../../shared/components/context/auth-context";
 import { useContext } from "react";
 import PlaceItem from "./PlaceItem";
 import Card from "../../shared/components/UIElements/Card";
-import React from "react";
+import React, { useState } from "react";
 import Button from "../../shared/components/FormElements/Button";
 const PlaceList = (props) => {
-  const auth = useContext(AuthContext);
-
-  //console.log(props.items);
-  //console.log(props.biddingamounts);
-
   let combinedData = [];
 
-  if (Array.isArray(props.items) && props.items.length > 0) {//an exw bidding amounts pintono pano sto combiend an den exw to combined vasika piani jina pou inta na moun otu i allos
+  if (Array.isArray(props.items) && props.items.length > 0) {
+    //an exw bidding amounts pintono pano sto combiend an den exw to combined vasika piani jina pou inta na moun otu i allos
     if (
       Array.isArray(props.biddingamounts) &&
       props.biddingamounts.length > 0
@@ -28,6 +24,23 @@ const PlaceList = (props) => {
       combinedData = props.items;
     }
   }
+
+  const auth = useContext(AuthContext);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 2;
+
+  const currentItems = combinedData.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
+  const totalPages = Math.ceil(props.items.length / usersPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    console.log(`Current Page: ${pageNumber}`);
+  };
+  //console.log(props.items);
+  //console.log(props.biddingamounts);
 
   //console.log(combinedData);
 
@@ -101,11 +114,9 @@ const PlaceList = (props) => {
   }
 
   return (
-    <ul className="place-list">
-      {combinedData.map(
-        (
-          item //from db
-        ) => (
+    <React.Fragment>
+      <ul className="place-list">
+        {currentItems.map((item) => (
           <PlaceItem
             key={item.id}
             id={item.id}
@@ -121,9 +132,21 @@ const PlaceList = (props) => {
             highestBid={item.highestBid}
             highestBidder={item.highestBidder}
           ></PlaceItem>
-        )
-      )}
-    </ul>
+        ))}
+      </ul>
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            className={currentPage === page ? "active" : ""}
+            onClick={() => handlePageChange(page)}
+          >
+            {page}
+          </button>
+        ))}
+      </div>
+      <br></br>
+    </React.Fragment>
   );
 };
 
