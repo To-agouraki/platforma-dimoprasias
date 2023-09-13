@@ -13,7 +13,7 @@ const PlaceList = (props) => {
 
   let combinedData = [];
 
-  if (Array.isArray(props.items) && props.items.length > 0) {
+  if (Array.isArray(props.items) && props.items.length > 0) {//an exw bidding amounts pintono pano sto combiend an den exw to combined vasika piani jina pou inta na moun otu i allos
     if (
       Array.isArray(props.biddingamounts) &&
       props.biddingamounts.length > 0
@@ -100,29 +100,29 @@ const PlaceList = (props) => {
     );
   }
 
-  const filteredItems = props.selectedCategory
-    ? props.items.filter((item) => item.category === props.selectedCategory)
-    : props.items;
-
   return (
     <ul className="place-list">
-      {filteredItems.map((item) => (
-        <PlaceItem
-          key={item.id}
-          id={item.id}
-          image={item.image}
-          title={item.title}
-          description={item.description}
-          category={item.category}
-          creatorId={item.creator}
-          dateTime={item.dateTime}
-          onDelete={props.onDeletePlace}
-          frombid={props.frombid}
-          amount={item.amount}
-          highestBid={item.highestBid}
-          highestBidder={item.highestBidder}
-        />
-      ))}
+      {combinedData.map(
+        (
+          item //from db
+        ) => (
+          <PlaceItem
+            key={item.id}
+            id={item.id}
+            image={item.image}
+            title={item.title}
+            description={item.description}
+            category={item.category}
+            creatorId={item.creator}
+            dateTime={item.dateTime}
+            onDelete={props.onDeletePlace}
+            frombid={props.frombid}
+            amount={item.amount}
+            highestBid={item.highestBid}
+            highestBidder={item.highestBidder}
+          ></PlaceItem>
+        )
+      )}
     </ul>
   );
 };
