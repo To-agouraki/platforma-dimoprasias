@@ -5,8 +5,12 @@ import PlaceItem from "./PlaceItem";
 import Card from "../../shared/components/UIElements/Card";
 import React, { useState } from "react";
 import Button from "../../shared/components/FormElements/Button";
+import TabbedPlaceItem from "./TabbedItem";
+import TabbedItem from "./TabbedItem";
+
 const PlaceList = (props) => {
   let combinedData = [];
+  const [isTabbedView, setIsTabbedView] = useState(false);
 
   if (Array.isArray(props.items) && props.items.length > 0) {
     //an exw bidding amounts pintono pano sto combiend an den exw to combined vasika piani jina pou inta na moun otu i allos
@@ -112,7 +116,7 @@ const PlaceList = (props) => {
       </div>
     );
   }
-
+console.log(currentItems);
   return (
     <React.Fragment>
       <ul className="place-list">
@@ -134,6 +138,12 @@ const PlaceList = (props) => {
           ></PlaceItem>
         ))}
       </ul>
+      <TabbedItem
+        key={currentItems[0].id}
+        id={currentItems[0].id}
+        image={currentItems[0].image}
+        title={currentItems[0].title}
+      ></TabbedItem>
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button

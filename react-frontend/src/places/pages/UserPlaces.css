@@ -32,3 +32,31 @@
     color: #ffffff;
   }
   
+
+  .user-places {
+    display: flex;
+    justify-content: flex-start; /* Align children from left to right */
+    align-items: flex-start; /* Align children from top to bottom */
+    margin-right: 10px;
+     /*  width: 70%;  Adjust the percentage as needed */
+  /*   margin: 0 auto; Center the content horizontally */
+  }
+  
+  .sidebar {
+    flex: 0 0 auto; /* Sidebar doesn't grow or shrink */
+    width: 200px; /* Set a fixed width for the sidebar */
+    padding: 16px; /* Add some spacing */
+    margin-left: 25px;
+    margin-top: 15px;
+  }
+  
+  .content {
+    flex: 1 1 auto; /* Content grows and shrinks to fill available space */
+    padding: 16px; /* Add some spacing */
+  }
+  
+  
+  
+  
+  
+  

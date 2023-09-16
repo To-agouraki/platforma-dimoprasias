@@ -1,0 +1,39 @@
+/* TabbedItem.css */
+.tabbed-item-container {
+    margin: 1rem 0;
+  }
+  
+  .tabbed-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .tabbed-item-left {
+    display: flex;
+    align-items: center;
+  }
+  
+  .tabbed-item-image {
+    width: 50px; /* Adjust the image width as needed */
+    height: 50px; /* Adjust the image height as needed */
+    object-fit: cover;
+    margin-right: 1rem;
+  }
+  
+  .tabbed-item h3 {
+    margin: 0;
+  }
+  
+  
+  
+  @media (min-width: 768px) {
+    .tabbed-item-image {
+      width: 75px; /* Adjust the image width for larger screens */
+      height: 75px; /* Adjust the image height for larger screens */
+    }
+  }
+  
