@@ -3,6 +3,59 @@
     margin: 1rem auto;
     padding: 0;
     width: 90%;
-    max-width: 40rem;
+    max-width: 45rem;
   }
+  
+/* normal and tabbed view buttons */
+  .view-toggle-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+  
+  .view-toggle-buttons button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .view-toggle-buttons button:hover {
+    background-color: #0056b3;
+  }
+
+/* select items per page */
+
+  /* Add these styles to your CSS file */
+.items-per-page {
+  margin-bottom: 1rem; /* Add some spacing between the select input and other elements */
+  display: flex;
+  align-items: center; /* Align label and select input vertically */
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.items-per-page label {
+  margin-right: 0.5rem; /* Add some spacing between the label and select input */
+  font-weight: bold;
+}
+
+.items-per-page select {
+  padding: 0.25rem 0.5rem; /* Add padding to the select input for better spacing */
+  border: 1px solid #ccc; /* Add a border */
+  border-radius: 4px; /* Add rounded corners */
+  font-size: 1rem; /* Adjust font size as needed */
+}
+
+/* Style the select input when it's focused */
+.items-per-page select:focus {
+  outline: none; /* Remove the default focus outline */
+  border-color: #007bff; /* Change the border color on focus (adjust color as needed) */
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Add a subtle box shadow on focus */
+}
+
   

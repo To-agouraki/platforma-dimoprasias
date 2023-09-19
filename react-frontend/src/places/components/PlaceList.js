@@ -5,12 +5,29 @@ import PlaceItem from "./PlaceItem";
 import Card from "../../shared/components/UIElements/Card";
 import React, { useState } from "react";
 import Button from "../../shared/components/FormElements/Button";
-import TabbedPlaceItem from "./TabbedItem";
 import TabbedItem from "./TabbedItem";
 
 const PlaceList = (props) => {
   let combinedData = [];
-  const [isTabbedView, setIsTabbedView] = useState(false);
+  const [tabbedView, setTabbedView] = useState(false);
+  const [usersPerPage, setUsersPerPage] = useState(3);
+
+  //const toggleTabbedView = () => {
+   // setTabbedView((prevTabbedView) => !prevTabbedView);
+  //};
+
+  const toggleTabbedView = () => {
+    setTabbedView(true);
+  };
+
+  const toggleNormalView = () => {
+    setTabbedView(false);
+  };
+
+  const handleUsersPerPageChange = (event) => {
+    const newValue = parseInt(event.target.value, 10); // Parse the selected value as an integer
+    setUsersPerPage(newValue);
+  };
 
   if (Array.isArray(props.items) && props.items.length > 0) {
     //an exw bidding amounts pintono pano sto combiend an den exw to combined vasika piani jina pou inta na moun otu i allos
@@ -31,7 +48,7 @@ const PlaceList = (props) => {
 
   const auth = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 2;
+
 
   const currentItems = combinedData.slice(
     (currentPage - 1) * usersPerPage,
@@ -116,34 +133,70 @@ const PlaceList = (props) => {
       </div>
     );
   }
-console.log(currentItems);
+  console.log(currentItems);
   return (
     <React.Fragment>
+      <div className="view-toggle-buttons">
+        <button
+          onClick={() => {
+            toggleTabbedView();
+          }}
+        >
+          Tabbed View
+        </button>
+        <button
+          onClick={() => {
+            toggleNormalView();
+          }}
+        >
+          Normal View
+        </button>
+      </div>
+
+      <div className="items-per-page">
+        <label htmlFor="itemsPerPage">Items per page:</label>
+        <select
+          id="itemsPerPage"
+          value={usersPerPage}
+          onChange={handleUsersPerPageChange}
+        >
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          {/* Add more options as needed */}
+        </select>
+      </div>
+
       <ul className="place-list">
-        {currentItems.map((item) => (
-          <PlaceItem
-            key={item.id}
-            id={item.id}
-            image={item.image}
-            title={item.title}
-            description={item.description}
-            category={item.category}
-            creatorId={item.creator}
-            dateTime={item.dateTime}
-            onDelete={props.onDeletePlace}
-            frombid={props.frombid}
-            amount={item.amount}
-            highestBid={item.highestBid}
-            highestBidder={item.highestBidder}
-          ></PlaceItem>
-        ))}
+        {currentItems.map((item) =>
+          tabbedView ? (
+            <TabbedItem
+              key={item.id}
+              id={item.id}
+              image={item.image}
+              title={item.title}
+            />
+          ) : (
+            <PlaceItem
+              key={item.id}
+              id={item.id}
+              image={item.image}
+              title={item.title}
+              description={item.description}
+              category={item.category}
+              creatorId={item.creator}
+              dateTime={item.dateTime}
+              onDelete={props.onDeletePlace}
+              frombid={props.frombid}
+              amount={item.amount}
+              highestBid={item.highestBid}
+              highestBidder={item.highestBidder}
+            />
+          )
+        )}
       </ul>
-      <TabbedItem
-        key={currentItems[0].id}
-        id={currentItems[0].id}
-        image={currentItems[0].image}
-        title={currentItems[0].title}
-      ></TabbedItem>
+
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
