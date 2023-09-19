@@ -1,20 +1,30 @@
 import "./PlaceList.css";
 import { AuthContext } from "../../shared/components/context/auth-context";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import PlaceItem from "./PlaceItem";
 import Card from "../../shared/components/UIElements/Card";
-import React, { useState } from "react";
+import React from "react";
 import Button from "../../shared/components/FormElements/Button";
 import TabbedItem from "./TabbedItem";
 
 const PlaceList = (props) => {
-  let combinedData = [];
   const [tabbedView, setTabbedView] = useState(false);
   const [usersPerPage, setUsersPerPage] = useState(3);
+  const auth = useContext(AuthContext);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [combinedData, setCombinedData] = useState([]);
 
-  //const toggleTabbedView = () => {
-   // setTabbedView((prevTabbedView) => !prevTabbedView);
-  //};
+  useEffect(() => {
+    // Update combinedData with isCollapsed property and amount if biddingamounts exist
+    const updatedCombinedData = props.items.map((place, index) => ({
+      ...place,
+      isCollapsed: true, // Initially, all items are collapsed
+      amount: Array.isArray(props.biddingamounts)
+        ? props.biddingamounts[index]
+        : null,
+    }));
+    setCombinedData(updatedCombinedData);
+  }, [props.items, props.biddingamounts]);
 
   const toggleTabbedView = () => {
     setTabbedView(true);
@@ -29,75 +39,44 @@ const PlaceList = (props) => {
     setUsersPerPage(newValue);
   };
 
-  if (Array.isArray(props.items) && props.items.length > 0) {
-    //an exw bidding amounts pintono pano sto combiend an den exw to combined vasika piani jina pou inta na moun otu i allos
-    if (
-      Array.isArray(props.biddingamounts) &&
-      props.biddingamounts.length > 0
-    ) {
-      const amounts = props.biddingamounts;
-
-      combinedData = props.items.map((place, index) => ({
-        ...place,
-        amount: amounts[index],
-      }));
-    } else {
-      combinedData = props.items;
-    }
-  }
-
-  const auth = useContext(AuthContext);
-  const [currentPage, setCurrentPage] = useState(1);
-
-
-  const currentItems = combinedData.slice(
-    (currentPage - 1) * usersPerPage,
-    currentPage * usersPerPage
-  );
-  const totalPages = Math.ceil(props.items.length / usersPerPage);
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    console.log(`Current Page: ${pageNumber}`);
   };
-  //console.log(props.items);
-  //console.log(props.biddingamounts);
 
-  //console.log(combinedData);
+  const toggleItemCollapse = (itemId) => {
+    const updatedCombinedData = combinedData.map((item) =>
+      item.id === itemId ? { ...item, isCollapsed: !item.isCollapsed } : item
+    );
+    setCombinedData(updatedCombinedData);
+  };
 
-  if (props.frombid) {
-    if (props.items.length === 0) {
-      return (
-        <div className="place-list center">
-          {/*2 classes */}
-          <Card>
-            <h2>No Bids found</h2>
-          </Card>
-        </div>
-      );
-    }
+  if (props.frombid && props.items.length === 0) {
+    return (
+      <div className="place-list center">
+        <Card>
+          <h2>No Bids found</h2>
+        </Card>
+      </div>
+    );
   }
 
-  if (props.fromMarket) {
-    if (props.items.length === 0) {
-      return (
-        <div className="place-list center">
-          {/*2 classes */}
-          <Card>
-            <h2>
-              No Items found in the Market, wait for users to add items for bid
-            </h2>
-          </Card>
-        </div>
-      );
-    }
+  if (props.fromMarket && props.items.length === 0) {
+    return (
+      <div className="place-list center">
+        <Card>
+          <h2>
+            No Items found in the Market, wait for users to add items for bid
+          </h2>
+        </Card>
+      </div>
+    );
   }
 
   if (typeof props.items === "undefined" && props.userId === auth.userId) {
     return (
       <div className="place-list center">
         <Card>
-          <h2>No Items found .</h2>
+          <h2>No Items found.</h2>
           <Button to="/places/new">Share an Item</Button>
         </Card>
       </div>
@@ -108,7 +87,7 @@ const PlaceList = (props) => {
     return (
       <div className="place-list center">
         <Card>
-          <h2>User has not added any item yet .</h2>
+          <h2>User has not added any item yet.</h2>
         </Card>
       </div>
     );
@@ -117,9 +96,8 @@ const PlaceList = (props) => {
   if (props.items.length === 0 && props.userId === auth.userId) {
     return (
       <div className="place-list center">
-        {/*2 classes */}
         <Card>
-          <h2>No Items found .</h2>
+          <h2>No Items found.</h2>
           <Button to="/places/new">Share an Item</Button>
         </Card>
       </div>
@@ -128,29 +106,24 @@ const PlaceList = (props) => {
     return (
       <div className="place-list center">
         <Card>
-          <h2>User has not added any item yet .</h2>
+          <h2>User has not added any item yet.</h2>
         </Card>
       </div>
     );
   }
-  console.log(currentItems);
+
+  const currentItems = combinedData.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
+
+  const totalPages = Math.ceil(props.items.length / usersPerPage);
+
   return (
     <React.Fragment>
       <div className="view-toggle-buttons">
-        <button
-          onClick={() => {
-            toggleTabbedView();
-          }}
-        >
-          Tabbed View
-        </button>
-        <button
-          onClick={() => {
-            toggleNormalView();
-          }}
-        >
-          Normal View
-        </button>
+        <button onClick={toggleTabbedView}>Tabbed View</button>
+        <button onClick={toggleNormalView}>Normal View</button>
       </div>
 
       <div className="items-per-page">
@@ -176,6 +149,8 @@ const PlaceList = (props) => {
               id={item.id}
               image={item.image}
               title={item.title}
+              onToggleCollapse={() => toggleItemCollapse(item.id)}
+              isCollapsed={item.isCollapsed}
             />
           ) : (
             <PlaceItem
@@ -192,6 +167,8 @@ const PlaceList = (props) => {
               amount={item.amount}
               highestBid={item.highestBid}
               highestBidder={item.highestBidder}
+              onToggleCollapse={() => toggleItemCollapse(item.id)}
+              isCollapsed={item.isCollapsed}
             />
           )
         )}
@@ -208,7 +185,6 @@ const PlaceList = (props) => {
           </button>
         ))}
       </div>
-      <br></br>
     </React.Fragment>
   );
 };
