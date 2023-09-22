@@ -17,6 +17,7 @@ import CategoriesPage from "./adminOnly/pages/CategoriesPage";
 import NewCategory from "./adminOnly/pages/NewCategory";
 import UpdateCategory from "./adminOnly/pages/UpdateCategory";
 import UserMainPage from "./user/pages/UserMainPage";
+import NoUserDashboard from "./user/components/NoUserDashboard";
 
 let logoutTimer;
 
@@ -128,7 +129,7 @@ const App = () => {
     //noone is logged in
     routes = (
       <React.Fragment>
-        <Route path="/" element={<ItemMarket />} />
+        <Route path="/" element={<NoUserDashboard />} />
         <Route path="*" exact element={<Navigate to="/auth" replace />} />
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/auth" element={<Auth />}></Route>

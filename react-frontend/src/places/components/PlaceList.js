@@ -145,12 +145,21 @@ const PlaceList = (props) => {
         {currentItems.map((item) =>
           tabbedView ? (
             <TabbedItem
-              key={item.id}
-              id={item.id}
-              image={item.image}
-              title={item.title}
-              onToggleCollapse={() => toggleItemCollapse(item.id)}
-              isCollapsed={item.isCollapsed}
+            key={item.id}
+            id={item.id}
+            image={item.image}
+            title={item.title}
+            description={item.description}
+            category={item.category}
+            creatorId={item.creator}
+            dateTime={item.dateTime}
+            onDelete={props.onDeletePlace}
+            frombid={props.frombid}
+            amount={item.amount}
+            highestBid={item.highestBid}
+            highestBidder={item.highestBidder}
+            onToggleCollapse={() => toggleItemCollapse(item.id)}
+            isCollapsed={item.isCollapsed}
             />
           ) : (
             <PlaceItem

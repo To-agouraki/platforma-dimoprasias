@@ -1,15 +1,23 @@
 // TabbedItem.js
 
-import React from "react";
+import React, { useState} from "react";
 import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
+import PlaceItem from "./PlaceItem";
 
 import "./TabbedItem.css";
 
 const TabbedItem = (props) => {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const toggleView = () => {
+    setIsCollapsed((view) => !view);
+  };
+
+
   return (
     <div className="tabbed-item-container">
-      {props.isCollapsed ? (
+      {isCollapsed ? (
         <Card className="tabbed-item">
           <div className="tabbed-item-left">
             <img
@@ -23,14 +31,30 @@ const TabbedItem = (props) => {
           </div>
           {/* Additional content for the right side if needed */}
           <div className="tabbed-item-right">
-            <Button onClick={props.onToggleCollapse}>
+            <Button onClick={toggleView}>
               {props.isCollapsed ? "Expand" : "Not collapsed"}
             </Button>
           </div>
         </Card>
       ) : (
-        /* Content when not collapsed */
-        <p>Not collapsed</p>
+
+        <PlaceItem
+        key={props.id}
+        id={props.id}
+        image={props.image}
+        title={props.title}
+        description={props.description}
+        category={props.category}
+        creatorId={props.creator}
+        dateTime={props.dateTime}
+        onDelete={props.onDelete}
+        frombid={props.frombid}
+        amount={props.amount}
+        highestBid={props.highestBid}
+        highestBidder={props.highestBidder}
+       // onToggleCollapse={() => toggleItemCollapse(item.id)}
+        isCollapsed={props.isCollapsed}
+        />
       )}
     </div>
   );

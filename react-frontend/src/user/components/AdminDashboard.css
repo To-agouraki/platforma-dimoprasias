@@ -1,27 +1,53 @@
 /* AdminDashboard.css */
+
+.centered-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .admin-dashboard {
-    text-align: center;
-    padding: 20px;
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .dashboard-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #0056b3;
-  }
-  
+  text-align: center;
+}
+
+.dashboard-card {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #ffffff; /* Background color for the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333; /* Text color for the title */
+}
+
+.dashboard-text {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #555; /* Text color for the content */
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff; /* Button background color */
+  color: #fff; /* Button text color */
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-button:hover {
+  background-color: #0056b3; /* Hover background color */
+}

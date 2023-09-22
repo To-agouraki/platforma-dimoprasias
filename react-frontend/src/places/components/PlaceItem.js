@@ -11,6 +11,7 @@ import RatingBar from "../../shared/components/SharedComponent/RatingBar";
 import CountdownPage from "../../shared/components/FormElements/CountDownPage";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/components/context/auth-context";
+import TabbedItem from "./TabbedItem";
 
 const PlaceItem = (props) => {
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
@@ -18,6 +19,11 @@ const PlaceItem = (props) => {
   const [bidAmount, setBidAmount] = useState(props.amount); // when the bid amount chancges
   const [counterExpire, setCounterExpire] = useState(false);
   const [highestBidder, setHighestBidder] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleView = () => {
+    setIsCollapsed((view) => !view);
+  };
 
   if (props.highestBidder) {
     useEffect(() => {
@@ -33,8 +39,7 @@ const PlaceItem = (props) => {
     }, [sendRequest, props.highestBidder]);
   }
 
-
- // console.log(props.highestBidder);
+  // console.log(props.highestBidder);
 
   let sentence;
 
@@ -119,11 +124,9 @@ const PlaceItem = (props) => {
     // For example, you can call a function passed from the parent component
     // to handle the filtering based on the clicked category.
     // This function could update the state to display only items with the selected category.
-  
     // Assuming you have a function called filterItemsByCategory in your parent component:
-   // filterItemsByCategory(category);
+    // filterItemsByCategory(category);
   };
-
 
   return (
     <React.Fragment>
@@ -163,80 +166,104 @@ const PlaceItem = (props) => {
           can't be undone thereafter.
         </p>
       </Modal>
+      {!isCollapsed ? (
+        <li className="place-item">
+          {/* item ikona me koumpia kai description */}
+          <Card className="place-item__content">
+            {isLoading && <LoadingSpinner asOverlay />}
+            <div className="place-item__image">
+              <img
+                src={`http://localhost:5000/${props.image}`}
+                alt={props.title}
+              ></img>
+            </div>
 
-      <li className="place-item">
-        {/* item ikona me koumpia kai description */}
-        <Card className="place-item__content">
-          {isLoading && <LoadingSpinner asOverlay />}
-          <div className="place-item__image">
-            <img
-              src={`http://localhost:5000/${props.image}`}
-              alt={props.title}
-            ></img>
-          </div>
-
-          <div className="place-item__info">
-            <h2>{props.title}</h2>
-            <h3>{props.address}</h3>
-            <p>{props.description}</p>
-            {counterExpire ? (
-              <h3 className="red-text">
-                The Bid is closed, you cannot bid anymore.
-              </h3>
-            ) : (
-              <h3 className="green-text">You may proceed with bid process.</h3>
-            )}
-            {theDateTime ? (
-              <CountdownPage
-                className="center"
-                getFromCount={handleCounterExpire}
-                initialDateTime={theDateTime}
-              />
-            ) : (
-              <p>loading....</p>
-            )}
-             {props.category && (
-        <p className="place-item__category">
-          Category:{" "}
-          <button
-            className="category-button"
-            onClick={() => handleCategoryClick(props.category)}
-          >
-            {props.category}
-          </button>
-        </p>
-      )}
-          </div>
-
-          <div className="place-item__actions">
-            <Button inverse onClick={openMapHandler}>
-              Additional info
-            </Button>
-            {/* inverse class from button css*/}
-            {!counterExpire && auth.userId === props.creatorId && (
-              <Button to={`/places/${props.id}`}>Edit</Button>
-            )}
-            {auth.userId === props.creatorId && (
-              <Button danger onClick={showDeleteWarningHandler}>
-                Delete
-              </Button>
-            )}
-            {props.amount && <h3>The amount you have bid is {bidAmount}</h3>}
-            {counterExpire && sentence }
-
-            {!counterExpire &&
-              auth.userId !== props.creatorId &&
-              auth.isLoggedIn && (
-                <BidInput
-                  itemId={props.id}
-                  onBidAmountChange={handleBidAmountChange}
-                />
+            <div className="place-item__info">
+              <h2>{props.title}</h2>
+              <h3>{props.address}</h3>
+              <p>{props.description}</p>
+              {counterExpire ? (
+                <h3 className="red-text">
+                  The Bid is closed, you cannot bid anymore.
+                </h3>
+              ) : (
+                <h3 className="green-text">
+                  You may proceed with bid process.
+                </h3>
               )}
-          </div>
-          <RatingBar/>
-        </Card>
-       
-      </li>
+              {theDateTime ? (
+                <CountdownPage
+                  className="center"
+                  getFromCount={handleCounterExpire}
+                  initialDateTime={theDateTime}
+                />
+              ) : (
+                <p>loading....</p>
+              )}
+              {props.category && (
+                <p className="place-item__category">
+                  Category:{" "}
+                  <button
+                    className="category-button"
+                    onClick={() => handleCategoryClick(props.category)}
+                  >
+                    {props.category}
+                  </button>
+                </p>
+              )}
+            </div>
+
+            <div className="place-item__actions">
+              <Button inverse onClick={openMapHandler}>
+                Additional info
+              </Button>
+              {/* inverse class from button css*/}
+              {!counterExpire && auth.userId === props.creatorId && (
+                <Button to={`/places/${props.id}`}>Edit</Button>
+              )}
+              {auth.userId === props.creatorId && (
+                <Button danger onClick={showDeleteWarningHandler}>
+                  Delete
+                </Button>
+              )}
+              {props.amount && <h3>The amount you have bid is {bidAmount}</h3>}
+              {counterExpire && sentence}
+
+              {!counterExpire &&
+                auth.userId !== props.creatorId &&
+                auth.isLoggedIn && (
+                  <BidInput
+                    itemId={props.id}
+                    onBidAmountChange={handleBidAmountChange}
+                  />
+                )}
+              <Button onClick={toggleView}>
+                {isCollapsed ? "Expand" : "Not collapsed"}
+              </Button>
+            </div>
+
+            <RatingBar />
+          </Card>
+        </li>
+      ) : (
+        <TabbedItem
+        key={props.id}
+        id={props.id}
+        image={props.image}
+        title={props.title}
+        description={props.description}
+        category={props.category}
+        creatorId={props.creator}
+        dateTime={props.dateTime}
+        onDelete={props.onDelete}
+        frombid={props.frombid}
+        amount={props.amount}
+        highestBid={props.highestBid}
+        highestBidder={props.highestBidder}
+       // onToggleCollapse={() => toggleItemCollapse(item.id)}
+        isCollapsed={props.isCollapsed}
+        />
+      )}
     </React.Fragment>
   );
 };
