@@ -12,11 +12,13 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import {
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import "../../user/pages/Auth.css";
 
 const UpdateNormalUser= () => {
+const id = useParams().userId;
+
   const navigate = useNavigate();
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -67,7 +69,7 @@ const UpdateNormalUser= () => {
     const fetchUser = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/users/getuser/${authObj.userId}`
+          `http://localhost:5000/api/users/getuser/${id}`
         );
         setLoadedUser(responseData.user);
         console.log(responseData.user);
