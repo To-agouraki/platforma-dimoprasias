@@ -8,6 +8,7 @@ const Admin = require("../models/admin");
 const Place = require("../models/place");
 const Category = require("../models/category"); // Assuming you've imported the Category model
 const BidJunctionTable = require("../models/bidding");
+const { param } = require("../routes/users-routes");
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -225,9 +226,49 @@ const updateCategory = async (req, res, next) => {
   }
 };
 
+const updateNormalUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
+  const { name, imagepath } = req.body;
+  const userId = req.params.uid;  
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (error) {
+    const err = new HttpError("something went wrong could not update", 500);
+    return next(err);
+  }
+
+  user.name = name;
+  if (typeof req.file !== 'undefined' && typeof req.file.path !== 'undefined') {
+    user.image = req.file.path;
+  }
+  //user.image = req.file.path;
+
+  try {
+    await user.save();
+  } catch (error) {
+    const err = new HttpError(
+      "Something went wrong could not save the updated data",
+      500
+    );
+    return next(err);
+  }
+
+  res.status(200).json({ user: user.toObject({ getters: true }) });
+};
+
+
+
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;
 exports.login = login;
 exports.createCategory = createCategory;
 exports.getCategories = getCategories;
 exports.getCategoryById = getCategoryById;
+exports.updateNormalUser = updateNormalUser;

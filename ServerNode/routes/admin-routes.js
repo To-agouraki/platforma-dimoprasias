@@ -10,8 +10,10 @@ router.post("/login", adminOperationsController.login);
 
 router.get("/categories", adminOperationsController.getCategories);
 
-router.get("/getCategory/:categoryId", adminOperationsController.getCategoryById);
-
+router.get(
+  "/getCategory/:categoryId",
+  adminOperationsController.getCategoryById
+);
 
 router.post(
   "/createCategory",
@@ -24,6 +26,16 @@ router.patch(
   [check("name").not().isEmpty(), check("description").isLength({ max: 300 })],
   adminOperationsController.updateCategory
 );
-router.delete("/deleteCategory/:categoryId", adminOperationsController.deleteCategory);
+router.delete(
+  "/deleteCategory/:categoryId",
+  adminOperationsController.deleteCategory
+);
+
+router.patch(
+  "/updateuser/:uid",
+  ImageUpload.single("image"),
+  [check("name").not().isEmpty()],
+  adminOperationsController.updateNormalUser
+);
 
 module.exports = router;

@@ -1,53 +1,80 @@
 /* AdminDashboard.css */
 
-.centered-content {
+
+.button-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  flex-direction: column; /* Make the buttons vertical */
+  justify-content: center; /* Center the buttons vertically */
 }
+
+
+
 
 .admin-dashboard {
-  text-align: center;
-}
-
-.dashboard-card {
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #ffffff; /* Background color for the card */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  height: 80vh;
+  background-color: #4d4d4d;
+  color: #fdb601;
+  margin-left: 20rem;
 }
 
 .dashboard-title {
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #333; /* Text color for the title */
-}
-
-.dashboard-text {
-  font-size: 18px;
-  margin-bottom: 20px;
-  color: #555; /* Text color for the content */
+  font-size: 3rem;
+  margin-right: 3rem;
+  
 }
 
 .button-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* Make buttons arranged vertically */
 }
 
+/* AdminDashboard.css */
+
 .dashboard-button {
-  margin: 0 10px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #007bff; /* Button background color */
-  color: #fff; /* Button text color */
-  border: none;
+  margin: 1rem 0;
+  padding: 1rem 2rem; /* Keep the padding consistent */
+  text-align: center;
+  background: #292929;
+  color: #fdb601;
+  border: 1px solid #fdb601;
   border-radius: 5px;
   text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
+  transition: background-color 0.3s ease; /* Add a smooth transition */
 }
 
 .dashboard-button:hover {
-  background-color: #0056b3; /* Hover background color */
+  background: #ffd900;
+  color: #292929;
+  /* Adjust the border and padding to ensure the size remains the same */
+  border: 1px solid #fdb601;
+  padding: 1rem 2rem;
+}
+
+
+/* AdminDashboard.css */
+
+/* Add these styles for positioning the description */
+.desc {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 2px;
+  z-index: 1;
+  margin-left: 5rem;
+}
+
+
+.description-box {
+  flex: 1; /* Allow the description box to grow and take available space */
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 2px;
+  z-index: 1;
+  max-width: 300px; /* Set a maximum width for the description box */
+  overflow-y: auto; /* Add vertical scrollbar when content exceeds max-height */
+  margin-left: 2rem;
 }

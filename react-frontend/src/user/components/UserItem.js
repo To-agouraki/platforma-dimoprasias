@@ -26,7 +26,7 @@ const UserItem = (props) => {
           </div>
         </Link>
         <div>
-          <Link to={`/settings/${props.id}`}>
+          <Link to={`/updateNormalUser/${props.id}`}>
             User Settings <FaCog className="user-item__settings-icon" />
           </Link>
         </div>

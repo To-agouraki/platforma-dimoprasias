@@ -18,6 +18,7 @@ import NewCategory from "./adminOnly/pages/NewCategory";
 import UpdateCategory from "./adminOnly/pages/UpdateCategory";
 import UserMainPage from "./user/pages/UserMainPage";
 import NoUserDashboard from "./user/components/NoUserDashboard";
+import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
 
 let logoutTimer;
 
@@ -107,6 +108,8 @@ const App = () => {
         <Route path="/categories/new" element={<NewCategory />}></Route>
         <Route path="/categories/:categoryId" element={<UpdateCategory />}></Route>
         <Route path="/categories" element={<CategoriesPage />}></Route>
+        <Route path="/updateNormalUser/:userId" element={<UpdateNormalUser />}></Route>
+
         
 
       </React.Fragment>
