@@ -6,7 +6,7 @@ const placeSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, require: true },
   image: { type: String, require: true },
-  category: { type: String, require: true },
+  category: { type: mongoose.Types.ObjectId, require: true, ref: "Category" },
   dateTime: { type: Date, require: true },
   highestBid: {
     type: Number,

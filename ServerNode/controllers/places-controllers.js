@@ -56,34 +56,37 @@ const getPlaceById = async (req, res, next) => {
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
   let places;
-  //let userWithPlaces; //comenneted alterantive method with populate
+  
   try {
-    places = await Place.find({ creator: userId });
-    //userWithPlaces = await User.findById(userId).populate('places');
+    // Populate the 'category' field with the actual category data
+    places = await Place.find({ creator: userId }).populate('category').exec();
   } catch (error) {
-    const err = new HttpError("fetch places failed.", 404);
+    const err = new HttpError("Fetch places failed.", 404);
     return next(err);
   }
 
-  //const places = DUMMY_PLACES.filter((p) => {
-  //return p.creator === userId; //old logic
-  //});
-
-  if (
-    !places /*userWithPlaces*/ ||
-    /*userWithPlaces.places.lenght*/ places.length === 0
-  ) {
+  if (!places || places.length === 0) {
     return next(
       new HttpError("Could not find places for the provided user id.", 404)
     );
   }
 
   res.json({
-    places: /*userWithPlaces.places.map(...) */ places.map((places) =>
-      places.toObject({ getters: true })
-    ),
+    places: places.map((place) => ({
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      creator: place.creator, // Include the entire user object if needed
+    })),
   });
+  
 };
+
 
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
@@ -96,33 +99,17 @@ const createPlace = async (req, res, next) => {
   const { title, description, category, dateTime, creator } = req.body;
   let image = req.file.path;
 
-  // Retrieve all categories from the database
-  let categories;
-  try {
-    categories = await Category.find({}, 'name'); // Assuming your category schema has a 'name' field
-  } catch (error) {
-    return next(
-      new HttpError(
-        "Fetching categories failed, please try again later.",
-        500
-      )
-    );
-  }
+  // Retrieve the category ObjectId based on the category name
+  const foundCategory = await Category.findOne({ name: category });
 
-  // Extract category names into an array
-  const validCategoryNames = categories.map((category) => category.name);
-
-  // Check if the submitted category exists in the valid category names
-  if (!validCategoryNames.includes(category)) {
-    return next(
-      new HttpError("Invalid category. Please select a valid category.", 422)
-    );
+  if (!foundCategory) {
+    return next(new HttpError("Category not found.", 404));
   }
 
   const createdPlace = new Place({
     title,
     description,
-    category,
+    category: foundCategory._id, // Use the ObjectId of the found category
     dateTime,
     image,
     creator,
@@ -159,6 +146,7 @@ const createPlace = async (req, res, next) => {
 
   res.status(201).json({ place: createdPlace });
 };
+
 
 
 const updatePlace = async (req, res, next) => {
