@@ -51,7 +51,7 @@ const AdminLogIn = () => {
       );
       setErrorMessageShow(false);
 
-      authObj.isAdmin(responeData.userId, responeData.token);
+      authObj.isAdminLogIn(responeData.userId, responeData.token);
     } catch (err) {
       setErrorMessageShow(true);
     }

@@ -49,12 +49,12 @@ const id = useParams().userId;
       formData.append("imagepath", loadedUser.image);
       await sendRequest(
         //fetch adds header if you use FormData api
-        `http://localhost:5000/api/users/updateuser`,
+        `http://localhost:5000/api/admin/updateuser/${id}`,
         "PATCH",
         formData
       );
       setErrorMessageShow(false);
-      navigate("/");
+      navigate("/users");
     } catch (error) {
       setErrorMessageShow(true);
     }

@@ -5,11 +5,12 @@ import { AuthContext } from "../context/auth-context";
 const NavLinks = (props) => {
   const auth = useContext(AuthContext);
 
+
   return (
     <ul className="nav-links">
       <li>
         <NavLink to="/" exact>
-          Dashboard
+          {auth.isLoggedIn ? "Dashboard" : "Welcome Page"}
         </NavLink>
       </li>
 

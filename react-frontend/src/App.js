@@ -28,6 +28,8 @@ const App = () => {
   const [tokenExpirationDate, setTokenExpirationDate] = useState();
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
+console.log("admin", isAdminLoggedIn);
+
   const logIn = useCallback(
     (uid, token, expirationDate, adminIsLogged = false) => {
       setIsAdminLoggedIn(adminIsLogged);
@@ -91,7 +93,6 @@ const App = () => {
   }, [logIn]);
 
   let routes;
-  console.log(isAdminLoggedIn);
 
   if (token && isAdminLoggedIn) {
     //routes when logged in
@@ -146,9 +147,10 @@ const App = () => {
     <AuthContext.Provider
       value={{
         isLoggedIn: !!token,
-        isAdmin: adminLogIn,
+        isAdmin: isAdminLoggedIn,
         token: token,
         userId: userId,
+        isAdminLogIn: adminLogIn,
         login: logIn,
         logout: logOut,
       }}

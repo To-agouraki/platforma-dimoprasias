@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 const NoUserDashboard = () => {
     return (
-        <div className="centered-content">
-            <div className="admin-dashboard">
+        <div className="center">
+            <div className="nouser-dashboard">
                 <Card className="dashboard-card">
-                    <h1 className="dashboard-title">Welcome User</h1>
+                    <h1 className="dashboard-title-nouser">Welcome User</h1>
                     <p className="dashboard-text">
                         You may browse items by clicking the Market button.
                     </p>
