@@ -73,6 +73,7 @@ const getPlacesByUserId = async (req, res, next) => {
 
   res.json({
     places: places.map((place) => ({
+      id: place._id,
       title: place.title,
       description: place.description,
       image: place.image,
@@ -84,7 +85,6 @@ const getPlacesByUserId = async (req, res, next) => {
       creator: place.creator, // Include the entire user object if needed
     })),
   });
-  
 };
 
 
@@ -333,8 +333,10 @@ const bidItem = async (req, res, next) => {
 const getPlacesMarket = async (req, res, next) => {
   const userId = req.params.uid;
   let places;
+  
   try {
-    places = await Place.find({ creator: { $ne: userId } });
+    // Populate the 'category' field with the actual category data
+    places = await Place.find({ creator: { $ne: userId } }).populate('category').exec();
   } catch (error) {
     const err = new HttpError("Fetching places failed.", 404);
     return next(err);
@@ -347,15 +349,28 @@ const getPlacesMarket = async (req, res, next) => {
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true })),
+    places: places.map((place) => ({
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      creator: place.creator, // Include the entire user object if needed
+    })),
   });
 };
+
 
 const getAllItemsMarket = async (req, res, next) => {
   let places;
 
   try {
-    places = await Place.find();
+    // Populate the 'category' field with the actual category data
+    places = await Place.find().populate('category').exec();
   } catch (error) {
     console.log(error);
     console.log("fail");
@@ -370,8 +385,20 @@ const getAllItemsMarket = async (req, res, next) => {
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true })),
+    places: places.map((place) => ({
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      creator: place.creator, // Include the entire user object if needed
+    })),
   });
+
 };
 
 exports.getPlacesMarket = getPlacesMarket;

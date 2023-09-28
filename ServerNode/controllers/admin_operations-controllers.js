@@ -192,7 +192,8 @@ const deleteCategory = async (req, res, next) => {
 
 const updateCategory = async (req, res, next) => {
   const errors = validationResult(req);
-  console.log(errors);
+
+  console.log("Errors:",errors);
   if (!errors.isEmpty()) {
     return next(
       new HttpError(
@@ -219,6 +220,7 @@ const updateCategory = async (req, res, next) => {
 
     res.status(200).json({ category: updatedCategory });
   } catch (error) {
+    console.log("Error:",error)
     console.error("Error updating category:", error);
     return next(
       new HttpError("Updating category failed, please try again.", 500)

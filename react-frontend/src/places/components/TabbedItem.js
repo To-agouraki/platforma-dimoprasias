@@ -45,7 +45,7 @@ const TabbedItem = (props) => {
         title={props.title}
         description={props.description}
         category={props.category}
-        creatorId={props.creator}
+        creatorId={props.creatorId}
         dateTime={props.dateTime}
         onDelete={props.onDelete}
         frombid={props.frombid}

@@ -17,13 +17,13 @@ router.get(
 
 router.post(
   "/createCategory",
-  [check("name").not().isEmpty(), check("description").isLength({ max: 300 })],
+  [check("name").not().isEmpty(), check("description").isLength({ max: 2000 })],
   adminOperationsController.createCategory
 );
 
 router.patch(
   "/updateCategory/:categoryId",
-  [check("name").not().isEmpty(), check("description").isLength({ max: 300 })],
+  [check("name").not().isEmpty(), check("description").isLength({ max: 2000 })],
   adminOperationsController.updateCategory
 );
 router.delete(

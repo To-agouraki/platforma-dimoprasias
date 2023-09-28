@@ -25,6 +25,8 @@ const PlaceItem = (props) => {
     setIsCollapsed((view) => !view);
   };
 
+  console.log(props.id);
+
   if (props.highestBidder) {
     useEffect(() => {
       const fetchPlaces = async () => {
@@ -118,6 +120,7 @@ const PlaceItem = (props) => {
       props.onDelete(props.id);
     } catch (err) {}
   };
+
 
   const handleCategoryClick = (category) => {
     // You can implement your filtering logic here.
@@ -214,14 +217,19 @@ const PlaceItem = (props) => {
             </div>
 
             <div className="place-item__actions">
-              <Button inverse onClick={openMapHandler}>
+              {/*<Button inverse onClick={openMapHandler}>
                 Additional info
-              </Button>
+              </Button>*/}
               {/* inverse class from button css*/}
               {!counterExpire && auth.userId === props.creatorId && (
                 <Button to={`/places/${props.id}`}>Edit</Button>
               )}
-              {auth.userId === props.creatorId && (
+              {auth.userId === props.creatorId && (//for item creator
+                <Button danger onClick={showDeleteWarningHandler}>
+                  Delete
+                </Button>
+              )}
+              {auth.isAdmin && (//for admin
                 <Button danger onClick={showDeleteWarningHandler}>
                   Delete
                 </Button>
@@ -231,18 +239,18 @@ const PlaceItem = (props) => {
 
               {!counterExpire &&
                 auth.userId !== props.creatorId &&
-                auth.isLoggedIn && (
+                auth.isLoggedIn && !auth.isAdmin && (
                   <BidInput
                     itemId={props.id}
                     onBidAmountChange={handleBidAmountChange}
                   />
                 )}
               <Button onClick={toggleView}>
-                {isCollapsed ? "Expand" : "Not collapsed"}
+                {isCollapsed ? "Expand" : "Collapse"}
               </Button>
             </div>
 
-            <RatingBar />
+           {/*<RatingBar />*/} 
           </Card>
         </li>
       ) : (
@@ -253,7 +261,7 @@ const PlaceItem = (props) => {
         title={props.title}
         description={props.description}
         category={props.category}
-        creatorId={props.creator}
+        creatorId={props.creatorId}
         dateTime={props.dateTime}
         onDelete={props.onDelete}
         frombid={props.frombid}
