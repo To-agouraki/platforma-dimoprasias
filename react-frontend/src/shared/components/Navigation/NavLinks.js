@@ -5,7 +5,6 @@ import { AuthContext } from "../context/auth-context";
 const NavLinks = (props) => {
   const auth = useContext(AuthContext);
 
-
   return (
     <ul className="nav-links">
       <li>
@@ -14,9 +13,17 @@ const NavLinks = (props) => {
         </NavLink>
       </li>
 
-      <li>
-        <NavLink to={`/market`}>MARKET</NavLink>
-      </li>
+      {!auth.isAdmin && (
+        <li>
+          <NavLink to={`/market`}>MARKET</NavLink>
+        </li>
+      )}
+
+      {auth.isAdmin && auth.isLoggedIn && (
+        <li>
+          <NavLink to={"/categories"}>CATEGORIES</NavLink>
+        </li>
+      )}
 
       {auth.isAdmin && auth.isLoggedIn && (
         <li>
@@ -24,22 +31,29 @@ const NavLinks = (props) => {
         </li>
       )}
 
-      {auth.isLoggedIn && (
+      {auth.isLoggedIn && !auth.isAdmin && (
         <li>
           <NavLink to={`/${auth.userId}/places`}>MY ITEMS</NavLink>
         </li>
       )}
+
+      {auth.isAdmin && (
+        <li>
+          <NavLink to={`/market`}>ALL ITEMS</NavLink>
+        </li>
+      )}
+
       {auth.isLoggedIn && !auth.isAdmin && (
         <li>
           <NavLink to={`/${auth.userId}/biddedItems`}>BIDS</NavLink>
         </li>
       )}
-      {auth.isLoggedIn && (
+      {auth.isLoggedIn && !auth.isAdmin &&(
         <li>
           <NavLink to={"/user/profile"}>PROFILE</NavLink>
         </li>
       )}
-      {auth.isLoggedIn && (
+      {auth.isLoggedIn && !auth.isAdmin &&(
         <li>
           <NavLink to="/places/new">NEW ITEM</NavLink>
         </li>

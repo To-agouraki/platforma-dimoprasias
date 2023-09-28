@@ -71,7 +71,7 @@ const updateUser = async (req, res, next) => {
   //DUMMY_PLACES[placeIndex] = updatedPlace;
 
   user.name = name;
-  if (typeof req.file !== 'undefined' && typeof req.file.path !== 'undefined') {
+  if (typeof req.file !== "undefined" && typeof req.file.path !== "undefined") {
     user.image = req.file.path;
   }
   //user.image = req.file.path;
@@ -240,10 +240,42 @@ const getBiddersItems = async (req, res, next) => {
     // Retrieve the bidded items for the user
     const biddedItems = await BidJunctionTable.find({
       bidder: userId,
-    }).populate("place");
+    })
+      .populate({
+        path: "place",
+        populate: {
+          path: "category",
+          select: "name", // Select only the 'name' field from the 'category' document
+        },
+      })
+      .exec();
+
     res.json({
-      items: biddedItems.map((items) => items.toObject({ getters: true })),
+      items: biddedItems.map((item) => ({
+        _id: item._id,
+        amount: item.amount,
+        place: {
+          _id: item.place._id,
+          title: item.place.title,
+          description: item.place.description,
+          image: item.place.image,
+          category: item.place.category.name, // Extract category name here
+          dateTime: item.place.dateTime,
+          highestBid: item.place.highestBid,
+          bids: item.place.bids,
+          creator: item.place.creator,
+          highestBidder: item.place.highestBidder,
+          id: item.place.id,
+        },
+        bidder: item.bidder,
+        __v: item.__v,
+        id: item.id,
+      })),
     });
+
+    /* res.json({
+      items: biddedItems.map((items) => items.toObject({ getters: true })),
+    });*/
   } catch (error) {
     console.log(error);
     const err = new HttpError("getting item failed.", 500);

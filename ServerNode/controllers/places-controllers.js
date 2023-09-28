@@ -6,6 +6,7 @@ const fs = require("fs");
 
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
+const AdminUser = require("../models/admin");
 const User = require("../models/user");
 const BidJunctionTable = require("../models/bidding");
 const Category = require("../models/category");
@@ -56,10 +57,10 @@ const getPlaceById = async (req, res, next) => {
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
   let places;
-  
+
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find({ creator: userId }).populate('category').exec();
+    places = await Place.find({ creator: userId }).populate("category").exec();
   } catch (error) {
     const err = new HttpError("Fetch places failed.", 404);
     return next(err);
@@ -86,7 +87,6 @@ const getPlacesByUserId = async (req, res, next) => {
     })),
   });
 };
-
 
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
@@ -147,8 +147,6 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-
-
 const updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -174,9 +172,23 @@ const updatePlace = async (req, res, next) => {
   // updatedPlace.description = description;
   //DUMMY_PLACES[placeIndex] = updatedPlace;
 
-  if (place.creator.toString() !== req.userData.userId) {
-    const error = new HttpError("Not authorized!.", 401);
+  const adminUser = await AdminUser.findById(req.userData.userId);
+
+  if (!adminUser) {
+    const error = new HttpError("Not authorized! not admin", 401);
     return next(error);
+  }
+
+  if (!place) {
+    return next(new HttpError("could not find this id", 404));
+  }
+
+
+  if (place.creator.id !== req.userData.userId) {
+    if (req.userData.userId != adminUser._id) {
+      const error = new HttpError("Not authorized!.", 401);
+      return next(error);
+    }
   }
 
   place.title = title;
@@ -211,14 +223,29 @@ const deletePlace = async (req, res, next) => {
     return next(err);
   }
 
+  const adminUser = await AdminUser.findById(req.userData.userId);
+
+  if (!adminUser) {
+    const error = new HttpError("Not authorized! not admin", 401);
+    return next(error);
+  }
+
   if (!place) {
     return next(new HttpError("could not find this id", 404));
   }
 
+
   if (place.creator.id !== req.userData.userId) {
-    const error = new HttpError("Not authorized!.", 401);
-    return next(error);
+    if (req.userData.userId != adminUser._id) {
+      const error = new HttpError("Not authorized!.", 401);
+      return next(error);
+    }
   }
+  
+
+
+
+
 
   const imagePath = place.image;
 
@@ -333,10 +360,12 @@ const bidItem = async (req, res, next) => {
 const getPlacesMarket = async (req, res, next) => {
   const userId = req.params.uid;
   let places;
-  
+
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find({ creator: { $ne: userId } }).populate('category').exec();
+    places = await Place.find({ creator: { $ne: userId } })
+      .populate("category")
+      .exec();
   } catch (error) {
     const err = new HttpError("Fetching places failed.", 404);
     return next(err);
@@ -364,13 +393,12 @@ const getPlacesMarket = async (req, res, next) => {
   });
 };
 
-
 const getAllItemsMarket = async (req, res, next) => {
   let places;
 
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find().populate('category').exec();
+    places = await Place.find().populate("category").exec();
   } catch (error) {
     console.log(error);
     console.log("fail");
@@ -398,7 +426,6 @@ const getAllItemsMarket = async (req, res, next) => {
       creator: place.creator, // Include the entire user object if needed
     })),
   });
-
 };
 
 exports.getPlacesMarket = getPlacesMarket;

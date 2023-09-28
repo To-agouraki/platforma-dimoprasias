@@ -121,7 +121,6 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
-
   const handleCategoryClick = (category) => {
     // You can implement your filtering logic here.
     // For example, you can call a function passed from the parent component
@@ -224,12 +223,17 @@ const PlaceItem = (props) => {
               {!counterExpire && auth.userId === props.creatorId && (
                 <Button to={`/places/${props.id}`}>Edit</Button>
               )}
-              {auth.userId === props.creatorId && (//for item creator
+
+              {!counterExpire && auth.isAdmin && (
+                <Button to={`/places/${props.id}`}>Edit</Button>
+              )}
+
+              {auth.userId === props.creatorId && ( //for item creator
                 <Button danger onClick={showDeleteWarningHandler}>
                   Delete
                 </Button>
               )}
-              {auth.isAdmin && (//for admin
+              {auth.isAdmin && ( //for admin
                 <Button danger onClick={showDeleteWarningHandler}>
                   Delete
                 </Button>
@@ -239,7 +243,8 @@ const PlaceItem = (props) => {
 
               {!counterExpire &&
                 auth.userId !== props.creatorId &&
-                auth.isLoggedIn && !auth.isAdmin && (
+                auth.isLoggedIn &&
+                !auth.isAdmin && (
                   <BidInput
                     itemId={props.id}
                     onBidAmountChange={handleBidAmountChange}
@@ -250,26 +255,26 @@ const PlaceItem = (props) => {
               </Button>
             </div>
 
-           {/*<RatingBar />*/} 
+            {/*<RatingBar />*/}
           </Card>
         </li>
       ) : (
         <TabbedItem
-        key={props.id}
-        id={props.id}
-        image={props.image}
-        title={props.title}
-        description={props.description}
-        category={props.category}
-        creatorId={props.creatorId}
-        dateTime={props.dateTime}
-        onDelete={props.onDelete}
-        frombid={props.frombid}
-        amount={props.amount}
-        highestBid={props.highestBid}
-        highestBidder={props.highestBidder}
-       // onToggleCollapse={() => toggleItemCollapse(item.id)}
-        isCollapsed={props.isCollapsed}
+          key={props.id}
+          id={props.id}
+          image={props.image}
+          title={props.title}
+          description={props.description}
+          category={props.category}
+          creatorId={props.creatorId}
+          dateTime={props.dateTime}
+          onDelete={props.onDelete}
+          frombid={props.frombid}
+          amount={props.amount}
+          highestBid={props.highestBid}
+          highestBidder={props.highestBidder}
+          // onToggleCollapse={() => toggleItemCollapse(item.id)}
+          isCollapsed={props.isCollapsed}
         />
       )}
     </React.Fragment>

@@ -27,7 +27,7 @@ const ItemMarket = () => {
       try {
         let url = `http://localhost:5000/api/places/market`;
 
-        if (authObj.isLoggedIn) {
+        if (authObj.isLoggedIn && !authObj.isAdmin) {
           url += `/${authObj.userId}`;
         } else {
           url += `/loggedout/general`;

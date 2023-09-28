@@ -10,8 +10,9 @@ const AdminDashboard = () => {
     "With this button you can go to the categories page where you can Create ,Delete ,Update and Edit categories for the items the user can create. ";
   const usersDescr =
     "With this button you can see the users of system (apart from the admin) were you can edit them or the items they created. ";
+  const itemDescr =
+    "With his button you can check all the items where you edit and delete but not create them since the admin does not create items";
 
-  console.log(hoveredButton);
   return (
     <div className="admin-dashboard">
       <h1 className="dashboard-title">Admin Dashboard</h1>
@@ -32,6 +33,14 @@ const AdminDashboard = () => {
             onMouseLeave={() => setHoveredButton(null)}
           >
             Users
+          </Link>
+          <Link
+            to="/market"
+            className="dashboard-button"
+            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            All Items
           </Link>
           {/* Add similar event handlers for other buttons */}
         </div>
