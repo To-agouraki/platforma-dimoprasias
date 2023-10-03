@@ -111,7 +111,7 @@ const NewPlace = () => {
       await sendRequest("http://localhost:5000/api/places", "POST", formData, {
         Authorization: "Bearer " + auth.token,
       });
-      navigate("/");
+      navigate(`/${auth.userId}/places`);
     } catch (error) {
       console.log(error);
     }

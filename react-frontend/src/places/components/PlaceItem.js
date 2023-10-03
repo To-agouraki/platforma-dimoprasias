@@ -25,7 +25,6 @@ const PlaceItem = (props) => {
     setIsCollapsed((view) => !view);
   };
 
-  console.log(props.id);
 
   if (props.highestBidder) {
     useEffect(() => {

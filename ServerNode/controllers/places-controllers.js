@@ -26,30 +26,39 @@ const Category = require("../models/category");
 // ];
 
 const getPlaceById = async (req, res, next) => {
-  const placeId = req.params.pid; // { pid: 'p1' }
-  let place;
+  const placeId = req.params.pid;
 
+  let place;
   try {
-    place = await Place.findById(placeId);
+    // Find the place by ID without populating the category field
+    place = await Place.findById(placeId).populate("category").exec();;
   } catch (error) {
-    const err = new HttpError("cant find id", 500);
+    const err = new HttpError("Couldn't find the place.", 500);
     return next(err);
   }
 
-  // const place = DUMMY_PLACES.find((p) => {  //old logic
-  //  return p.id === placeId;
-  // });
-
   if (!place) {
-    const error = new HttpError(
-      "Could not find a place for the provided id.",
-      404
-    );
+    const error = new HttpError("Could not find a place for the provided id.", 404);
     return next(error);
   }
 
-  res.json({ place: place.toObject({ getters: true }) }); // => { place } => { place: place } getters = true remove the undescore on _id cause mongoose adds an id getter on evry doc which return the id as a string
+  // Return the place data without populating the category field
+  res.json({
+    place: {
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Assuming category is a string field in your schema
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder,
+      bids: place.bids,
+      creator: place.creator,
+    },
+  });
 };
+
 
 // function getPlaceById() { ... }
 // const getPlaceById = function() { ... }
@@ -155,7 +164,7 @@ const updatePlace = async (req, res, next) => {
     );
   }
 
-  const { title, description, testing } = req.body;
+  const { title, description, category} = req.body;
   const placeId = req.params.pid;
 
   let place;
@@ -191,9 +200,17 @@ const updatePlace = async (req, res, next) => {
     }
   }
 
+  const itemCategory = await Category.findOne({ _id: category });
+
+  if (!itemCategory) {
+    return res.status(404).json({ message: 'Category not found' });
+  }
+
+
+
   place.title = title;
   place.description = description;
-  place.testing = testing;
+  place.category = category;
 
   try {
     await place.save();
