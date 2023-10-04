@@ -71,4 +71,20 @@
   .new-category-button:hover {
     background-color: #0056b3;
   }
+
+  .delete-button {
+    background-color: #ff0000;
+    color: #fff;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-left: 10px; /* Add some space between Update and Delete buttons */
+    transition: background-color 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #cc0000;
+  }
   
