@@ -13,6 +13,10 @@ const CategoryList = (props) => {
     indexOfLastUser
   );
 
+const deleteCategory= ()=>{
+
+}
+  
   const totalPages = Math.ceil(props.items.length / usersPerPage);
 
   const handlePageChange = (pageNumber) => {
@@ -43,6 +47,7 @@ const CategoryList = (props) => {
             id={categories.id}
             name={categories.name}
             description={categories.description}
+            onDelete={props.deleteCategory}
           />
         ))}
       </ul>

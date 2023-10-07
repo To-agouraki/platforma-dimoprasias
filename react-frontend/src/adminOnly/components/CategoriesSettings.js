@@ -21,6 +21,12 @@ const CategoriesSettings = () => {
     };
     fetchCategories();
   }, [sendRequest]);
+
+  const deletedCategory = (categoryId) => {
+    setCategories((prevCategories) =>
+      prevCategories.filter((category) => category.id !== categoryId)
+    );
+  };
   
   console.log(categories);
 
@@ -32,7 +38,7 @@ const CategoriesSettings = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && categories && <CategoryList items={categories} />}
+      {!isLoading && categories && <CategoryList items={categories} deleteCategory={deletedCategory} />}
     </React.Fragment>
   );
   

@@ -7,7 +7,7 @@ import Modal from "../../shared/components/UIElements/Modal";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { useNavigate } from "react-router-dom";
 
-const CategoryItem = ({ name, description, id }) => {
+const CategoryItem = ({ name, description, id, onDelete }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const CategoryItem = ({ name, description, id }) => {
         "DELETE",
         null
       )
-      // props.onDelete(props.id);
+      onDelete(id);
     } catch (err) {}
   };
 
