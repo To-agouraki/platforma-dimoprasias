@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import "./CategoryItem.css";
 import Button from "../../shared/components/FormElements/Button";
 import Modal from "../../shared/components/UIElements/Modal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import { useHttpClient } from "../../shared/hooks/http-hook";
-import { useNavigate } from "react-router-dom";
 
 const CategoryItem = ({ name, description, id, onDelete }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
-  const navigate = useNavigate();
 
   const showDeleteWarningHandler = () => {
     setShowConfirmModal(true);
@@ -27,13 +27,15 @@ const CategoryItem = ({ name, description, id, onDelete }) => {
         `http://localhost:5000/api/admin//deleteCategory/${id}`,
         "DELETE",
         null
-      )
+      );
       onDelete(id);
     } catch (err) {}
   };
 
   return (
     <React.Fragment>
+      <ErrorModal error={nError} onClear={clearError} />
+
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
@@ -58,6 +60,7 @@ const CategoryItem = ({ name, description, id, onDelete }) => {
 
       <li className="category-item">
         <Card>
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className="category-header">
             <h3>{name}</h3>
             <div className="button-group">

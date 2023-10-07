@@ -12,10 +12,6 @@ const CategoryList = (props) => {
     indexOfFirstUser,
     indexOfLastUser
   );
-
-const deleteCategory= ()=>{
-
-}
   
   const totalPages = Math.ceil(props.items.length / usersPerPage);
 

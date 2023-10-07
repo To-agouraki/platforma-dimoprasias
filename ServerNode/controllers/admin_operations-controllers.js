@@ -149,7 +149,6 @@ const createCategory = async (req, res, next) => {
   }
 
   const { name, description } = req.body;
-  console.log(name, description);
 
   const createdCategory = new Category({
     name,
