@@ -1,0 +1,73 @@
+defretro versi on
+
+const updatePlace = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
+  const { title, description, category } = req.body;
+  const placeId = req.params.pid;
+
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    const err = new HttpError("Something went wrong, could not update", 500);
+    return next(err);
+  }
+
+  const adminUser = await AdminUser.findById(req.userData.userId);
+
+  if (!adminUser) {
+    const error = new HttpError("Not authorized! Not admin", 401);
+    return next(error);
+  }
+
+  if (!place) {
+    const error = new HttpError("Could not find this ID", 404);
+    return next(error);
+  }
+
+  if (place.creator.id !== req.userData.userId) {
+    if (req.userData.userId != adminUser._id) {
+      const error = new HttpError("Not authorized!.", 401);
+      return next(error);
+    }
+  }
+
+  // Update fields only if they are provided in the request body
+  if (title !== undefined) {
+    place.title = title;
+  }
+
+  if (description !== undefined) {
+    place.description = description;
+  }
+
+  try {
+    if (category && mongoose.Types.ObjectId.isValid(category)) {
+      //epidi en stelno id je title pou to backend miniski san string je prepi na ginete checked
+      // Check if the category ID is valid before updating
+      const itemCategory = await Category.findOne({ _id: category });
+      if (!itemCategory) {
+        const error = new HttpError("Invalid category ID", 400);
+        return next(error);
+      }
+      place.category = category;
+    }
+  } catch (error) {
+    console.log(error);
+    console.log("error has occured");
+  }
+
+  try {
+    await place.save();
+    res.status(200).json({ place: place.toObject({ getters: true }) });
+  } catch (error) {
+    const err = new HttpError("Something went wrong, could not update", 500);
+    return next(err);
+  }
+};

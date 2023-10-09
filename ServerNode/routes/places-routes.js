@@ -15,6 +15,7 @@ router.get("/market/:uid", placesControllers.getPlacesMarket);
 
 router.get("/market/loggedout/general", placesControllers.getAllItemsMarket);
 
+
 router.use(Authchecking);
 
 router.post(
@@ -33,6 +34,8 @@ router.patch(
   [check("title").not().isEmpty(), check("description").isLength({ min: 5 })],
   placesControllers.updatePlace
 );
+
+
 
 router.post(
   "/biditem",

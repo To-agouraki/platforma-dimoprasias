@@ -6,6 +6,7 @@ import Button from "../../shared/components/FormElements/Button";
 import Select from "react-select";
 import Card from "../../shared/components/UIElements/Card";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+import ErrorMessage from "../../shared/components/FormElements/ErrorMessage";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import {
@@ -20,10 +21,14 @@ import "./PlaceForm.css";
 
 const UpdatePlace = () => {
   const auth = useContext(AuthContext);
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [errorMessageShow, setErrorMessageShow] = useState(false);
+
+  console.log(nError);
+
 
   const placeId = useParams().placeId;
   const navigate = useNavigate();
@@ -53,7 +58,10 @@ const UpdatePlace = () => {
           `http://localhost:5000/api/places/${placeId}`
         );
         setLoadedPlace(responseData.place);
-        setSelectedCategory({label: responseData.place.category, value: responseData.place.category});
+        setSelectedCategory({
+          label: responseData.place.category,
+          value: responseData.place.category,
+        });
         setFormData(
           {
             title: {
@@ -98,28 +106,28 @@ const UpdatePlace = () => {
   const updatePlaceHandler = async (event) => {
     event.preventDefault();
     try {
-      // Extract other form data and update the place API endpoint accordingly
-      // Update the category in the API request payload
-      console.log(formState.inputs.title.value,formState.inputs.category.value);
       await sendRequest(
         `http://localhost:5000/api/places/${placeId}`,
         "PATCH",
         JSON.stringify({
           title: formState.inputs.title.value,
           description: formState.inputs.description.value,
-          category: formState.inputs.category.value, // Assuming formState.inputs.category.value is the category ID
+          category: formState.inputs.category.value, // Always include the category field
         }),
         {
           "Content-Type": "application/json",
           Authorization: "Bearer " + auth.token,
         }
       );
-  if (auth.isAdmin) {
+      setErrorMessageShow(true);
+      if (auth.isAdmin) {
         navigate("/market");
       } else {
         navigate("/" + auth.userId + "/places");
-      }      // ...
-    } catch (err) {}
+      }
+    } catch (err) {
+      setErrorMessageShow(true);
+    }
   };
 
   if (isLoading) {
@@ -130,7 +138,7 @@ const UpdatePlace = () => {
     );
   }
 
-  if (!loadedPlace && !error) {
+  if (!loadedPlace && !nError) {
     return (
       <div className="center">
         <Card>
@@ -142,10 +150,12 @@ const UpdatePlace = () => {
 
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={clearError} />
-	  {!isLoading && loadedPlace && (
-      <form className="place-form" onSubmit={updatePlaceHandler}>
-        <Input
+      <ErrorModal error={nError} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
+      {!isLoading && loadedPlace && (
+        <form className="place-form" onSubmit={updatePlaceHandler}>
+          {errorMessageShow && <ErrorMessage message={nError} />}
+          <Input
             id="title"
             element="input"
             type="text"
@@ -156,7 +166,7 @@ const UpdatePlace = () => {
             initialValue={loadedPlace.title}
             initialValid={true}
           />
-		  <Input
+          <Input
             id="description"
             element="textarea"
             label="Description"
@@ -166,28 +176,28 @@ const UpdatePlace = () => {
             initialValue={loadedPlace.description}
             initialValid={true}
           />
-        <div>
-          <h3>Select a Category</h3>
-          {/* Select component for categories */}
-          <Select
-            id="category"
-            value={selectedCategory}
-            onChange={handleCategoryChange}
-            options={categories.map((category) => ({
-              value: category.id, // Assuming category.id is the category ID
-              label: category.name, // Assuming category.name is the category name
-            }))}
-            isSearchable={true}
-            placeholder="Select a category"
-          />
-        </div>
-        <br/>
-        {/* Button to submit the form */}
-        <Button type="submit" disabled={!formState.isValid}>
-          UPDATE PLACE
-        </Button>
-      </form>
-	  )}
+          <div>
+            <h3>Select a Category</h3>
+            {/* Select component for categories */}
+            <Select
+              id="category"
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              options={categories.map((category) => ({
+                value: category.id, // Assuming category.id is the category ID
+                label: category.name, // Assuming category.name is the category name
+              }))}
+              isSearchable={true}
+              placeholder="Select a category"
+            />
+          </div>
+          <br />
+          {/* Button to submit the form */}
+          <Button type="submit" disabled={!formState.isValid}>
+            UPDATE PLACE
+          </Button>
+        </form>
+      )}
     </React.Fragment>
   );
 };

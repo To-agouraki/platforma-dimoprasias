@@ -10,6 +10,7 @@ const AdminUser = require("../models/admin");
 const User = require("../models/user");
 const BidJunctionTable = require("../models/bidding");
 const Category = require("../models/category");
+const { error } = require("console");
 
 // let DUMMY_PLACES = [
 //   {
@@ -31,14 +32,17 @@ const getPlaceById = async (req, res, next) => {
   let place;
   try {
     // Find the place by ID without populating the category field
-    place = await Place.findById(placeId).populate("category").exec();;
+    place = await Place.findById(placeId).populate("category").exec();
   } catch (error) {
     const err = new HttpError("Couldn't find the place.", 500);
     return next(err);
   }
 
   if (!place) {
-    const error = new HttpError("Could not find a place for the provided id.", 404);
+    const error = new HttpError(
+      "Could not find a place for the provided id.",
+      404
+    );
     return next(error);
   }
 
@@ -58,7 +62,6 @@ const getPlaceById = async (req, res, next) => {
     },
   });
 };
-
 
 // function getPlaceById() { ... }
 // const getPlaceById = function() { ... }
@@ -164,62 +167,64 @@ const updatePlace = async (req, res, next) => {
     );
   }
 
-  const { title, description, category} = req.body;
+  const { title, description, category } = req.body;
   const placeId = req.params.pid;
 
   let place;
   try {
     place = await Place.findById(placeId);
   } catch (error) {
-    const err = new HttpError("something went wrong could not update", 500);
+    const err = new HttpError("Something went wrong, could not update", 500);
     return next(err);
   }
 
-  //const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) };//old logic
-  //const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
-  //updatedPlace.title = title;
-  // updatedPlace.description = description;
-  //DUMMY_PLACES[placeIndex] = updatedPlace;
-
   const adminUser = await AdminUser.findById(req.userData.userId);
 
-  if (!adminUser) {
-    const error = new HttpError("Not authorized! not admin", 401);
+
+  if (!place) {
+    const error = new HttpError("Could not find this ID", 404);
     return next(error);
   }
 
-  if (!place) {
-    return next(new HttpError("could not find this id", 404));
-  }
-
-
-  if (place.creator.id !== req.userData.userId) {
-    if (req.userData.userId != adminUser._id) {
+  if (place.creator!= req.userData.userId) {
+    if (req.userData.userId != adminUser.id) {
       const error = new HttpError("Not authorized!.", 401);
       return next(error);
     }
   }
 
-  const itemCategory = await Category.findOne({ _id: category });
-
-  if (!itemCategory) {
-    return res.status(404).json({ message: 'Category not found' });
+  // Update fields only if they are provided in the request body
+  if (title !== undefined) {
+    place.title = title;
   }
 
+  if (description !== undefined) {
+    place.description = description;
+  }
 
-
-  place.title = title;
-  place.description = description;
-  place.category = category;
+  try {
+    if (category && mongoose.Types.ObjectId.isValid(category)) {
+      //epidi en stelno id je title pou to backend miniski san string je prepi na ginete checked
+      // Check if the category ID is valid before updating
+      const itemCategory = await Category.findOne({ _id: category });
+      if (!itemCategory) {
+        const error = new HttpError("Invalid category ID", 400);
+        return next(error);
+      }
+      place.category = category;
+    }
+  } catch (error) {
+    console.log(error);
+    console.log("error has occured");
+  }
 
   try {
     await place.save();
+    res.status(200).json({ place: place.toObject({ getters: true }) });
   } catch (error) {
-    const err = new HttpError("Something went wrontg could not jpdate", 500);
+    const err = new HttpError("Something went wrong, could not update", 500);
     return next(err);
   }
-
-  res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
 const deletePlace = async (req, res, next) => {
@@ -251,18 +256,12 @@ const deletePlace = async (req, res, next) => {
     return next(new HttpError("could not find this id", 404));
   }
 
-
   if (place.creator.id !== req.userData.userId) {
     if (req.userData.userId != adminUser._id) {
       const error = new HttpError("Not authorized!.", 401);
       return next(error);
     }
   }
-  
-
-
-
-
 
   const imagePath = place.image;
 

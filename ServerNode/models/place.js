@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 
 const placeSchema = new Schema({
   title: { type: String, required: true },
-  description: { type: String, require: true },
-  image: { type: String, require: true },
-  category: { type: mongoose.Types.ObjectId, require: true, ref: "Category" },
-  dateTime: { type: Date, require: true },
+  description: { type: String, required: true },
+  image: { type: String, required: true },
+  category: { type: mongoose.Types.ObjectId, required: true, ref: "Category" },
+  dateTime: { type: Date, required: true },
   highestBid: {
     type: Number,
     default: 0,
