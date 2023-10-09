@@ -103,6 +103,7 @@ const getPlacesByUserId = async (req, res, next) => {
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log("from create place", errors);
     return next(
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
@@ -162,6 +163,7 @@ const createPlace = async (req, res, next) => {
 const updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors);
     return next(
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
@@ -180,13 +182,12 @@ const updatePlace = async (req, res, next) => {
 
   const adminUser = await AdminUser.findById(req.userData.userId);
 
-
   if (!place) {
     const error = new HttpError("Could not find this ID", 404);
     return next(error);
   }
 
-  if (place.creator!= req.userData.userId) {
+  if (place.creator != req.userData.userId) {
     if (req.userData.userId != adminUser.id) {
       const error = new HttpError("Not authorized!.", 401);
       return next(error);
@@ -215,7 +216,18 @@ const updatePlace = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    console.log("error has occured");
+    console.log("error has occured with category");
+  }
+
+  try {
+    if (
+      typeof req.file !== "undefined" &&
+      typeof req.file.path !== "undefined"
+    ) {
+      place.image = req.file.path;
+    }
+  } catch (error) {
+    console.log("image error: ", error);
   }
 
   try {

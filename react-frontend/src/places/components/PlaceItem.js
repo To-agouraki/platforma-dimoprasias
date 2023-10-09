@@ -20,6 +20,8 @@ const PlaceItem = (props) => {
   const [counterExpire, setCounterExpire] = useState(false);
   const [highestBidder, setHighestBidder] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
+
 
   const toggleView = () => {
     setIsCollapsed((view) => !view);
@@ -35,6 +37,7 @@ const PlaceItem = (props) => {
           );
           setHighestBidder(responseData.user.name);
         } catch (err) {}
+        setLoading(false); // Set loading to false once data is fetched
       };
       fetchPlaces();
     }, [sendRequest, props.highestBidder]);
@@ -129,6 +132,22 @@ const PlaceItem = (props) => {
     // filterItemsByCategory(category);
   };
 
+  const [disButton, setDisButton] = useState(counterExpire);
+
+
+
+  useEffect(() => {
+    if (counterExpire) {
+      // Timer has expired, disable the "Edit" buttons
+      setDisButton(true);
+    } else {
+      // Timer has not expired, enable the "Edit" buttons
+      setDisButton(false);
+    }
+  }, [counterExpire]);
+  
+
+
   return (
     <React.Fragment>
       <ErrorModal error={nError} onClear={clearError} />
@@ -220,11 +239,13 @@ const PlaceItem = (props) => {
               </Button>*/}
               {/* inverse class from button css*/}
               {!counterExpire && auth.userId === props.creatorId && (
-                <Button to={`/places/${props.id}`}>Edit</Button>
+                <Button  to={`/places/${props.id}`}>Edit</Button>
               )}
-
               {!counterExpire && auth.isAdmin && (
-                <Button to={`/places/${props.id}`}>Edit</Button>
+                <Button  to={`/places/${props.id}`}  >Edit</Button>
+              )}
+               {counterExpire && auth.isAdmin && (
+                <Button  to={`/places/${props.id}`} disabled>Edit</Button>
               )}
 
               {auth.userId === props.creatorId && ( //for item creator

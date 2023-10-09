@@ -27,9 +27,6 @@ const UpdatePlace = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [errorMessageShow, setErrorMessageShow] = useState(false);
 
-  console.log(nError);
-
-
   const placeId = useParams().placeId;
   const navigate = useNavigate();
 
@@ -44,6 +41,10 @@ const UpdatePlace = () => {
         isValid: false,
       },
       category: {
+        value: "",
+        isValid: false,
+      },
+      image: {
         value: "",
         isValid: false,
       },
@@ -76,6 +77,10 @@ const UpdatePlace = () => {
               value: responseData.place.category, // Assuming responseData.place.category is the category ID
               isValid: true,
             },
+            image: {
+              value: responseData.place.image,
+              isValid: true,
+            },
           },
           true
         );
@@ -105,17 +110,22 @@ const UpdatePlace = () => {
 
   const updatePlaceHandler = async (event) => {
     event.preventDefault();
+
+    const formData = new FormData();
+    formData.append("title", formState.inputs.title.value);
+    formData.append("description", formState.inputs.description.value);
+    formData.append("category", formState.inputs.category.value);
+    formData.append("image", formState.inputs.image.value);
+
+    console.log("title", formState.inputs.title.value);
+    console.log("description", formState.inputs.description.value);
+
     try {
       await sendRequest(
         `http://localhost:5000/api/places/${placeId}`,
         "PATCH",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          category: formState.inputs.category.value, // Always include the category field
-        }),
+        formData, // Use formData directly, no need for JSON.stringify
         {
-          "Content-Type": "application/json",
           Authorization: "Bearer " + auth.token,
         }
       );
@@ -150,11 +160,18 @@ const UpdatePlace = () => {
 
   return (
     <React.Fragment>
-      <ErrorModal error={nError} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
       {!isLoading && loadedPlace && (
         <form className="place-form" onSubmit={updatePlaceHandler}>
           {errorMessageShow && <ErrorMessage message={nError} />}
+          <h2>Edit Item</h2>
+          <ImageUpload
+            center
+            id="image"
+            existingimage={loadedPlace.image}
+            onInput={inputHandler}
+          />
+
           <Input
             id="title"
             element="input"

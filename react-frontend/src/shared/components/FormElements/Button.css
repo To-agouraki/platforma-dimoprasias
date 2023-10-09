@@ -73,3 +73,11 @@
 .button--big {
   font-size: 1.5rem;
 }
+
+/* CSS */
+.disabled {
+  pointer-events: none; /* Prevents the link from being clickable */
+  color: #a91a1a; /* Change text color to indicate the disabled state */
+  text-decoration: none; /* Remove underline, if any */
+  cursor: not-allowed; /* Show disabled cursor */
+}
