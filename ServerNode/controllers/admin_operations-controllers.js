@@ -172,7 +172,18 @@ const createCategory = async (req, res, next) => {
 const deleteCategory = async (req, res, next) => {
   const categoryId = req.params.categoryId; // Assuming you pass the categoryId as a route parameter
 
+  
+    // Check if there are items in the category
+    
+    
+
   try {
+
+    const itemsInCategory = await Place.find({ category: categoryId });
+
+    if (itemsInCategory.length > 0) {
+      return next(new HttpError("Cannot delete category with associated items", 400));
+    }
     // Find the category by its ID and delete it
     const deletedCategory = await Category.findByIdAndRemove(categoryId);
 
@@ -192,7 +203,7 @@ const deleteCategory = async (req, res, next) => {
 const updateCategory = async (req, res, next) => {
   const errors = validationResult(req);
 
-  console.log("Errors:",errors);
+  //console.log("Errors:",errors);
   if (!errors.isEmpty()) {
     return next(
       new HttpError(
