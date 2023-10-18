@@ -250,6 +250,8 @@ const getBiddersItems = async (req, res, next) => {
       })
       .exec();
 
+//console.log(biddedItems);
+
     res.json({
       items: biddedItems.map((item) => ({
         _id: item._id,
