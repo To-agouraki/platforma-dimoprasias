@@ -17,6 +17,7 @@ const PlaceItem = (props) => {
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const [theDateTime, setTheDateTime] = useState("");
   const [bidAmount, setBidAmount] = useState(props.amount); // when the bid amount chancges
+  const [highestbidAmount, setHighestBidAmount] = useState(props.highestBid); 
   const [counterExpire, setCounterExpire] = useState(false);
   const [highestBidder, setHighestBidder] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -43,7 +44,7 @@ const PlaceItem = (props) => {
     }, [sendRequest, props.highestBidder]);
   }
 
-  // console.log(props.highestBidder);
+   console.log('highseet',props.highestBidder);
 
   let sentence;
 
@@ -67,10 +68,12 @@ const PlaceItem = (props) => {
   useEffect(() => {
     // Update bid amount when props.amount changes
     setBidAmount(props.amount);
-  }, [props.amount]);
+    setHighestBidAmount(props.highestBid);
+  }, [props.amount,props.highestBid]);
 
   const handleBidAmountChange = (newAmount) => {
     setBidAmount(newAmount);
+    setHighestBidAmount(newAmount);
   };
 
   //console.log(props.amount);
@@ -258,7 +261,9 @@ const PlaceItem = (props) => {
                   Delete
                 </Button>
               )}
-              {props.amount && <h3>The amount you have bid is {bidAmount}</h3>}
+              {props.amount && <h4>The amount you have bid is {bidAmount}</h4>}
+              {props.highestBid && <h3>Highest Bid:  {highestbidAmount}</h3>}
+
               {counterExpire && sentence}
 
               {!counterExpire &&

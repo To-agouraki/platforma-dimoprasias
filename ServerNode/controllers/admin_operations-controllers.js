@@ -105,7 +105,7 @@ const getAdmins = async () => {
 const getCategories = async (req, res, next) => {
   let categories;
   try {
-    categories = await Category.find();
+    categories = await Category.find().sort({ name: 1 });
   } catch (error) {
     return next(new HttpError("return categories failed", 500));
   }
@@ -148,10 +148,19 @@ const createCategory = async (req, res, next) => {
     );
   }
 
+  // Function to capitalize the first letter of a string
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+
   const { name, description } = req.body;
 
+  const capitalizedCategoryName = capitalizeFirstLetter(name);
+
+
   const createdCategory = new Category({
-    name,
+    name: capitalizedCategoryName,
     description,
   });
 
@@ -172,17 +181,15 @@ const createCategory = async (req, res, next) => {
 const deleteCategory = async (req, res, next) => {
   const categoryId = req.params.categoryId; // Assuming you pass the categoryId as a route parameter
 
-  
-    // Check if there are items in the category
-    
-    
+  // Check if there are items in the category
 
   try {
-
     const itemsInCategory = await Place.find({ category: categoryId });
 
     if (itemsInCategory.length > 0) {
-      return next(new HttpError("Cannot delete category with associated items", 400));
+      return next(
+        new HttpError("Cannot delete category with associated items", 400)
+      );
     }
     // Find the category by its ID and delete it
     const deletedCategory = await Category.findByIdAndRemove(categoryId);
@@ -230,7 +237,7 @@ const updateCategory = async (req, res, next) => {
 
     res.status(200).json({ category: updatedCategory });
   } catch (error) {
-    console.log("Error:",error)
+    console.log("Error:", error);
     console.error("Error updating category:", error);
     return next(
       new HttpError("Updating category failed, please try again.", 500)
@@ -247,7 +254,7 @@ const updateNormalUser = async (req, res, next) => {
   }
 
   const { name, imagepath } = req.body;
-  const userId = req.params.uid;  
+  const userId = req.params.uid;
   let user;
   try {
     user = await User.findById(userId);
@@ -257,7 +264,7 @@ const updateNormalUser = async (req, res, next) => {
   }
 
   user.name = name;
-  if (typeof req.file !== 'undefined' && typeof req.file.path !== 'undefined') {
+  if (typeof req.file !== "undefined" && typeof req.file.path !== "undefined") {
     user.image = req.file.path;
   }
   //user.image = req.file.path;
@@ -274,8 +281,6 @@ const updateNormalUser = async (req, res, next) => {
 
   res.status(200).json({ user: user.toObject({ getters: true }) });
 };
-
-
 
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;

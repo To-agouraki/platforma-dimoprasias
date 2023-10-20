@@ -17,6 +17,7 @@ const Users = () => {
           "http://localhost:5000/api/users"
         );
         setLoadedUsers(responseData.users);
+        console.log(responseData.users);
       } catch (error) {}
     };
     fetchUsers();

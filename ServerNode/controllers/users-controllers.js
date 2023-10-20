@@ -20,7 +20,7 @@ const BidJunctionTable = require("../models/bidding");
 const getUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find({}, "-password");
+    users = await User.find({}, "-password").sort({ name: 1 }).collation({ locale: 'en', strength: 2 });
   } catch (error) {
     return next(new HttpError("return users failed", 500));
   }
@@ -64,6 +64,26 @@ const updateUser = async (req, res, next) => {
     return next(err);
   }
 
+
+  let existingUserName;
+  try {
+    existingUserName = await User.findOne({ name: name});
+  } catch (err) {
+    const error = new HttpError(
+      "Signing up failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
+  if (existingUserName  && existingUserName.id !== userId) {
+    const error = new HttpError(
+      "Username is already taken, please choose a differnt one.",
+      422
+    );
+    return next(error);
+  }
+
   //const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) };//old logic
   //const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
   //updatedPlace.title = title;
@@ -102,9 +122,9 @@ const signup = async (req, res, next) => {
   }
   const { name, email, password } = req.body;
 
-  let existingUser;
+  let existingUserEmail;
   try {
-    existingUser = await User.findOne({ email: email });
+    existingUserEmail = await User.findOne({ email: email});
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
@@ -113,7 +133,26 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  if (existingUser) {
+  let existingUserName;
+  try {
+    existingUserName = await User.findOne({ name: name});
+  } catch (err) {
+    const error = new HttpError(
+      "Signing up failed, please try again later.",
+      500
+    );
+    return next(error);
+  }
+
+  if (existingUserName) {
+    const error = new HttpError(
+      "Username is already taken, please choose a differnt one.",
+      422
+    );
+    return next(error);
+  }
+
+  if (existingUserEmail) {
     const error = new HttpError(
       "User exists already, please login instead.",
       422
@@ -250,7 +289,7 @@ const getBiddersItems = async (req, res, next) => {
       })
       .exec();
 
-//console.log(biddedItems);
+    //console.log(biddedItems);
 
     res.json({
       items: biddedItems.map((item) => ({

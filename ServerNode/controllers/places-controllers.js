@@ -303,87 +303,45 @@ const deletePlace = async (req, res, next) => {
 
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
-  let bid;
 
-  if (amount < 0) {
-    return next(new HttpError("Please bid with a positive amount", 500));
+  if (amount <= 0) {
+    return next(new HttpError("Please place a bid with a positive amount", 400));
   }
 
   try {
-    // Find the existing highest bid for the same item by the current bidder
-    const existingBid = await BidJunctionTable.findOne({
-      place: itemId,
-      bidder: userId,
-    }).sort({ amount: -1 });
-
-    if (existingBid) {
-      // If existing bid is found, checkaro if the new bid amount is greater
-      if (amount > existingBid.amount) {
-        // Update the existing bid with the new amount
-        existingBid.amount = amount;
-        await existingBid.save();
-        bid = existingBid; // Assign the existing bid to the
-      } else {
-        return res.status(400).json({
-          message:
-            "The bid amount must be greater than the existing highest bid.",
-        });
-      }
-    } else {
-      // Create a new bid
-      bid = new BidJunctionTable({
-        amount,
-        place: itemId,
-        bidder: userId,
-      });
-
-      // Save the new bid to the database
-      await bid.save();
-
-      // Update the user's bids field only when a new bid is created
-      await User.findByIdAndUpdate(
-        userId,
-        { $push: { bids: bid._id } },
-        { new: true }
-      );
-
-      await Place.findByIdAndUpdate(
-        userId,
-        { $push: { bids: bid._id } },
-        { new: true }
-      );
-    }
-
     // Find the existing highest bid for the item
     const existingHighestBid = await BidJunctionTable.findOne({ place: itemId })
       .sort({ amount: -1 })
       .exec();
 
-    let highestBid = existingHighestBid ? existingHighestBid.amount : 0;
-    let highestBidder = existingHighestBid ? existingHighestBid.bidder : null;
+    const currentHighestBid = existingHighestBid ? existingHighestBid.amount : 0;
 
-    if (amount > highestBid) {
-      highestBid = amount;
-      highestBidder = userId;
-    }
-
-    // Update the place's highest bid and bidder fields
-    try {
-      await Place.findByIdAndUpdate(
-        itemId,
-        { highestBid, highestBidder },
-        { new: true }
+    if (amount > currentHighestBid) {
+      // If the new bid is higher than the current highest bid, create/update the bid
+      let bid = await BidJunctionTable.findOneAndUpdate(
+        { place: itemId, bidder: userId },
+        { amount: amount },
+        { new: true, upsert: true }
       );
-    } catch (error) {
-      console.log(error);
-    }
 
-    res.status(201).json({ message: "Bid created successfully", bid });
+      // Update the user's bids field only when a new bid is created
+      await User.findByIdAndUpdate(userId, { $addToSet: { bids: bid._id } });
+
+      // Update the place's highest bid and bidder fields
+      await Place.findByIdAndUpdate(itemId, { highestBid: amount, highestBidder: userId });
+
+      return res.status(201).json({ message: "Bid created/updated successfully", bid });
+    } else {
+      return res.status(400).json({
+        message: "Your bid amount must be higher than the current highest bid.",
+      });
+    }
   } catch (error) {
-    console.log(error);
-    return next(new HttpError("Creating bid failed, please try again", 500));
+    console.error(error);
+    return next(new HttpError("Creating/updating bid failed, please try again", 500));
   }
 };
+
 
 const getPlacesMarket = async (req, res, next) => {
   const userId = req.params.uid;
@@ -391,8 +349,12 @@ const getPlacesMarket = async (req, res, next) => {
 
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find({ creator: { $ne: userId } })
+    places = await Place.find({
+      dateTime: { $gte: new Date() },
+      creator: { $ne: userId },
+    })
       .populate("category")
+      .sort({ title: 1 })
       .exec();
   } catch (error) {
     const err = new HttpError("Fetching places failed.", 404);
@@ -426,7 +388,10 @@ const getAllItemsMarket = async (req, res, next) => {
 
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find().populate("category").exec();
+    places = await Place.find({ dateTime: { $gte: new Date() } })
+      .populate("category")
+      .sort({ title: 1 })
+      .exec();
   } catch (error) {
     console.log(error);
     console.log("fail");
