@@ -48,5 +48,7 @@ router.post(
 );
 
 router.delete("/:pid", placesControllers.deletePlace);
+router.patch("/deactivate/:pid", placesControllers.deactivatePlace);
+
 
 module.exports = router;

@@ -1,4 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpRightAndDownLeftFromCenter, faDownLeftAndUpRightToCenter } from "@fortawesome/free-solid-svg-icons";
 
 import "./PlaceItem.css";
 import Card from "../../shared/components/UIElements/Card";
@@ -17,17 +19,15 @@ const PlaceItem = (props) => {
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const [theDateTime, setTheDateTime] = useState("");
   const [bidAmount, setBidAmount] = useState(props.amount); // when the bid amount chancges
-  const [highestbidAmount, setHighestBidAmount] = useState(props.highestBid); 
+  const [highestbidAmount, setHighestBidAmount] = useState(props.highestBid);
   const [counterExpire, setCounterExpire] = useState(false);
   const [highestBidder, setHighestBidder] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
 
-
   const toggleView = () => {
     setIsCollapsed((view) => !view);
   };
-
 
   if (props.highestBidder) {
     useEffect(() => {
@@ -44,7 +44,7 @@ const PlaceItem = (props) => {
     }, [sendRequest, props.highestBidder]);
   }
 
-   console.log('highseet',props.highestBidder);
+  console.log("highseet", props.highestBidder);
 
   let sentence;
 
@@ -69,7 +69,7 @@ const PlaceItem = (props) => {
     // Update bid amount when props.amount changes
     setBidAmount(props.amount);
     setHighestBidAmount(props.highestBid);
-  }, [props.amount,props.highestBid]);
+  }, [props.amount, props.highestBid]);
 
   const handleBidAmountChange = (newAmount) => {
     setBidAmount(newAmount);
@@ -97,8 +97,8 @@ const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
- // const openMapHandler = () => {
-   // setShowMap(true);
+  // const openMapHandler = () => {
+  // setShowMap(true);
   //};
 
   const closeMapHandler = () => {
@@ -126,6 +126,19 @@ const PlaceItem = (props) => {
     } catch (err) {}
   };
 
+  const confirmDeactivateHandler = async () => {
+    setShowConfirmModal(false);
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/places/deactivate/${props.id}`,
+        "PATCH",
+        null,
+        { Authorization: "Bearer " + auth.token }
+      );
+      //props.onDelete(props.id);
+    } catch (err) {}
+  };
+
   const handleCategoryClick = (category) => {
     // You can implement your filtering logic here.
     // For example, you can call a function passed from the parent component
@@ -137,8 +150,6 @@ const PlaceItem = (props) => {
 
   const [disButton, setDisButton] = useState(counterExpire);
 
-
-
   useEffect(() => {
     if (counterExpire) {
       // Timer has expired, disable the "Edit" buttons
@@ -148,8 +159,6 @@ const PlaceItem = (props) => {
       setDisButton(false);
     }
   }, [counterExpire]);
-  
-
 
   return (
     <React.Fragment>
@@ -180,6 +189,9 @@ const PlaceItem = (props) => {
             </Button>
             <Button danger onClick={confirmDeleteHandler}>
               Delete
+            </Button>
+            <Button danger onClick={confirmDeactivateHandler}>
+              Deactivate
             </Button>
           </React.Fragment>
         }
@@ -242,13 +254,15 @@ const PlaceItem = (props) => {
               </Button>*/}
               {/* inverse class from button css*/}
               {!counterExpire && auth.userId === props.creatorId && (
-                <Button  to={`/places/${props.id}`}>Edit</Button>
+                <Button to={`/places/${props.id}`}>Edit</Button>
               )}
               {!counterExpire && auth.isAdmin && (
-                <Button  to={`/places/${props.id}`}  >Edit</Button>
+                <Button to={`/places/${props.id}`}>Edit</Button>
               )}
-               {counterExpire && auth.isAdmin && (
-                <Button  to={`/places/${props.id}`} disabled>Edit</Button>
+              {counterExpire && auth.isAdmin && (
+                <Button to={`/places/${props.id}`} disabled>
+                  Edit
+                </Button>
               )}
 
               {auth.userId === props.creatorId && ( //for item creator
@@ -262,7 +276,7 @@ const PlaceItem = (props) => {
                 </Button>
               )}
               {props.amount && <h4>The amount you have bid is {bidAmount}</h4>}
-              {props.highestBid && <h3>Highest Bid:  {highestbidAmount}</h3>}
+              {<h3>Highest Bid: {highestbidAmount}</h3>}
 
               {counterExpire && sentence}
 
@@ -276,7 +290,11 @@ const PlaceItem = (props) => {
                   />
                 )}
               <Button onClick={toggleView}>
-                {isCollapsed ? "Expand" : "Collapse"}
+                {isCollapsed ? (
+                 <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+                ) : (
+                  <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
+                )}
               </Button>
             </div>
 

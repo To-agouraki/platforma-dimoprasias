@@ -96,6 +96,8 @@ const getPlacesByUserId = async (req, res, next) => {
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
+      activationState : place.activationState
+
     })),
   });
 };
@@ -238,7 +240,7 @@ const updatePlace = async (req, res, next) => {
     return next(err);
   }
 };
-
+/////////////////////////
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
   // if (!DUMMY_PLACES.find((p) => p.id === placeId)) {
@@ -300,6 +302,51 @@ const deletePlace = async (req, res, next) => {
 
   res.status(200).json({ message: "Deleted place." });
 };
+/////////////////////////
+
+const deactivatePlace = async(req, res, next)=>{
+  const placeId = req.params.pid;
+
+    let place;
+    try {
+      place = await Place.findById(placeId);
+    } catch (error) {
+      const err = new HttpError("Something went wrong, could not update", 500);
+      return next(err);
+    }
+  
+    const adminUser = await AdminUser.findById(req.userData.userId);
+  
+    if (!place) {
+      const error = new HttpError("Could not find this ID", 404);
+      return next(error);
+    }
+  
+    if (place.creator != req.userData.userId) {
+      if (req.userData.userId != adminUser.id) {
+        const error = new HttpError("Not authorized!.", 401);
+        return next(error);
+      }
+    }
+  
+    try {
+      place.activationState = false;
+    } catch (error) {
+      console.log(error);
+    }
+
+  
+    try {
+      await place.save();
+      res.status(200).json({ place: place.toObject({ getters: true }) });
+    } catch (error) {
+      const err = new HttpError("Something went wrong, could not update", 500);
+      return next(err);
+    }
+  
+};
+
+
 
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
@@ -379,6 +426,7 @@ const getPlacesMarket = async (req, res, next) => {
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
+      activationState : place.activationState
     })),
   });
 };
@@ -417,6 +465,8 @@ const getAllItemsMarket = async (req, res, next) => {
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
+      activationState : place.activationState
+
     })),
   });
 };
@@ -429,3 +479,4 @@ exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
 exports.bidItem = bidItem;
 exports.getAllItemsMarket = getAllItemsMarket;
+exports.deactivatePlace = deactivatePlace;

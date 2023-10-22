@@ -1,6 +1,9 @@
 // TabbedItem.js
 
 import React, { useState} from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpRightAndDownLeftFromCenter, faDownLeftAndUpRightToCenter } from "@fortawesome/free-solid-svg-icons";
+
 import Card from "../../shared/components/UIElements/Card";
 import Button from "../../shared/components/FormElements/Button";
 import PlaceItem from "./PlaceItem";
@@ -31,9 +34,13 @@ const TabbedItem = (props) => {
           </div>
           {/* Additional content for the right side if needed */}
           <div className="tabbed-item-right">
-            <Button onClick={toggleView}>
-              {props.isCollapsed ? "Expand" : "Not collapsed"}
-            </Button>
+          <Button onClick={toggleView}>
+                {isCollapsed ? (
+                  <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+                ) : (
+                  <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
+                )}
+              </Button>
           </div>
         </Card>
       ) : (
