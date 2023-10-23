@@ -19,6 +19,7 @@ import UpdateCategory from "./adminOnly/pages/UpdateCategory";
 import UserMainPage from "./user/pages/UserMainPage";
 import NoUserDashboard from "./user/components/NoUserDashboard";
 import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
+import DeactivatedItems from "./adminOnly/pages/DeactivateItems";
 
 let logoutTimer;
 
@@ -110,6 +111,8 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/categories/:categoryId" element={<UpdateCategory />}></Route>
         <Route path="/categories" element={<CategoriesPage />}></Route>
         <Route path="/updateNormalUser/:userId" element={<UpdateNormalUser />}></Route>
+        <Route path="/deactivatedItems" element={<DeactivatedItems />}></Route>
+
 
         
 

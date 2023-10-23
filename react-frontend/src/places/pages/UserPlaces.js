@@ -112,6 +112,7 @@
                   items={filteredData}
                   userId={userId}
                   onDeletePlace={placeDeletedHandler}
+                  deactState={true}
                 />
               </div>
             )}

@@ -15,6 +15,9 @@ router.get("/market/:uid", placesControllers.getPlacesMarket);
 
 router.get("/market/loggedout/general", placesControllers.getAllItemsMarket);
 
+router.get("/deactivatedItems/items", placesControllers.getDeactivatedItemsAdmin);
+
+
 router.use(Authchecking);
 
 router.post(
@@ -49,6 +52,5 @@ router.post(
 
 router.delete("/:pid", placesControllers.deletePlace);
 router.patch("/deactivate/:pid", placesControllers.deactivatePlace);
-
 
 module.exports = router;

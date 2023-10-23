@@ -28,7 +28,7 @@ const { error } = require("console");
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
-
+console.log('??????');
   let place;
   try {
     // Find the place by ID without populating the category field
@@ -59,6 +59,7 @@ const getPlaceById = async (req, res, next) => {
       highestBidder: place.highestBidder,
       bids: place.bids,
       creator: place.creator,
+      activationState : place.activationState,
     },
   });
 };
@@ -330,7 +331,7 @@ const deactivatePlace = async(req, res, next)=>{
     }
   
     try {
-      place.activationState = false;
+      place.activationState = !place.activationState;
     } catch (error) {
       console.log(error);
     }
@@ -431,6 +432,47 @@ const getPlacesMarket = async (req, res, next) => {
   });
 };
 
+const getDeactivatedItemsAdmin = async (req, res, next) => {
+  let places;
+console.log('1');
+  try {
+    // Populate the 'category' field with the actual category data
+    places = await Place.find({
+      dateTime: { $gte: new Date() },
+      activationState: { $eq: false },
+    })
+      .populate("category")
+      .sort({ title: 1 })
+      .exec();
+  } catch (error) {
+    const err = new HttpError("Fetching places failed.", 404);
+    return next(err);
+  }
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+  res.json({
+    places: places.map((place) => ({
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      creator: place.creator, // Include the entire user object if needed
+      activationState : place.activationState
+    })),
+  });
+};
+
+
 const getAllItemsMarket = async (req, res, next) => {
   let places;
 
@@ -480,3 +522,4 @@ exports.deletePlace = deletePlace;
 exports.bidItem = bidItem;
 exports.getAllItemsMarket = getAllItemsMarket;
 exports.deactivatePlace = deactivatePlace;
+exports.getDeactivatedItemsAdmin = getDeactivatedItemsAdmin;

@@ -6,6 +6,7 @@ import Card from "../../shared/components/UIElements/Card";
 import React from "react";
 import Button from "../../shared/components/FormElements/Button";
 import TabbedItem from "./TabbedItem";
+import ChangePageButton from "../../shared/components/FormElements/ChangePageButton";
 
 const PlaceList = (props) => {
   const [tabbedView, setTabbedView] = useState(false);
@@ -14,6 +15,7 @@ const PlaceList = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [combinedData, setCombinedData] = useState([]);
 
+  console.log(props.deactState);
   useEffect(() => {
     // Update combinedData with isCollapsed property and amount if biddingamounts exist
     const updatedCombinedData = props.items.map((place, index) => ({
@@ -25,6 +27,8 @@ const PlaceList = (props) => {
     }));
     setCombinedData(updatedCombinedData);
   }, [props.items, props.biddingamounts]);
+
+  //console.log(combinedData);
 
   const toggleTabbedView = () => {
     setTabbedView(true);
@@ -126,6 +130,8 @@ const PlaceList = (props) => {
         <button onClick={toggleNormalView}>Normal View</button>
       </div>
 
+      <ChangePageButton state={props.deactState} ></ChangePageButton>
+
       <div className="items-per-page">
         <label htmlFor="itemsPerPage">Items per page:</label>
         <select
@@ -145,21 +151,22 @@ const PlaceList = (props) => {
         {currentItems.map((item) =>
           tabbedView ? (
             <TabbedItem
-            key={item.id}
-            id={item.id}
-            image={item.image}
-            title={item.title}
-            description={item.description}
-            category={item.category}
-            creatorId={item.creator}
-            dateTime={item.dateTime}
-            onDelete={props.onDeletePlace}
-            frombid={props.frombid}
-            amount={item.amount}
-            highestBid={item.highestBid}
-            highestBidder={item.highestBidder}
-            onToggleCollapse={() => toggleItemCollapse(item.id)}
-            isCollapsed={item.isCollapsed}
+              key={item.id}
+              id={item.id}
+              image={item.image}
+              title={item.title}
+              description={item.description}
+              category={item.category}
+              creatorId={item.creator}
+              dateTime={item.dateTime}
+              onDelete={props.onDeletePlace}
+              frombid={props.frombid}
+              amount={item.amount}
+              highestBid={item.highestBid}
+              highestBidder={item.highestBidder}
+              activationState={item.activationState}
+              onToggleCollapse={() => toggleItemCollapse(item.id)}
+              isCollapsed={item.isCollapsed}
             />
           ) : (
             <PlaceItem
@@ -176,6 +183,7 @@ const PlaceList = (props) => {
               amount={item.amount}
               highestBid={item.highestBid}
               highestBidder={item.highestBidder}
+              activationState={item.activationState}
               onToggleCollapse={() => toggleItemCollapse(item.id)}
               isCollapsed={item.isCollapsed}
             />

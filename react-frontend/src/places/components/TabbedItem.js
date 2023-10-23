@@ -59,6 +59,7 @@ const TabbedItem = (props) => {
         amount={props.amount}
         highestBid={props.highestBid}
         highestBidder={props.highestBidder}
+        activationState={props.activationState}
        // onToggleCollapse={() => toggleItemCollapse(item.id)}
         isCollapsed={props.isCollapsed}
         />

@@ -1,6 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpRightAndDownLeftFromCenter, faDownLeftAndUpRightToCenter } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUpRightAndDownLeftFromCenter,
+  faDownLeftAndUpRightToCenter,
+} from "@fortawesome/free-solid-svg-icons";
 
 import "./PlaceItem.css";
 import Card from "../../shared/components/UIElements/Card";
@@ -25,6 +28,7 @@ const PlaceItem = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
 
+
   const toggleView = () => {
     setIsCollapsed((view) => !view);
   };
@@ -44,7 +48,6 @@ const PlaceItem = (props) => {
     }, [sendRequest, props.highestBidder]);
   }
 
-  console.log("highseet", props.highestBidder);
 
   let sentence;
 
@@ -190,16 +193,27 @@ const PlaceItem = (props) => {
             <Button danger onClick={confirmDeleteHandler}>
               Delete
             </Button>
-            <Button danger onClick={confirmDeactivateHandler}>
-              Deactivate
-            </Button>
+            {props.activationState ? (
+              <Button danger onClick={confirmDeactivateHandler}>
+                Deactivate
+              </Button>
+            ) : (
+              <Button onClick={confirmDeactivateHandler}>Activate</Button>
+            )}
           </React.Fragment>
         }
       >
-        <p>
-          Do you want to proceed and delete this place? Please note that it
-          can't be undone thereafter.
-        </p>
+        {props.activationState ? (
+          <p>
+            Do you want to proceed and delete this place? Please note that it
+            can't be undone thereafter.
+          </p>
+        ) : (
+          <p>
+            Do you want to Activate this item? After you activate this item it
+            wil be visible.
+          </p>
+        )}
       </Modal>
       {!isCollapsed ? (
         <li className="place-item">
@@ -270,11 +284,14 @@ const PlaceItem = (props) => {
                   Delete
                 </Button>
               )}
-              {auth.isAdmin && ( //for admin
+              {auth.isAdmin && props.activationState ? (
                 <Button danger onClick={showDeleteWarningHandler}>
                   Delete
                 </Button>
+              ) : (
+                <Button inverse onClick={showDeleteWarningHandler}>Activate</Button>
               )}
+
               {props.amount && <h4>The amount you have bid is {bidAmount}</h4>}
               {<h3>Highest Bid: {highestbidAmount}</h3>}
 
@@ -291,7 +308,7 @@ const PlaceItem = (props) => {
                 )}
               <Button onClick={toggleView}>
                 {isCollapsed ? (
-                 <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+                  <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
                 ) : (
                   <FontAwesomeIcon icon={faDownLeftAndUpRightToCenter} />
                 )}
@@ -316,6 +333,7 @@ const PlaceItem = (props) => {
           amount={props.amount}
           highestBid={props.highestBid}
           highestBidder={props.highestBidder}
+          activationState={props.activationState}
           // onToggleCollapse={() => toggleItemCollapse(item.id)}
           isCollapsed={props.isCollapsed}
         />

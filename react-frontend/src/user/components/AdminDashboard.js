@@ -42,6 +42,14 @@ const AdminDashboard = () => {
           >
             All Items
           </Link>
+          <Link
+            to="/deactivatedItems"
+            className="dashboard-button"
+            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            Deactivated Items
+          </Link>
           {/* Add similar event handlers for other buttons */}
         </div>
       </div>
