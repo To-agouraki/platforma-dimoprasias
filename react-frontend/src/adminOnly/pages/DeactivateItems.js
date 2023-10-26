@@ -114,6 +114,8 @@ const deactivatedItems = () => {
                   items={filteredData}
                   userId={userId}
                   onDeletePlace={placeDeletedHandler}
+                  deactState={false}
+
                 />
               </div>
             )}
