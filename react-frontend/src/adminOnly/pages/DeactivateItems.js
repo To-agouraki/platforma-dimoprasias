@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import PlaceList from "../../places/components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import SearchBar from "../../shared/components/SharedComponent/SearchBar";
 import CategoryFilter from "../../shared/components/SharedComponent/CategoryFilter";
-import { useHttpClient } from "../../shared/hooks/http-hook";
-
 import "../../places/pages/UserPlaces.css";
 
-const deactivatedItems = () => {
+const DeactivatedItems = () => {
   const [loadedPlaces, setLoadedPlaces] = useState([]);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [filteredData, setFilteredData] = useState([]);
@@ -114,7 +112,7 @@ const deactivatedItems = () => {
                   items={filteredData}
                   userId={userId}
                   onDeletePlace={placeDeletedHandler}
-                  deactState={false}
+                  fromDeactivated={true}
 
                 />
               </div>
@@ -126,4 +124,4 @@ const deactivatedItems = () => {
   );
 };
 
-export default deactivatedItems;
+export default DeactivatedItems;

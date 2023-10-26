@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt"); //pass encryption
 const jwt = require("jsonwebtoken"); //token
+const io = require("socket.io")(); // Import the Socket.IO instance
 
 const HttpError = require("../models/http-error");
 const User = require("../models/user");
@@ -153,11 +154,9 @@ const createCategory = async (req, res, next) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
-
   const { name, description } = req.body;
 
   const capitalizedCategoryName = capitalizeFirstLetter(name);
-
 
   const createdCategory = new Category({
     name: capitalizedCategoryName,
@@ -282,6 +281,103 @@ const updateNormalUser = async (req, res, next) => {
   res.status(200).json({ user: user.toObject({ getters: true }) });
 };
 
+const getAllItems = async (req, res, next) => {
+  let places;
+
+  try {
+    // Populate the 'category' field with the actual category data
+    places = await Place.find({
+      dateTime: { $gte: new Date() },
+      activationState: { $eq: true },
+    })
+      .populate("category")
+      .sort({ title: 1 })
+      .exec();
+  } catch (error) {
+    console.log(error);
+    console.log("fail");
+    const err = new HttpError("Fetching places failed.", 404);
+    return next(err);
+  }
+  try {
+    io.emit("notification", { message: "New item added!" });
+  } catch (error) {
+    console.log(error);
+  }
+  // try {
+  //     io.emit("notification", { message: "New items are available!" });
+
+  // } catch (error) {
+  //   console.log(error);
+  // }
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+  res.json({
+    places: places.map((place) => ({
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      creator: place.creator, // Include the entire user object if needed
+      activationState: place.activationState,
+    })),
+  });
+};
+
+const getAllExpiredItems = async (req, res, next) => {
+  let places;
+
+  try {
+    // Populate the 'category' field with the actual category data
+    places = await Place.find({
+      dateTime: { $lt: new Date() },
+      //activationState: { $eq: true },//enkro an xriazete afu en expired
+    })
+      .populate("category")
+      .sort({ title: 1 })
+      .exec();
+  } catch (error) {
+    console.log(error);
+    console.log("fail");
+    const err = new HttpError("Fetching places failed.", 404);
+    return next(err);
+  }
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+  console.log(places);
+
+  res.json({
+    places: places.map((place) => ({
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      creator: place.creator, // Include the entire user object if needed
+      activationState: place.activationState,
+    })),
+  });
+};
+
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;
 exports.login = login;
@@ -289,3 +385,5 @@ exports.createCategory = createCategory;
 exports.getCategories = getCategories;
 exports.getCategoryById = getCategoryById;
 exports.updateNormalUser = updateNormalUser;
+exports.getAllItems = getAllItems;
+exports.getAllExpiredItems = getAllExpiredItems;

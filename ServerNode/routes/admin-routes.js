@@ -6,9 +6,15 @@ const adminOperationsController = require("../controllers/admin_operations-contr
 const ImageUpload = require("../middleware/file-upload");
 const router = express.Router();
 
+router.get("/allitems/items", adminOperationsController.getAllItems);
+router.get("/allitems/expired", adminOperationsController.getAllExpiredItems);
+
+
+
 router.post("/login", adminOperationsController.login);
 
 router.get("/categories", adminOperationsController.getCategories);
+
 
 router.get(
   "/getCategory/:categoryId",

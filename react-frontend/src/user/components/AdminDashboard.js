@@ -35,7 +35,7 @@ const AdminDashboard = () => {
             Users
           </Link>
           <Link
-            to="/market"
+            to="/allitems/items"
             className="dashboard-button"
             onMouseEnter={() => setHoveredButton(itemDescr)}
             onMouseLeave={() => setHoveredButton(null)}
@@ -49,6 +49,14 @@ const AdminDashboard = () => {
             onMouseLeave={() => setHoveredButton(null)}
           >
             Deactivated Items
+          </Link>
+          <Link
+            to="/allitems/expired"
+            className="dashboard-button"
+            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+          Expired Items
           </Link>
           {/* Add similar event handlers for other buttons */}
         </div>

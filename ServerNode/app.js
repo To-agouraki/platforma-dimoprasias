@@ -2,6 +2,9 @@ const express = require("express");
 const bodyParses = require("body-parser");
 const mongoose = require("mongoose");
 
+const http = require("http"); // Import http module
+const socketIo = require("socket.io"); // Import Socket.IO module
+
 const path = require("path");
 const fs = require("fs"); //file system module
 
@@ -11,6 +14,8 @@ const adminRoutes = require("./routes/admin-routes");
 const HttpError = require("./models/http-error");
 
 const app = express();
+const server = http.createServer(app); // Create an HTTP server instance
+const io = socketIo(server); // Initialize Socket.IO with the HTTP server
 
 app.use(bodyParses.json());
 
@@ -54,6 +59,17 @@ app.use((error, req, res, next) => {
 mongoose
   .connect("mongodb+srv://testuser:mongopass@cluster0.vbt4uxc.mongodb.net/mern")
   .then(() => {
+    io.on("connection", (socket) => {
+      console.log("Client connected");
+
+      // Example: Emit a notification to the connected client
+      socket.emit("notification", { message: "Welcome to the server!" });
+
+      socket.on("disconnect", () => {
+        console.log("Client disconnected");
+      });
+    });
+
     app.listen(5000);
   })
   .catch((err) => {

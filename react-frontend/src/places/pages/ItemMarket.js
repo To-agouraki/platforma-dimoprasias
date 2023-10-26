@@ -123,6 +123,7 @@ const ItemMarket = () => {
                   userId={userId}
                   fromMarket={true}
                   onDeletePlace={placeDeletedHandler}
+                  deactState={true}
                 />
               </div>
             )}

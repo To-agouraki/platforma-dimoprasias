@@ -20,6 +20,8 @@ import UserMainPage from "./user/pages/UserMainPage";
 import NoUserDashboard from "./user/components/NoUserDashboard";
 import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
 import DeactivatedItems from "./adminOnly/pages/DeactivateItems";
+import AllItems from "./adminOnly/pages/AllItems";
+import ExpiredItems from "./adminOnly/pages/ExpiredItems";
 
 let logoutTimer;
 
@@ -106,7 +108,8 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/places/new" exact element={<NewPlace />} />
         <Route path="/places/:placeId" element={<UpdatePlace />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
-        <Route path="/market" element={<ItemMarket />}></Route>
+        <Route path="/allitems/items" element={<AllItems />}></Route>
+        <Route path="/allitems/expired" element={<ExpiredItems />}></Route>
         <Route path="/categories/new" element={<NewCategory />}></Route>
         <Route path="/categories/:categoryId" element={<UpdateCategory />}></Route>
         <Route path="/categories" element={<CategoriesPage />}></Route>

@@ -28,26 +28,35 @@ const PlaceItem = (props) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
 
-
   const toggleView = () => {
     setIsCollapsed((view) => !view);
   };
 
-  if (props.highestBidder) {
-    useEffect(() => {
-      const fetchPlaces = async () => {
-        try {
-          const responseData = await sendRequest(
-            `http://localhost:5000/api/users/getuser/${props.highestBidder}`
-          );
-          setHighestBidder(responseData.user.name);
-        } catch (err) {}
-        setLoading(false); // Set loading to false once data is fetched
-      };
-      fetchPlaces();
-    }, [sendRequest, props.highestBidder]);
-  }
+  useEffect(() => {
+    let isMounted = true; // Track if the component is mounted
 
+    const fetchUserData = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/users/getuser/${props.highestBidder}`
+        );
+
+        if (isMounted) {
+          setHighestBidder(responseData.user.name);
+          setLoading(false);
+        }
+      } catch (err) {
+        // Handle errors appropriately
+      }
+    };
+
+    fetchUserData();
+
+    // Cleanup function
+    return () => {
+      isMounted = false; // Component is unmounted, cancel async operations if still pending
+    };
+  }, [sendRequest, props.highestBidder]);
 
   let sentence;
 
@@ -116,18 +125,18 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = async () => {
-    setShowConfirmModal(false);
-    try {
-      await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
-        "DELETE",
-        null,
-        { Authorization: "Bearer " + auth.token }
-      );
-      props.onDelete(props.id);
-    } catch (err) {}
-  };
+  // const confirmDeleteHandler = async () => {
+  //   setShowConfirmModal(false);
+  //   try {
+  //     await sendRequest(
+  //       `http://localhost:5000/api/places/${props.id}`,
+  //       "DELETE",
+  //       null,
+  //       { Authorization: "Bearer " + auth.token }
+  //     );
+  //     props.onDelete(props.id);
+  //   } catch (err) {}
+  // };
 
   const confirmDeactivateHandler = async () => {
     setShowConfirmModal(false);
@@ -138,7 +147,7 @@ const PlaceItem = (props) => {
         null,
         { Authorization: "Bearer " + auth.token }
       );
-      //props.onDelete(props.id);
+      props.onDelete(props.id);
     } catch (err) {}
   };
 
@@ -162,6 +171,8 @@ const PlaceItem = (props) => {
       setDisButton(false);
     }
   }, [counterExpire]);
+
+  console.log(props.activationState);
 
   return (
     <React.Fragment>
@@ -190,9 +201,9 @@ const PlaceItem = (props) => {
             <Button inverse onClick={cancelDeleteHandler}>
               Cancel
             </Button>
-            <Button danger onClick={confirmDeleteHandler}>
+            {/* <Button danger onClick={confirmDeleteHandler}>
               Delete
-            </Button>
+            </Button> */}
             {props.activationState ? (
               <Button danger onClick={confirmDeactivateHandler}>
                 Deactivate
@@ -273,24 +284,23 @@ const PlaceItem = (props) => {
               {!counterExpire && auth.isAdmin && (
                 <Button to={`/places/${props.id}`}>Edit</Button>
               )}
-              {counterExpire && auth.isAdmin && (
-                <Button to={`/places/${props.id}`} disabled>
-                  Edit
-                </Button>
-              )}
 
-              {auth.userId === props.creatorId && ( //for item creator
+              {/* {auth.userId === props.creatorId && ( //for item creator
                 <Button danger onClick={showDeleteWarningHandler}>
                   Delete
                 </Button>
-              )}
-              {auth.isAdmin && props.activationState ? (
-                <Button danger onClick={showDeleteWarningHandler}>
-                  Delete
-                </Button>
-              ) : (
-                <Button inverse onClick={showDeleteWarningHandler}>Activate</Button>
-              )}
+              )} */}
+              {auth.isLoggedIn && props.activationState !== undefined ? (
+                props.activationState ? (
+                  <Button danger onClick={showDeleteWarningHandler}>
+                    Deactivate
+                  </Button>
+                ) : (
+                  <Button inverse onClick={showDeleteWarningHandler}>
+                    Activate
+                  </Button>
+                )
+              ) : null}
 
               {props.amount && <h4>The amount you have bid is {bidAmount}</h4>}
               {<h3>Highest Bid: {highestbidAmount}</h3>}

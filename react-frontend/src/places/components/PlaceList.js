@@ -15,7 +15,6 @@ const PlaceList = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [combinedData, setCombinedData] = useState([]);
 
-  console.log(props.deactState);
   useEffect(() => {
     // Update combinedData with isCollapsed property and amount if biddingamounts exist
     const updatedCombinedData = props.items.map((place, index) => ({
@@ -63,6 +62,27 @@ const PlaceList = (props) => {
       </div>
     );
   }
+  if (props.fromDeactivated && props.items.length === 0) {
+    return (
+      <div className="place-list center">
+        <Card>
+          <h2>No Deactivated Items found.</h2>
+        </Card>
+      </div>
+    );
+  }
+
+  if (props.fromExpired && props.items.length === 0) {
+    return (
+      <div className="place-list center">
+        <Card>
+          <h2>No Expired Items</h2>
+        </Card>
+      </div>
+    );
+  }
+
+
 
   if (props.fromMarket && props.items.length === 0) {
     return (
@@ -110,7 +130,7 @@ const PlaceList = (props) => {
     return (
       <div className="place-list center">
         <Card>
-          <h2>User has not added any item yet.</h2>
+          <h2>User has not added any item yet .</h2>
         </Card>
       </div>
     );
@@ -130,7 +150,7 @@ const PlaceList = (props) => {
         <button onClick={toggleNormalView}>Normal View</button>
       </div>
 
-      <ChangePageButton state={props.deactState} ></ChangePageButton>
+      {auth.isLoggedIn && !props.fromExpired &&<ChangePageButton state={props.deactState} ></ChangePageButton>}
 
       <div className="items-per-page">
         <label htmlFor="itemsPerPage">Items per page:</label>

@@ -39,7 +39,7 @@ const NavLinks = (props) => {
 
       {auth.isAdmin && (
         <li>
-          <NavLink to={`/market`}>ALL ITEMS</NavLink>
+          <NavLink to={`/allitems/items`}>ALL ITEMS</NavLink>
         </li>
       )}
 

@@ -28,7 +28,6 @@ const { error } = require("console");
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
-console.log('??????');
   let place;
   try {
     // Find the place by ID without populating the category field
@@ -59,7 +58,7 @@ console.log('??????');
       highestBidder: place.highestBidder,
       bids: place.bids,
       creator: place.creator,
-      activationState : place.activationState,
+      activationState: place.activationState,
     },
   });
 };
@@ -73,7 +72,12 @@ const getPlacesByUserId = async (req, res, next) => {
 
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find({ creator: userId }).populate("category").exec();
+    places = await Place.find({
+      creator: userId,
+      activationState: { $eq: true },
+    })
+      .populate("category")
+      .exec();
   } catch (error) {
     const err = new HttpError("Fetch places failed.", 404);
     return next(err);
@@ -97,8 +101,7 @@ const getPlacesByUserId = async (req, res, next) => {
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
-      activationState : place.activationState
-
+      activationState: place.activationState,
     })),
   });
 };
@@ -305,55 +308,68 @@ const deletePlace = async (req, res, next) => {
 };
 /////////////////////////
 
-const deactivatePlace = async(req, res, next)=>{
+const deactivatePlace = async (req, res, next) => {
   const placeId = req.params.pid;
 
-    let place;
-    try {
-      place = await Place.findById(placeId);
-    } catch (error) {
-      const err = new HttpError("Something went wrong, could not update", 500);
-      return next(err);
-    }
-  
-    const adminUser = await AdminUser.findById(req.userData.userId);
-  
-    if (!place) {
-      const error = new HttpError("Could not find this ID", 404);
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (error) {
+    const err = new HttpError("Something went wrong, could not update", 500);
+    return next(err);
+  }
+
+  let expiredplace;
+  try {
+    expiredplace = await Place.find({
+      _id: placeId,
+      dateTime: { $lt: new Date() },
+    });
+  } catch (error) {
+    const err = new HttpError("Something went wrong, could not update", 500);
+    return next(err);
+  }
+
+  if (expiredplace) {
+    const error = new HttpError("It is expired, do not deactivate for now.", 404);
+    return next(error);
+  }
+  const adminUser = await AdminUser.findById(req.userData.userId);
+
+  if (!place) {
+    const error = new HttpError("Could not find this ID", 404);
+    return next(error);
+  }
+
+  if (place.creator != req.userData.userId) {
+    if (req.userData.userId != adminUser.id) {
+      const error = new HttpError("Not authorized!.", 401);
       return next(error);
     }
-  
-    if (place.creator != req.userData.userId) {
-      if (req.userData.userId != adminUser.id) {
-        const error = new HttpError("Not authorized!.", 401);
-        return next(error);
-      }
-    }
-  
-    try {
-      place.activationState = !place.activationState;
-    } catch (error) {
-      console.log(error);
-    }
+  }
 
-  
-    try {
-      await place.save();
-      res.status(200).json({ place: place.toObject({ getters: true }) });
-    } catch (error) {
-      const err = new HttpError("Something went wrong, could not update", 500);
-      return next(err);
-    }
-  
+  try {
+    place.activationState = !place.activationState;
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
+    await place.save();
+    res.status(200).json({ place: place.toObject({ getters: true }) });
+  } catch (error) {
+    const err = new HttpError("Something went wrong, could not update", 500);
+    return next(err);
+  }
 };
-
-
 
 const bidItem = async (req, res, next) => {
   const { amount, itemId, userId } = req.body;
 
   if (amount <= 0) {
-    return next(new HttpError("Please place a bid with a positive amount", 400));
+    return next(
+      new HttpError("Please place a bid with a positive amount", 400)
+    );
   }
 
   try {
@@ -362,7 +378,9 @@ const bidItem = async (req, res, next) => {
       .sort({ amount: -1 })
       .exec();
 
-    const currentHighestBid = existingHighestBid ? existingHighestBid.amount : 0;
+    const currentHighestBid = existingHighestBid
+      ? existingHighestBid.amount
+      : 0;
 
     if (amount > currentHighestBid) {
       // If the new bid is higher than the current highest bid, create/update the bid
@@ -376,9 +394,14 @@ const bidItem = async (req, res, next) => {
       await User.findByIdAndUpdate(userId, { $addToSet: { bids: bid._id } });
 
       // Update the place's highest bid and bidder fields
-      await Place.findByIdAndUpdate(itemId, { highestBid: amount, highestBidder: userId });
+      await Place.findByIdAndUpdate(itemId, {
+        highestBid: amount,
+        highestBidder: userId,
+      });
 
-      return res.status(201).json({ message: "Bid created/updated successfully", bid });
+      return res
+        .status(201)
+        .json({ message: "Bid created/updated successfully", bid });
     } else {
       return res.status(400).json({
         message: "Your bid amount must be higher than the current highest bid.",
@@ -386,10 +409,11 @@ const bidItem = async (req, res, next) => {
     }
   } catch (error) {
     console.error(error);
-    return next(new HttpError("Creating/updating bid failed, please try again", 500));
+    return next(
+      new HttpError("Creating/updating bid failed, please try again", 500)
+    );
   }
 };
-
 
 const getPlacesMarket = async (req, res, next) => {
   const userId = req.params.uid;
@@ -400,6 +424,7 @@ const getPlacesMarket = async (req, res, next) => {
     places = await Place.find({
       dateTime: { $gte: new Date() },
       creator: { $ne: userId },
+      activationState: { $eq: true },
     })
       .populate("category")
       .sort({ title: 1 })
@@ -427,14 +452,14 @@ const getPlacesMarket = async (req, res, next) => {
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
-      activationState : place.activationState
+      activationState: place.activationState,
     })),
   });
 };
 
 const getDeactivatedItemsAdmin = async (req, res, next) => {
   let places;
-console.log('1');
+  console.log("1");
   try {
     // Populate the 'category' field with the actual category data
     places = await Place.find({
@@ -467,18 +492,20 @@ console.log('1');
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
-      activationState : place.activationState
+      activationState: place.activationState,
     })),
   });
 };
-
 
 const getAllItemsMarket = async (req, res, next) => {
   let places;
 
   try {
     // Populate the 'category' field with the actual category data
-    places = await Place.find({ dateTime: { $gte: new Date() } })
+    places = await Place.find({
+      dateTime: { $gte: new Date() },
+      activationState: { $eq: true },
+    })
       .populate("category")
       .sort({ title: 1 })
       .exec();
@@ -507,8 +534,7 @@ const getAllItemsMarket = async (req, res, next) => {
       highestBidder: place.highestBidder, // Include the entire user object if needed
       bids: place.bids, // Include the array of bid IDs
       creator: place.creator, // Include the entire user object if needed
-      activationState : place.activationState
-
+      activationState: place.activationState,
     })),
   });
 };
