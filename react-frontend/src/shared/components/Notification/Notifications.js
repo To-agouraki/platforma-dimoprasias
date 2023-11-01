@@ -10,9 +10,9 @@ import Backdrop from "../UIElements/Backdrop";
 import "./MainNavigation.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import NotificationsModal from "../Notification/NotificationsModal";
+import Modal from "../UIElements/Modal";
 
-const MainNavigation = (props) => {
+const Notifications = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
 
@@ -45,15 +45,6 @@ const MainNavigation = (props) => {
   }
 
 
-  
-
-  const openDrawerHandler = () => {
-    setDrawerIsOpen(true);
-  };
-
-  const closeDrawerHandler = () => {
-    setDrawerIsOpen(false);
-  };
 
   const cancelDeleteHandler = () => {
     setShowConfirmModal(false);
@@ -65,10 +56,10 @@ const MainNavigation = (props) => {
 
   return (
     <React.Fragment>
-      <NotificationsModal
+      <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
-        header="Notification"
+        header="are you sure?"
         footerClass="place-item__modal-actions"
         footer={
           <React.Fragment>
@@ -83,37 +74,12 @@ const MainNavigation = (props) => {
         }
       >
         <p>
-          {message}  .
+          Do you want to proceed and delete this place? Please note that it
+          can't be undone thereafter{message}  .
         </p>
-      </NotificationsModal>
-
-      {drawerIsOpen && <Backdrop onClick={closeDrawerHandler} />}
-      <SideDrawer show={drawerIsOpen} onClick={closeDrawerHandler}>
-        <nav className="main-navigation__drawer-nav">
-          <NavLinks />
-        </nav>
-      </SideDrawer>
-      <MainHeader>
-        <button
-          className="main-navigation__menu-btn"
-          onClick={openDrawerHandler}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-        <h1 className="main-navigation__title">
-          <Link to="/">Auction Platform</Link>
-        </h1>
-        <Button onClick={showNotificationModal}>
-          <FontAwesomeIcon icon={faBell} size="xl" />{" "}
-        </Button>
-        <nav className="main-navigation__header-nav">
-          <NavLinks />
-        </nav>
-      </MainHeader>
+      </Modal>
     </React.Fragment>
   );
 };
 
-export default MainNavigation;
+export default Notifications;

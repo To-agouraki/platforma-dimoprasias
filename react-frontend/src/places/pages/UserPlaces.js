@@ -18,7 +18,6 @@ const UserPlaces = () => {
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const deactState = true;
 
   useEffect(() => {
     const fetchCategories = async () => {

@@ -26,36 +26,35 @@ const PlaceItem = (props) => {
   const [counterExpire, setCounterExpire] = useState(false);
   const [highestBidder, setHighestBidder] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [loading, setLoading] = useState(true); // Add loading state
 
   const toggleView = () => {
     setIsCollapsed((view) => !view);
   };
 
   useEffect(() => {
-    let isMounted = true; // Track if the component is mounted
+    // Check if highestBidder prop exists and is truthy
+    if (props.highestBidder) {
+      let isMounted = true; // Track if the component is mounted
 
-    const fetchUserData = async () => {
-      try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/users/getuser/${props.highestBidder}`
-        );
+      const fetchUserData = async () => {
+        try {
+          const responseData = await sendRequest(
+            `http://localhost:5000/api/users/getuser/${props.highestBidder}`
+          );
 
-        if (isMounted) {
-          setHighestBidder(responseData.user.name);
-          setLoading(false);
+          if (isMounted) {
+            setHighestBidder(responseData.user.name);
+          }
+        } catch (err) {
+          // Handle errors appropriately
         }
-      } catch (err) {
-        // Handle errors appropriately
-      }
-    };
-
-    fetchUserData();
-
-    // Cleanup function
-    return () => {
-      isMounted = false; // Component is unmounted, cancel async operations if still pending
-    };
+      };
+      fetchUserData();
+      // Cleanup function
+      return () => {
+        isMounted = false; // Component is unmounted, cancel async operations if still pending
+      };
+    }
   }, [sendRequest, props.highestBidder]);
 
   let sentence;
@@ -159,18 +158,6 @@ const PlaceItem = (props) => {
     // Assuming you have a function called filterItemsByCategory in your parent component:
     // filterItemsByCategory(category);
   };
-
-  const [disButton, setDisButton] = useState(counterExpire);
-
-  useEffect(() => {
-    if (counterExpire) {
-      // Timer has expired, disable the "Edit" buttons
-      setDisButton(true);
-    } else {
-      // Timer has not expired, enable the "Edit" buttons
-      setDisButton(false);
-    }
-  }, [counterExpire]);
 
   console.log(props.activationState);
 

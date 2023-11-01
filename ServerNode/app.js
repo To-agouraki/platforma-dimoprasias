@@ -78,7 +78,6 @@ app.use((error, req, res, next) => {
 mongoose
   .connect("mongodb+srv://testuser:mongopass@cluster0.vbt4uxc.mongodb.net/mern")
   .then(() => {
-
     try {
       io.on("connection", (socket) => {
         console.log("Client connected");
