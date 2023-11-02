@@ -1,7 +1,7 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect, useContext,useMemo } from "react";
 import { Link } from "react-router-dom";
-import io from 'socket.io-client';
-
+import io from "socket.io-client";
+import { AuthContext } from "../context/auth-context";
 import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
 import SideDrawer from "./SideDrawer";
@@ -16,20 +16,28 @@ const MainNavigation = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
 
-
-
-
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isConnected, setIsConnected] = useState(false);
+  const auth = useContext(AuthContext);
+  const userId = auth.userId;
+
+ 
+
+  // Memoize the userSockets object to prevent it from changing on every render
+  const userSockets = useMemo(() => {
+    return {
+      [userId]: null, // Initialize the socket ID to null
+    };
+  }, [userId]);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
-
-    socket.on('connect', () => {
+    const socket = io("http://localhost:5000");
+    userSockets[userId] = socket.id;
+    socket.on("connect", () => {
       setIsConnected(true); // Set connection status to true when connected
     });
 
-    socket.on('notification', (data) => {
+    socket.on("notification", (data) => {
       setMessage(data.message);
     });
 
@@ -38,14 +46,11 @@ const MainNavigation = (props) => {
     return () => {
       socket.disconnect();
     };
-  }, [message]); // Empty dependency array ensures the effect runs once after the initial render
+  }, [message,userSockets,userId]); // Empty dependency array ensures the effect runs once after the initial render
 
   if (!isConnected) {
     return <div>Connecting to the server...</div>;
   }
-
-
-  
 
   const openDrawerHandler = () => {
     setDrawerIsOpen(true);
@@ -78,13 +83,10 @@ const MainNavigation = (props) => {
             {/* <Button danger onClick={confirmDeleteHandler}>
               Delete
             </Button> */}
-            
           </React.Fragment>
         }
       >
-        <p>
-          {message}  .
-        </p>
+        <p>{message} .</p>
       </NotificationsModal>
 
       {drawerIsOpen && <Backdrop onClick={closeDrawerHandler} />}

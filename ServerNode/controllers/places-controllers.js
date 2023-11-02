@@ -3,6 +3,8 @@ const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
 const fs = require("fs");
+const {io} = require('../app');
+console.log(io); // Check the output in the console
 
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
@@ -10,6 +12,7 @@ const AdminUser = require("../models/admin");
 const User = require("../models/user");
 const BidJunctionTable = require("../models/bidding");
 const Category = require("../models/category");
+const Notification = require("../models/notification");
 const { error } = require("console");
 
 // let DUMMY_PLACES = [
@@ -331,7 +334,10 @@ const deactivatePlace = async (req, res, next) => {
   }
 
   if (expiredplace) {
-    const error = new HttpError("It is expired, do not deactivate for now.", 404);
+    const error = new HttpError(
+      "It is expired, do not deactivate for now.",
+      404
+    );
     return next(error);
   }
   const adminUser = await AdminUser.findById(req.userData.userId);
@@ -398,6 +404,29 @@ const bidItem = async (req, res, next) => {
         highestBid: amount,
         highestBidder: userId,
       });
+
+      // Check if there was a previous highest bidder
+      if (existingHighestBid && existingHighestBid.bidder !== userId) {
+        const replacedUserId = existingHighestBid.bidder;
+        const itemID = existingHighestBid.place;
+        const newBidAmount = amount;
+
+        // Create a new notification
+        const notification = new Notification({
+          userId: replacedUserId, // User ID of the replaced highest bidder
+          message: `You have been replaced as the highest bidder for item ${itemID}.`,
+          data: { itemId: itemID, newBidAmount: newBidAmount },
+        });
+
+        // Save the notification to the database
+        await notification.save();
+
+        // Emit a notification event to the replaced user with item information
+        io.to(replacedUserId).emit("notification", {
+          message: `You have been replaced as the highest bidder for item ${itemID}.`,
+          notificationId: notification._id, // Optionally, send the notification ID to the client for further reference
+        });
+      }
 
       return res
         .status(201)
