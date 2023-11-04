@@ -3,8 +3,8 @@ const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
 const fs = require("fs");
-const {io} = require('../app');
-console.log(io); // Check the output in the console
+const { getIo } = require("../middleware/socketio");
+const io = getIo();
 
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
@@ -420,6 +420,8 @@ const bidItem = async (req, res, next) => {
 
         // Save the notification to the database
         await notification.save();
+        console.log(replacedUserId);
+        
 
         // Emit a notification event to the replaced user with item information
         io.to(replacedUserId).emit("notification", {

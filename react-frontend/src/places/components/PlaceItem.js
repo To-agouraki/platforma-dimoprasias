@@ -277,7 +277,7 @@ const PlaceItem = (props) => {
                   Delete
                 </Button>
               )} */}
-              {auth.isLoggedIn && props.activationState !== undefined ? (
+              {auth.isLoggedIn && props.activationState !== undefined && (auth.isAdmin || auth.userId === props.creatorId ) ? (
                 props.activationState ? (
                   <Button danger onClick={showDeleteWarningHandler}>
                     Deactivate

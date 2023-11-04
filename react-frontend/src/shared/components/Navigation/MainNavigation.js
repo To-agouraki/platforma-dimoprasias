@@ -30,6 +30,7 @@ const MainNavigation = (props) => {
     };
   }, [userId]);
 
+  console.log(userId);
   useEffect(() => {
     const socket = io("http://localhost:5000");
     userSockets[userId] = socket.id;

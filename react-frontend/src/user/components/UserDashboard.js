@@ -18,7 +18,6 @@ const UserDashboard = () => {
     const profileDescr ="With this button you can see your profie and change you profile picture to something of your liking other the standar the system gives you.";
     const newItemDescr ="With thus button you can create an item of your own and the other users of the app can bid to win it after the tune you set runs out";
 
-  console.log(hoveredButton);
   return (
     <div className="admin-dashboard">
       <h1 className="dashboard-title">User Dashboard</h1>

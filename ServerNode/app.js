@@ -6,6 +6,16 @@ const socketIo = require("socket.io");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const { initIo } = require("./middleware/socketio");
+const { getIo } = require("./middleware/socketio");
+
+// ... (your other imports)
+const app = express();
+const server = http.createServer(app);
+initIo(server); 
+const io = getIo();
+
+
 
 const placesRoutes = require("./routes/places-routes");
 const userRoutes = require("./routes/users-routes");
@@ -18,13 +28,9 @@ const corsOptions = {
   credentials: true,
 };
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "*",
-  },
-});
+
+
+
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
@@ -51,16 +57,9 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unknown error occurred" });
 });
 
-io.on("connection", (socket) => {
-  console.log("Client connected");
 
-  // Example: Emit a notification to the connected client
-  socket.emit("notification", { message: "Welcome to the server!" });
 
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
+
 
 mongoose
   .connect("mongodb+srv://testuser:mongopass@cluster0.vbt4uxc.mongodb.net/mern")
