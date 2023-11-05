@@ -15,6 +15,9 @@ function initIo(server) {
     console.log(`User ${userId} connected`);
     // Handle socket events here
 
+    socket.join(userId);
+
+
     socket.on("disconnect", () => {
       console.log(`User ${userId} disconnected`);
     });
