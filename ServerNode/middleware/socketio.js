@@ -11,11 +11,12 @@ function initIo(server) {
 
   io.on("connection", (socket) => {
     console.log("Client connected");
-
+    const userId = socket.handshake.query.userId;
+    console.log(`User ${userId} connected`);
     // Handle socket events here
 
     socket.on("disconnect", () => {
-      console.log("Client disconnected");
+      console.log(`User ${userId} disconnected`);
     });
   });
 }

@@ -20,6 +20,7 @@ const MainNavigation = (props) => {
   const [isConnected, setIsConnected] = useState(false);
   const auth = useContext(AuthContext);
   const userId = auth.userId;
+  console.log(userId);
 
  
 
@@ -32,8 +33,12 @@ const MainNavigation = (props) => {
 
   console.log(userId);
   useEffect(() => {
-    const socket = io("http://localhost:5000");
-    userSockets[userId] = socket.id;
+    const socket = io("http://localhost:5000", {
+      query: {
+        userId: userId,
+      },
+    });
+        socket.emit("userConnected", { userId });
     socket.on("connect", () => {
       setIsConnected(true); // Set connection status to true when connected
     });
