@@ -2,6 +2,8 @@ const socketIo = require("socket.io");
 
 let io;
 
+const activeSockets = {};
+
 function initIo(server) {
   io = socketIo(server, {
     cors: {
@@ -9,19 +11,40 @@ function initIo(server) {
     },
   });
 
+  let useridd;
+
   io.on("connection", (socket) => {
-    console.log("Client connected");
-    const userId = socket.handshake.query.userId;
-    console.log(`User ${userId} connected`);
-    // Handle socket events here
+    socket.on("userConnected", (data) => {
+      const userId = data.userId;
+      useridd = data.userId;
+      activeSockets[userId] = socket;
+     // io.to(data.userId).emit("notification", { message: `Welcome to the platform!${data.userId}` });
+      console.log(`User ${userId} connected`);
+    });
 
-    socket.join(userId);
+   // socket.join(useridd);
 
-
+    
     socket.on("disconnect", () => {
-      console.log(`User ${userId} disconnected`);
+      // Remove the disconnected socket from activeSockets
+      const userId = getUserIdBySocket(socket);
+      if (userId) {
+        delete activeSockets[userId];
+        console.log(`User ${userId} disconnected`);
+      }
     });
   });
+}
+
+function getUserIdBySocket(socket) {
+  // Find user ID by socket from activeSockets
+  const entries = Object.entries(activeSockets);
+  for (const [userId, activeSocket] of entries) {
+    if (activeSocket === socket) {
+      return userId;
+    }
+  }
+  return null;
 }
 
 function getIo() {
@@ -34,4 +57,5 @@ function getIo() {
 module.exports = {
   initIo,
   getIo,
+  activeSockets,
 };

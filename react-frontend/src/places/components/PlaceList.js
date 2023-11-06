@@ -150,7 +150,7 @@ const PlaceList = (props) => {
         <button onClick={toggleNormalView}>Normal View</button>
       </div>
 
-      {auth.isLoggedIn && !props.fromExpired &&<ChangePageButton state={props.deactState} ></ChangePageButton>}
+      {!props.fromMarket && !props.frombid && auth.isLoggedIn && !props.fromExpired &&<ChangePageButton state={props.deactState} ></ChangePageButton>}
 
       <div className="items-per-page">
         <label htmlFor="itemsPerPage">Items per page:</label>
@@ -182,6 +182,7 @@ const PlaceList = (props) => {
               onDelete={props.onDeletePlace}
               frombid={props.frombid}
               amount={item.amount}
+              fromMarket={props.fromMarket}
               highestBid={item.highestBid}
               highestBidder={item.highestBidder}
               activationState={item.activationState}
@@ -201,6 +202,7 @@ const PlaceList = (props) => {
               onDelete={props.onDeletePlace}
               frombid={props.frombid}
               amount={item.amount}
+              fromMarket={props.fromMarket}
               highestBid={item.highestBid}
               highestBidder={item.highestBidder}
               activationState={item.activationState}

@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const fs = require("fs");
 const { getIo } = require("../middleware/socketio");
-const io = getIo();
+const { activeSockets } = require("../middleware/socketio");
 
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
@@ -420,14 +420,22 @@ const bidItem = async (req, res, next) => {
 
         // Save the notification to the database
         await notification.save();
+
+        const io = getIo();
+        const socket = activeSockets[replacedUserId];
         console.log(replacedUserId);
         
-
-        // Emit a notification event to the replaced user with item information
-        io.to(replacedUserId).emit("notification", {
-          message: `You have been replaced as the highest bidder for item ${itemID}.`,
-          notificationId: notification._id, // Optionally, send the notification ID to the client for further reference
-        });
+        if (socket) {
+          // Join the room and emit the notification after joining
+          socket.join(replacedUserId);
+            io.to(replacedUserId).emit("notification", {
+              message: `You have been replaced as the highest bidder for item ${itemID},${new Date().toISOString()}.`,
+              notificationId: notification._id,
+            });
+          
+        } else {
+          console.log(`Socket for User ${replacedUserId} not found`);
+        }
       }
 
       return res

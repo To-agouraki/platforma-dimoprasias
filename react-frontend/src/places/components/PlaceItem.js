@@ -325,6 +325,7 @@ const PlaceItem = (props) => {
           category={props.category}
           creatorId={props.creatorId}
           dateTime={props.dateTime}
+          fromMarket={props.fromMarket}
           onDelete={props.onDelete}
           frombid={props.frombid}
           amount={props.amount}

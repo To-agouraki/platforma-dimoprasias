@@ -56,6 +56,7 @@ const TabbedItem = (props) => {
         dateTime={props.dateTime}
         onDelete={props.onDelete}
         frombid={props.frombid}
+        fromMarket={props.fromMarket}
         amount={props.amount}
         highestBid={props.highestBid}
         highestBidder={props.highestBidder}

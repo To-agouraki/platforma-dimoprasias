@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext,useMemo } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import io from "socket.io-client";
 import { AuthContext } from "../context/auth-context";
@@ -15,21 +15,13 @@ import NotificationsModal from "../Notification/NotificationsModal";
 const MainNavigation = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const [hasNewNotification, setHasNewNotification] = useState(false); // Add state for new notifications
 
-  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]); // Array to store messages
   const [isConnected, setIsConnected] = useState(false);
   const auth = useContext(AuthContext);
   const userId = auth.userId;
   console.log(userId);
-
- 
-
-  // Memoize the userSockets object to prevent it from changing on every render
-  const userSockets = useMemo(() => {
-    return {
-      [userId]: null, // Initialize the socket ID to null
-    };
-  }, [userId]);
 
   console.log(userId);
   useEffect(() => {
@@ -38,21 +30,25 @@ const MainNavigation = (props) => {
         userId: userId,
       },
     });
-        socket.emit("userConnected", { userId });
+
     socket.on("connect", () => {
       setIsConnected(true); // Set connection status to true when connected
+      socket.emit("userConnected", { userId: userId }); // Emit userConnected event after connection
+      console.log("id", userId);
     });
 
     socket.on("notification", (data) => {
-      setMessage(data.message);
+      setMessages((prevMessages) => [...prevMessages, data.message]);
+      setHasNewNotification(true);
     });
 
-    console.log(message);
+    console.log(messages);
     // Clean up on component unmount
     return () => {
       socket.disconnect();
     };
-  }, [message,userSockets,userId]); // Empty dependency array ensures the effect runs once after the initial render
+  }, [messages, userId]); // Remove userSockets from the dependency array, it's not needed here
+  // Empty dependency array ensures the effect runs once after the initial render
 
   if (!isConnected) {
     return <div>Connecting to the server...</div>;
@@ -72,6 +68,7 @@ const MainNavigation = (props) => {
 
   const showNotificationModal = () => {
     setShowConfirmModal(true);
+    setHasNewNotification(false);
   };
 
   return (
@@ -92,7 +89,13 @@ const MainNavigation = (props) => {
           </React.Fragment>
         }
       >
-        <p>{message} .</p>
+        <div className="message-container">
+          {messages.map((message, index) => (
+            <div key={index} className="message">
+              {message}
+            </div>
+          ))}
+        </div>
       </NotificationsModal>
 
       {drawerIsOpen && <Backdrop onClick={closeDrawerHandler} />}
@@ -113,9 +116,15 @@ const MainNavigation = (props) => {
         <h1 className="main-navigation__title">
           <Link to="/">Auction Platform</Link>
         </h1>
-        <Button onClick={showNotificationModal}>
-          <FontAwesomeIcon icon={faBell} size="xl" />{" "}
-        </Button>
+        {hasNewNotification ? (
+          <Button onClick={showNotificationModal}>
+            <FontAwesomeIcon icon={faBell} shake size="xl" />{" "}
+          </Button>
+        ) : (
+          <Button onClick={showNotificationModal}>
+            <FontAwesomeIcon icon={faBell} size="xl" />{" "}
+          </Button>
+        )}
         <nav className="main-navigation__header-nav">
           <NavLinks />
         </nav>

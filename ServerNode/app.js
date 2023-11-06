@@ -7,13 +7,11 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const { initIo } = require("./middleware/socketio");
-const { getIo } = require("./middleware/socketio");
 
 // ... (your other imports)
 const app = express();
 const server = http.createServer(app);
 initIo(server); 
-const io = getIo();
 
 
 
@@ -73,7 +71,4 @@ mongoose
     console.log(err);
   });
 
-module.exports = {
-  app,
-  io,
-};
+
