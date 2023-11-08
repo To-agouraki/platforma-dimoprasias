@@ -18,7 +18,15 @@ const ModalOverlay = (props) => {
         }
       >
         <div className={`modal__content ${props.contentClass}`}>
-          {props.children}
+          <div
+            style={{
+              maxHeight: "350px",
+              overflowY: "auto",
+              overflowX: "hidden",
+            }}
+          >
+            {props.children}
+          </div>
         </div>
         <footer className={`modal__footer ${props.footerClass}`}>
           {props.footer}

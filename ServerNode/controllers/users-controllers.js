@@ -7,6 +7,7 @@ const HttpError = require("../models/http-error");
 const User = require("../models/user");
 const Place = require("../models/place");
 const BidJunctionTable = require("../models/bidding");
+const Notification = require("../models/notification");
 
 // const DUMMY_USERS = [
 //   {
@@ -20,7 +21,9 @@ const BidJunctionTable = require("../models/bidding");
 const getUsers = async (req, res, next) => {
   let users;
   try {
-    users = await User.find({}, "-password").sort({ name: 1 }).collation({ locale: 'en', strength: 2 });
+    users = await User.find({}, "-password")
+      .sort({ name: 1 })
+      .collation({ locale: "en", strength: 2 });
   } catch (error) {
     return next(new HttpError("return users failed", 500));
   }
@@ -29,7 +32,7 @@ const getUsers = async (req, res, next) => {
 
 const getOnetUsers = async (req, res, next) => {
   const userId = req.params.uid;
-  let user;
+
   try {
     //users = await User.find(u=>u.id === userId)
     user = await User.findById(userId, "-id -_id -email");
@@ -64,10 +67,9 @@ const updateUser = async (req, res, next) => {
     return next(err);
   }
 
-
   let existingUserName;
   try {
-    existingUserName = await User.findOne({ name: name});
+    existingUserName = await User.findOne({ name: name });
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
@@ -76,7 +78,7 @@ const updateUser = async (req, res, next) => {
     return next(error);
   }
 
-  if (existingUserName  && existingUserName.id !== userId) {
+  if (existingUserName && existingUserName.id !== userId) {
     const error = new HttpError(
       "Username is already taken, please choose a differnt one.",
       422
@@ -124,7 +126,7 @@ const signup = async (req, res, next) => {
 
   let existingUserEmail;
   try {
-    existingUserEmail = await User.findOne({ email: email});
+    existingUserEmail = await User.findOne({ email: email });
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
@@ -135,7 +137,7 @@ const signup = async (req, res, next) => {
 
   let existingUserName;
   try {
-    existingUserName = await User.findOne({ name: name});
+    existingUserName = await User.findOne({ name: name });
   } catch (err) {
     const error = new HttpError(
       "Signing up failed, please try again later.",
@@ -324,6 +326,28 @@ const getBiddersItems = async (req, res, next) => {
   }
 };
 
+
+const getUnreadNotifications = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  try {
+    // Find unread notifications for the given userId
+    const unreadNotifications = await Notification.find({ userId, isread: false });
+
+    if (unreadNotifications.length === 0) {
+      return res.status(200).json({ message: 'No unread notifications for the user.' });
+    }
+
+    res.status(200).json({ notifications: unreadNotifications });
+  } catch (error) {
+    // Handle errors, e.g., database error
+    console.error('Error fetching unread notifications:', error);
+    res.status(500).json({ message: 'Failed to fetch unread notifications.' });
+  }
+};
+
+
+exports.getUnreadNotifications = getUnreadNotifications;
 exports.getUsers = getUsers;
 exports.signup = signup;
 exports.login = login;

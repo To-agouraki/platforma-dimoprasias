@@ -44,15 +44,15 @@
     }
   }
 
-  .message-container {
+  /*.message-container {
     position: fixed;
     top: 20px;
     right: 20px;
     max-width: 300px;
     z-index: 9999;
-  }
+  }*/
    /* notification */
-  .message {
+  .message-notification {
     background-color: #ffffff;
     border: 1px solid #cccccc;
     border-radius: 4px;
@@ -65,8 +65,8 @@
     transition: transform 0.3s ease-in-out;
   }
   
-  .message:hover {
-    transform: scale(1.05);
+  .message-notification:hover {
+    transform: scale(1.01);
   }
   
  

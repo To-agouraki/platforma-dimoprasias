@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { Link } from "react-router-dom";
 import io from "socket.io-client";
 import { AuthContext } from "../context/auth-context";
@@ -11,19 +11,40 @@ import "./MainNavigation.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import NotificationsModal from "../Notification/NotificationsModal";
+import { useHttpClient } from "../../hooks/http-hook";
 
 const MainNavigation = (props) => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [hasNewNotification, setHasNewNotification] = useState(false); // Add state for new notifications
 
-  const [messages, setMessages] = useState([]); // Array to store messages
+  const [messages, setMessages] = useState(() => {
+    // Load messages from localStorage on component mount
+    const storedMessages = localStorage.getItem("messages");
+    return storedMessages ? JSON.parse(storedMessages) : [];
+  });
   const [isConnected, setIsConnected] = useState(false);
   const auth = useContext(AuthContext);
   const userId = auth.userId;
-  console.log(userId);
 
-  console.log(userId);
+  useEffect(() => {
+    if (auth.isLoggedIn && !auth.isAdmin) {
+      const fetchNotifications = async () => {
+        try {
+          const responseData = await sendRequest(
+            `http://localhost:5000/api/users/getusernotifications/${userId}`
+          );
+          console.log(responseData.notifications);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchNotifications();
+    }
+  }, [sendRequest, userId, auth.isLoggedIn, auth.isAdmin]);
+  
+
   useEffect(() => {
     const socket = io("http://localhost:5000", {
       query: {
@@ -38,7 +59,12 @@ const MainNavigation = (props) => {
     });
 
     socket.on("notification", (data) => {
-      setMessages((prevMessages) => [...prevMessages, data.message]);
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages, data.message];
+        // Save new messages to localStorage
+        localStorage.setItem("messages", JSON.stringify(newMessages));
+        return newMessages;
+      });
       setHasNewNotification(true);
     });
 
@@ -48,7 +74,8 @@ const MainNavigation = (props) => {
       socket.disconnect();
     };
   }, [messages, userId]); // Remove userSockets from the dependency array, it's not needed here
-  // Empty dependency array ensures the effect runs once after the initial render
+
+  const memoizedMessages = useMemo(() => messages, [messages]);
 
   if (!isConnected) {
     return <div>Connecting to the server...</div>;
@@ -83,18 +110,19 @@ const MainNavigation = (props) => {
             <Button inverse onClick={cancelDeleteHandler}>
               Cancel
             </Button>
-            {/* <Button danger onClick={confirmDeleteHandler}>
-              Delete
-            </Button> */}
           </React.Fragment>
         }
       >
         <div className="message-container">
-          {messages.map((message, index) => (
-            <div key={index} className="message">
-              {message}
-            </div>
-          ))}
+          {memoizedMessages.length > 0 ? (
+            memoizedMessages.map((message, index) => (
+              <div key={index} className="message-notification">
+                {message}
+              </div>
+            ))
+          ) : (
+            <div>No new notifications</div>
+          )}
         </div>
       </NotificationsModal>
 
@@ -116,15 +144,18 @@ const MainNavigation = (props) => {
         <h1 className="main-navigation__title">
           <Link to="/">Auction Platform</Link>
         </h1>
-        {hasNewNotification ? (
-          <Button onClick={showNotificationModal}>
-            <FontAwesomeIcon icon={faBell} shake size="xl" />{" "}
-          </Button>
-        ) : (
-          <Button onClick={showNotificationModal}>
-            <FontAwesomeIcon icon={faBell} size="xl" />{" "}
-          </Button>
-        )}
+        {auth.isLoggedIn ? (
+          hasNewNotification ? (
+            <Button onClick={showNotificationModal}>
+              <FontAwesomeIcon icon={faBell} shake size="xl" />{" "}
+            </Button>
+          ) : (
+            <Button onClick={showNotificationModal}>
+              <FontAwesomeIcon icon={faBell} size="xl" />{" "}
+            </Button>
+          )
+        ) : null}
+
         <nav className="main-navigation__header-nav">
           <NavLinks />
         </nav>

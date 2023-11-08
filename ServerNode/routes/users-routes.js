@@ -8,6 +8,9 @@ const router = express.Router();
 
 router.get("/", usersController.getUsers);
 
+router.get("/getusernotifications/:uid", usersController.getUnreadNotifications);
+
+
 router.post(
   "/signup",
   [
