@@ -27,22 +27,38 @@ const MainNavigation = (props) => {
   const [isConnected, setIsConnected] = useState(false);
   const auth = useContext(AuthContext);
   const userId = auth.userId;
+  const memoizedAuth = useMemo(() => ({
+    isLoggedIn: auth.isLoggedIn,
+    isAdmin: auth.isAdmin,
+  }), [auth.isLoggedIn, auth.isAdmin]);
+  
+
 
   useEffect(() => {
-    if (auth.isLoggedIn && !auth.isAdmin) {
+   
       const fetchNotifications = async () => {
         try {
           const responseData = await sendRequest(
             `http://localhost:5000/api/users/getusernotifications/${userId}`
           );
-          console.log(responseData.notifications);
+  
+          // Extract relevant data from the response and format it
+          const fetchedNotifications = responseData.notifications.map((notification) => ({
+            id: notification._id,
+            message: notification.message,
+            timestamp: notification.timestamp,
+          }));
+  
+        console.log(fetchedNotifications);
+  
         } catch (error) {
           console.log(error);
         }
       };
+  
       fetchNotifications();
-    }
-  }, [sendRequest, userId, auth.isLoggedIn, auth.isAdmin]);
+    
+  },[userId]);
   
 
   useEffect(() => {
@@ -59,21 +75,37 @@ const MainNavigation = (props) => {
     });
 
     socket.on("notification", (data) => {
+      // Extract message, timestamp, and notificationId from the received data
+      const { message, timestamp, notificationId } = data;
+
+      // Update messages state with new notification from socket
       setMessages((prevMessages) => {
-        const newMessages = [...prevMessages, data.message];
-        // Save new messages to localStorage
-        localStorage.setItem("messages", JSON.stringify(newMessages));
-        return newMessages;
+        const newMessages = [
+          ...prevMessages,
+          { notificationId, message, timestamp },
+        ];
+
+        // Sort notifications by timestamp in descending order
+        const sortedMessages = newMessages.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        );
+
+        // Save sorted messages to localStorage
+        localStorage.setItem("messages", JSON.stringify(sortedMessages));
+
+        return sortedMessages;
       });
+
       setHasNewNotification(true);
     });
 
-    console.log(messages);
-    // Clean up on component unmount
-    return () => {
-      socket.disconnect();
-    };
-  }, [messages, userId]); // Remove userSockets from the dependency array, it's not needed here
+    // Load messages from localStorage on component mount
+    const storedMessages = localStorage.getItem("messages");
+    const initialMessages = storedMessages ? JSON.parse(storedMessages) : [];
+    setMessages(initialMessages);
+  }, [userId]);
+
+  // Remove userSockets from the dependency array, it's not needed here
 
   const memoizedMessages = useMemo(() => messages, [messages]);
 
@@ -117,7 +149,8 @@ const MainNavigation = (props) => {
           {memoizedMessages.length > 0 ? (
             memoizedMessages.map((message, index) => (
               <div key={index} className="message-notification">
-                {message}
+                <p>{message.message}</p>
+                <p>Date: {new Date(message.timestamp).toLocaleString()}</p>
               </div>
             ))
           ) : (
