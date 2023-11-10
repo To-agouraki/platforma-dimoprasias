@@ -64,11 +64,14 @@ const PlaceList = (props) => {
   }
   if (props.fromDeactivated && props.items.length === 0) {
     return (
+      <React.Fragment>
+      <ChangePageButton state={props.deactState}></ChangePageButton>
       <div className="place-list center">
         <Card>
-          <h2>No Deactivated Items found.</h2>
+          <h2>No deactivated item found.</h2>
         </Card>
       </div>
+    </React.Fragment>
     );
   }
 
@@ -82,8 +85,6 @@ const PlaceList = (props) => {
     );
   }
 
-
-
   if (props.fromMarket && props.items.length === 0) {
     return (
       <div className="place-list center">
@@ -96,7 +97,11 @@ const PlaceList = (props) => {
     );
   }
 
-  if (typeof props.items === "undefined" && props.userId === auth.userId) {
+  if (
+    typeof props.items === "undefined" &&
+    props.userId === auth.userId &&
+    !auth.isAdmin
+  ) {
     return (
       <div className="place-list center">
         <Card>
@@ -117,7 +122,24 @@ const PlaceList = (props) => {
     );
   }
 
-  if (props.items.length === 0 && props.userId === auth.userId) {
+  if (auth.isAdmin && props.items.length === 0) {
+    return (
+      <React.Fragment>
+        <ChangePageButton state={false}></ChangePageButton>
+        <div className="place-list center">
+          <Card>
+            <h2>No Items Found.</h2>
+          </Card>
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  if (
+    props.items.length === 0 &&
+    props.userId === auth.userId &&
+    !auth.isAdmin
+  ) {
     return (
       <div className="place-list center">
         <Card>
@@ -150,7 +172,12 @@ const PlaceList = (props) => {
         <button onClick={toggleNormalView}>Normal View</button>
       </div>
 
-      {!props.fromMarket && !props.frombid && auth.isLoggedIn && !props.fromExpired &&<ChangePageButton state={props.deactState} ></ChangePageButton>}
+      {!props.fromMarket &&
+        !props.frombid &&
+        auth.isLoggedIn &&
+        !props.fromExpired && (
+          <ChangePageButton state={props.deactState}></ChangePageButton>
+        )}
 
       <div className="items-per-page">
         <label htmlFor="itemsPerPage">Items per page:</label>

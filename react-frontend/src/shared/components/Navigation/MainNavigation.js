@@ -27,39 +27,43 @@ const MainNavigation = (props) => {
   const [isConnected, setIsConnected] = useState(false);
   const auth = useContext(AuthContext);
   const userId = auth.userId;
-  const memoizedAuth = useMemo(() => ({
-    isLoggedIn: auth.isLoggedIn,
-    isAdmin: auth.isAdmin,
-  }), [auth.isLoggedIn, auth.isAdmin]);
-  
-
 
   useEffect(() => {
-   
+    if (auth.isLoggedIn) {
       const fetchNotifications = async () => {
         try {
           const responseData = await sendRequest(
             `http://localhost:5000/api/users/getusernotifications/${userId}`
           );
-  
+
           // Extract relevant data from the response and format it
-          const fetchedNotifications = responseData.notifications.map((notification) => ({
-            id: notification._id,
-            message: notification.message,
-            timestamp: notification.timestamp,
-          }));
-  
-        console.log(fetchedNotifications);
-  
+          const fetchedNotifications = responseData.notifications.map(
+            (notification) => ({
+              notificationId: notification._id,
+              message: notification.message,
+              timestamp: notification.timestamp,
+            })
+          );
+
+          // Sort notifications by timestamp in descending order
+          const sortedNotifications = fetchedNotifications.sort(
+            (a, b) => a.timestamp - b.timestamp
+          );
+
+          // Update component state with sorted notifications
+          setMessages(sortedNotifications);
+
+          console.log(sortedNotifications);
+          localStorage.setItem("messages", JSON.stringify(sortedNotifications));
+          setHasNewNotification(true);
         } catch (error) {
           console.log(error);
         }
       };
-  
+
       fetchNotifications();
-    
-  },[userId]);
-  
+    }
+  }, [userId, auth.isLoggedIn, sendRequest]);
 
   useEffect(() => {
     const socket = io("http://localhost:5000", {
@@ -87,7 +91,7 @@ const MainNavigation = (props) => {
 
         // Sort notifications by timestamp in descending order
         const sortedMessages = newMessages.sort(
-          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+          (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
         );
 
         // Save sorted messages to localStorage
@@ -130,6 +134,11 @@ const MainNavigation = (props) => {
     setHasNewNotification(false);
   };
 
+  const handleNotificationClick = (notificationId) => {
+    console.log("Clicked on notification with id:", notificationId);
+    // Add any additional logic you need here
+  };
+
   return (
     <React.Fragment>
       <NotificationsModal
@@ -148,7 +157,11 @@ const MainNavigation = (props) => {
         <div className="message-container">
           {memoizedMessages.length > 0 ? (
             memoizedMessages.map((message, index) => (
-              <div key={index} className="message-notification">
+              <div
+                key={index}
+                className="message-notification"
+                onClick={() => handleNotificationClick(message.notificationId)}
+              >
                 <p>{message.message}</p>
                 <p>Date: {new Date(message.timestamp).toLocaleString()}</p>
               </div>

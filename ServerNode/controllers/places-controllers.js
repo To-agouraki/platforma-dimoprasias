@@ -322,6 +322,7 @@ const deactivatePlace = async (req, res, next) => {
     return next(err);
   }
 
+
   let expiredplace;
   try {
     expiredplace = await Place.find({
@@ -333,7 +334,8 @@ const deactivatePlace = async (req, res, next) => {
     return next(err);
   }
 
-  if (expiredplace) {
+
+  if (expiredplace && expiredplace.length > 0) {
     const error = new HttpError(
       "It is expired, do not deactivate for now.",
       404
@@ -424,16 +426,15 @@ const bidItem = async (req, res, next) => {
         const io = getIo();
         const socket = activeSockets[replacedUserId];
         console.log(replacedUserId);
-        
+
         if (socket) {
           // Join the room and emit the notification after joining
           socket.join(replacedUserId);
-            io.to(replacedUserId).emit("notification", {
-              message: `You have been replaced as the highest bidder for item ${itemID}`,
-              timestamp : new Date().toISOString(),
-              notificationId: notification._id,
-            });
-          
+          io.to(replacedUserId).emit("notification", {
+            message: `You have been replaced as the highest bidder for item ${itemID}`,
+            timestamp: new Date().toISOString(),
+            notificationId: notification._id,
+          });
         } else {
           console.log(`Socket for User ${replacedUserId} not found`);
         }
@@ -579,16 +580,14 @@ const getAllItemsMarket = async (req, res, next) => {
   });
 };
 
-
 const deleteNotif = async () => {
   try {
     const deletedCount = await Notification.deleteMany({});
     console.log(`Deleted ${deletedCount.deletedCount} notifications.`);
   } catch (error) {
-    console.error('Error deleting notifications:', error);
+    console.error("Error deleting notifications:", error);
   }
 };
-
 
 exports.getPlacesMarket = getPlacesMarket;
 exports.getPlaceById = getPlaceById;

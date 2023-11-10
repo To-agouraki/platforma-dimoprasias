@@ -18,7 +18,8 @@ const placeSchema = new Schema({
   },
   bids: [{ type: mongoose.Types.ObjectId, required: true, ref: "Bidding" }],
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
-  activationState: {type: Boolean, default: true},
+  activationState: { type: Boolean, default: true },
+  creationDate: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("Place", placeSchema);

@@ -338,6 +338,7 @@ const getUnreadNotifications = async (req, res, next) => {
       return res.status(200).json({ message: 'No unread notifications for the user.' });
     }
 
+    
     console.log(unreadNotifications);
     res.status(200).json({ notifications: unreadNotifications });
   } catch (error) {

@@ -135,7 +135,6 @@ const AllItems = () => {
                 <PlaceList
                   items={filteredData}
                   userId={userId}
-                  fromMarket={true}
                   onDeletePlace={placeDeletedHandler}
                   deactState={true}
                 />
