@@ -80,6 +80,14 @@ const AdminDashboard = () => {
           >
           Expired Items
           </Link>
+          <Link
+            to="/systemStatistics"
+            className="dashboard-button"
+            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+          Statistics
+          </Link>
           {/* Add similar event handlers for other buttons */}
         </div>
       </div>

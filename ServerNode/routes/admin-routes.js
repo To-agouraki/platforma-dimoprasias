@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get("/allitems/items", adminOperationsController.getAllItems);
 router.get("/allitems/expired", adminOperationsController.getAllExpiredItems);
+router.get("/statistics", adminOperationsController.getStatistics);
+
 
 
 

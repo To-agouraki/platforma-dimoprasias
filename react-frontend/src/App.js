@@ -22,6 +22,7 @@ import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
 import DeactivatedItems from "./adminOnly/pages/DeactivateItems";
 import AllItems from "./adminOnly/pages/AllItems";
 import ExpiredItems from "./adminOnly/pages/ExpiredItems";
+import SystemStatistics from "./adminOnly/pages/SystemStatistics";
 
 let logoutTimer;
 
@@ -116,6 +117,8 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/categories" element={<CategoriesPage />}></Route>
         <Route path="/updateNormalUser/:userId" element={<UpdateNormalUser />}></Route>
         <Route path="/deactivatedItems" element={<DeactivatedItems />}></Route>
+        <Route path="/systemStatistics" element={<SystemStatistics />}></Route>
+
 
 
         

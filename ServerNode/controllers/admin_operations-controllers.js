@@ -134,8 +134,6 @@ const getCategoryById = async (req, res, next) => {
   res.json({ category: category.toObject({ getters: true }) });
 };
 
-exports.getCategoryById = getCategoryById;
-
 //getAdmins();
 
 const createCategory = async (req, res, next) => {
@@ -378,6 +376,61 @@ const getAllExpiredItems = async (req, res, next) => {
   });
 };
 
+const getStatistics = async (req, res, next) => {
+  try {
+    const totalItems = await Place.countDocuments();
+    const activatedItems = await Place.countDocuments({
+      activationState: true,
+    });
+    const deactivatedItems = await Place.countDocuments({
+      activationState: false,
+    });
+    const expiredItems = await Place.countDocuments({
+      dateTime: { $lt: new Date() },
+    });
+    const nonExpiredItems = totalItems - expiredItems;
+
+    const totalUsers = await User.countDocuments();
+
+    const usersWithPlaces = await User.countDocuments({
+      places: { $exists: true, $not: { $size: 0 } },
+    });
+    const usersWithBids = await User.countDocuments({
+      bids: { $exists: true, $not: { $size: 0 } },
+    });
+
+    const totalCategories = await Category.countDocuments();
+
+    console.log(
+      totalItems,
+      activatedItems,
+      deactivatedItems,
+      expiredItems,
+      nonExpiredItems,
+      totalUsers,
+      usersWithPlaces,
+      usersWithBids,
+      totalCategories
+    );
+
+    res.json({
+      totalItems,
+      activatedItems,
+      deactivatedItems,
+      expiredItems,
+      nonExpiredItems,
+      totalUsers,
+      usersWithPlaces,
+      usersWithBids,
+      totalCategories
+    });
+  } catch (error) {
+    const err = new HttpError("Could not fetch statistics.", 500);
+    return next(err);
+  }
+};
+
+
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;
 exports.login = login;
@@ -387,3 +440,4 @@ exports.getCategoryById = getCategoryById;
 exports.updateNormalUser = updateNormalUser;
 exports.getAllItems = getAllItems;
 exports.getAllExpiredItems = getAllExpiredItems;
+exports.getStatistics = getStatistics;
