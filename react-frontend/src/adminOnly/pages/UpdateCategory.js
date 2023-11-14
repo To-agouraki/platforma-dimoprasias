@@ -1,17 +1,18 @@
-import React, { useEffect, useState /*, useContext*/ } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState /*, useContext*/ } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-import Input from '../../shared/components/FormElements/Input';
-import Button from '../../shared/components/FormElements/Button';
-import Card from '../../shared/components/UIElements/Card';
-import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
-import ErrorModal from '../../shared/components/UIElements/ErrorModal';
+import Input from "../../shared/components/FormElements/Input";
+import Button from "../../shared/components/FormElements/Button";
+import Card from "../../shared/components/UIElements/Card";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import {
   VALIDATOR_REQUIRE,
-  VALIDATOR_MINLENGTH
-} from '../../shared/util/validators';
-import { useForm } from '../../shared/hooks/form-hook';
-import { useHttpClient } from '../../shared/hooks/http-hook';
+  VALIDATOR_MINLENGTH,
+} from "../../shared/util/validators";
+import { useForm } from "../../shared/hooks/form-hook";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 //import { AuthContext } from '../../shared/components/context/auth-context';
 
 const UpdateCategory = () => {
@@ -24,13 +25,17 @@ const UpdateCategory = () => {
   const [formState, inputHandler, setFormData] = useForm(
     {
       name: {
-        value: '',
-        isValid: false
+        value: "",
+        isValid: false,
       },
       description: {
-        value: '',
-        isValid: false
-      }
+        value: "",
+        isValid: false,
+      },
+      image: {
+        value: "",
+        isValid: false,
+      },
     },
     false
   );
@@ -46,36 +51,38 @@ const UpdateCategory = () => {
           {
             name: {
               value: responseData.category.name,
-              isValid: true
+              isValid: true,
             },
             description: {
               value: responseData.category.description,
-              isValid: true
-            }
+              isValid: true,
+            },
+            image: {
+              value: responseData.category.image,
+              isValid: true,
+            },
           },
           true
         );
-
       } catch (err) {}
     };
     fetchCategory();
   }, [sendRequest, categoryId, setFormData]);
 
-  const categoryUpdateSubmitHandler = async event => {
+  const categoryUpdateSubmitHandler = async (event) => {
     event.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append("name", formState.inputs.name.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("image", formState.inputs.image.value);
+
       await sendRequest(
         `http://localhost:5000/api/admin/updateCategory/${categoryId}`,
-        'PATCH',
-        JSON.stringify({
-          name: formState.inputs.name.value,
-          description: formState.inputs.description.value
-        }),
-        {
-          'Content-Type': 'application/json',
-        }
+        "PATCH",
+        formData
       );
-      navigate('/categories');
+      navigate("/categories");
     } catch (err) {}
   };
 
@@ -102,6 +109,12 @@ const UpdateCategory = () => {
       <ErrorModal error={error} onClear={clearError} />
       {!isLoading && loadedCategory && (
         <form className="place-form" onSubmit={categoryUpdateSubmitHandler}>
+          <ImageUpload
+            center
+            id="image"
+            existingimage={loadedCategory.image}
+            onInput={inputHandler}
+          />
           <Input
             id="name"
             element="input"
@@ -123,7 +136,13 @@ const UpdateCategory = () => {
             initialValue={loadedCategory.description}
             initialValid={true}
           />
-          <Button type="submit" disabled={!formState.inputs.name.isValid || !formState.inputs.description.isValid}>
+          <Button
+            type="submit"
+            disabled={
+              !formState.inputs.name.isValid ||
+              !formState.inputs.description.isValid
+            }
+          >
             UPDATE CATEGORY
           </Button>
         </form>

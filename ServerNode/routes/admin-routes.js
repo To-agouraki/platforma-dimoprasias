@@ -10,13 +10,9 @@ router.get("/allitems/items", adminOperationsController.getAllItems);
 router.get("/allitems/expired", adminOperationsController.getAllExpiredItems);
 router.get("/statistics", adminOperationsController.getStatistics);
 
-
-
-
 router.post("/login", adminOperationsController.login);
 
 router.get("/categories", adminOperationsController.getCategories);
-
 
 router.get(
   "/getCategory/:categoryId",
@@ -25,12 +21,14 @@ router.get(
 
 router.post(
   "/createCategory",
+  ImageUpload.single("image"),
   [check("name").not().isEmpty(), check("description").isLength({ max: 2000 })],
   adminOperationsController.createCategory
 );
 
 router.patch(
   "/updateCategory/:categoryId",
+  ImageUpload.single("image"),
   [check("name").not().isEmpty(), check("description").isLength({ max: 2000 })],
   adminOperationsController.updateCategory
 );

@@ -154,11 +154,14 @@ const createCategory = async (req, res, next) => {
 
   const { name, description } = req.body;
 
+  let image = req.file.path;
+
   const capitalizedCategoryName = capitalizeFirstLetter(name);
 
   const createdCategory = new Category({
     name: capitalizedCategoryName,
     description,
+    image,
   });
 
   try {
@@ -219,12 +222,13 @@ const updateCategory = async (req, res, next) => {
 
   const categoryId = req.params.categoryId; // Assuming you pass the categoryId as a route parameter
   const { name, description } = req.body;
+  let image = req.file.path;
 
   try {
     // Find the category by its ID and update its properties
     const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
-      { name, description },
+      { name, description, image},
       { new: true } // This option returns the updated category
     );
 
@@ -422,14 +426,13 @@ const getStatistics = async (req, res, next) => {
       totalUsers,
       usersWithPlaces,
       usersWithBids,
-      totalCategories
+      totalCategories,
     });
   } catch (error) {
     const err = new HttpError("Could not fetch statistics.", 500);
     return next(err);
   }
 };
-
 
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;

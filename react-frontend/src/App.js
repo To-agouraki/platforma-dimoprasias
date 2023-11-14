@@ -23,6 +23,7 @@ import DeactivatedItems from "./adminOnly/pages/DeactivateItems";
 import AllItems from "./adminOnly/pages/AllItems";
 import ExpiredItems from "./adminOnly/pages/ExpiredItems";
 import SystemStatistics from "./adminOnly/pages/SystemStatistics";
+import WelcomePage from "./welcomepage/pages/WelcomePage";
 
 let logoutTimer;
 
@@ -143,7 +144,7 @@ console.log("admin", isAdminLoggedIn);
     //noone is logged in
     routes = (
       <React.Fragment>
-        <Route path="/" element={<NoUserDashboard />} />
+        <Route path="/" element={<WelcomePage />} />
         <Route path="*" exact element={<Navigate to="/auth" replace />} />
         <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/auth" element={<Auth />}></Route>

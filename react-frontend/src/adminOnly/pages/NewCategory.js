@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
@@ -26,6 +27,10 @@ const NewCategory = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: "",
+        isValid: false,
+      },
     },
     false
   );
@@ -40,20 +45,33 @@ const NewCategory = () => {
   const categorySubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const requestBody = {
-        name: formState.inputs.name.value,
-        description: formState.inputs.description.value,
-      };
+      const formData = new FormData();
+      formData.append("name", formState.inputs.name.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("image", formState.inputs.image.value);
+
+      // console.log("FormData:");
+      // for (var pair of formData.entries()) {
+      //   console.log(pair[0] + ', ' + pair[1]);
+      // }
+
+      // // Log specific details about the image file
+      // const imageFile = formData.get("image");
+      // if (imageFile instanceof File) {
+      //   console.log("Image File Details:");
+      //   console.log("Name:", imageFile.name);
+      //   console.log("Type:", imageFile.type);
+      //   console.log("Size:", imageFile.size, "bytes");
+      // } else {
+      //   console.log("No image file found in the FormData.");
+      // }
 
       await sendRequest(
         "http://localhost:5000/api/admin/createCategory",
         "POST",
-        JSON.stringify(requestBody),
-        {
-          "Content-Type": "application/json",
-        }
+        formData, 
       );
-      navigate("/categories");
+       navigate("/categories");
     } catch (error) {
       console.error("Error creating category:", error.message);
     }
@@ -64,6 +82,7 @@ const NewCategory = () => {
       <ErrorModal error={nError} onClear={clearError} />
       <form className="place-form" onSubmit={categorySubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
+        <ImageUpload center id="image" onInput={inputHandler} />
         <Input
           id="name"
           element="input"
