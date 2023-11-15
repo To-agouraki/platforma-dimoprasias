@@ -1,4 +1,4 @@
-.category-item {
+.ADcategory-item {
     border: 1px solid #ccc;
     padding: 10px;
     margin: 10px;
@@ -15,22 +15,22 @@
     font-style: italic;
   }
   
-  .category-item {
+  .ADcategory-item {
   position: relative; /* Create a positioning context for child elements */
 }
 
-.category-item {
+.ADcategory-item {
     position: relative;
   }
   
-  .category-header {
+  .ADcategory-header {
     display: flex; /* Use flexbox to make children inline */
     align-items: center; /* Vertically align children */
     justify-content: space-between; /* Add space between children (name and button) */
     padding: 10px; /* Adjust padding for spacing */
   }
   
-  .update-button {
+  .ADupdate-button {
     background-color: #007bff;
     color: #fff;
     padding: 5px 10px;
@@ -41,11 +41,11 @@
     transition: background-color 0.3s ease;
   }
   
-  .update-button:hover {
+  .ADupdate-button:hover {
     background-color: #0056b3;
   }
 
-  .categories-title {
+  .ADcategories-title {
     font-size: 35px; /* Adjust the font size as needed */
     font-weight: bold; /* Make the text bold */
     color: #050404; /* Choose a color for the title */
@@ -54,7 +54,7 @@
   
   /* Add any other styles for the card as needed */
   
-  .new-category-button {
+  .ADnew-category-button {
     display: inline-block;
     margin: 10px auto;
     padding: 10px 20px;
@@ -68,7 +68,7 @@
     transition: background-color 0.3s ease;
   }
   
-  .new-category-button:hover {
+  .ADnew-category-button:hover {
     background-color: #0056b3;
   }
 

@@ -210,7 +210,6 @@ const deleteCategory = async (req, res, next) => {
 const updateCategory = async (req, res, next) => {
   const errors = validationResult(req);
 
-  //console.log("Errors:",errors);
   if (!errors.isEmpty()) {
     return next(
       new HttpError(
@@ -220,16 +219,20 @@ const updateCategory = async (req, res, next) => {
     );
   }
 
-  const categoryId = req.params.categoryId; // Assuming you pass the categoryId as a route parameter
+  const categoryId = req.params.categoryId;
   const { name, description } = req.body;
-  let image = req.file.path;
+  let imagepath;
+
+  // Check if req.file is defined and has a path property
+  if (req.file && req.file.path) {
+    imagepath = req.file.path;
+  }
 
   try {
-    // Find the category by its ID and update its properties
     const updatedCategory = await Category.findByIdAndUpdate(
       categoryId,
-      { name, description, image},
-      { new: true } // This option returns the updated category
+      { name, description, imagepath }, // Use imagepath variable
+      { new: true }
     );
 
     if (!updatedCategory) {
@@ -238,13 +241,13 @@ const updateCategory = async (req, res, next) => {
 
     res.status(200).json({ category: updatedCategory });
   } catch (error) {
-    console.log("Error:", error);
     console.error("Error updating category:", error);
     return next(
       new HttpError("Updating category failed, please try again.", 500)
     );
   }
 };
+
 
 const updateNormalUser = async (req, res, next) => {
   const errors = validationResult(req);

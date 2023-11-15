@@ -58,13 +58,13 @@ const CategoryItem = ({ name, description, id, onDelete }) => {
         </p>
       </Modal>
 
-      <li className="category-item">
+      <li className="ADcategory-item">
         <Card>
           {isLoading && <LoadingSpinner asOverlay />}
-          <div className="category-header">
+          <div className="ADcategory-header">
             <h3>{name}</h3>
             <div className="button-group">
-              <Link to={`/categories/${id}`} className="update-button">
+              <Link to={`/categories/${id}`} className="ADupdate-button">
                 Update
               </Link>
               <Link

@@ -17,6 +17,9 @@ router.get("/market/loggedout/general", placesControllers.getAllItemsMarket);
 
 router.get("/deactivatedItems/items", placesControllers.getDeactivatedItemsAdmin);
 
+router.get("/newarrivals/newitems", placesControllers.getNewArrivals);
+
+
 
 router.use(Authchecking);
 

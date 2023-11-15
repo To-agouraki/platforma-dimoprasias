@@ -31,7 +31,7 @@ const CategoryList = (props) => {
     <div>
       <h2 className="center categories-title">Categories</h2>
       <div className="center">
-        <Link to="/categories/new" className="center new-category-button">
+        <Link to="/categories/new" className="center ADnew-category-button">
           New Category
         </Link>
       </div>

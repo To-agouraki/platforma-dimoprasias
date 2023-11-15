@@ -580,6 +580,48 @@ const getAllItemsMarket = async (req, res, next) => {
   });
 };
 
+const getNewArrivals = async (req, res, next) => {
+  let places;
+
+  try {
+    // Populate the 'category' field with the actual category data
+    places = await Place.find({
+      dateTime: { $gte: new Date() },
+      activationState: { $eq: true },
+    })
+      .populate("category")
+      .sort({ creationDate: -1 }) // Sort by creationDate in descending order
+      .limit(4) // Limit the result to 4 items
+      .exec();
+  } catch (error) {
+    console.log(error);
+    console.log("fail");
+    const err = new HttpError("Fetching places failed.", 404);
+    return next(err);
+  }
+
+  if (!places || places.length === 0) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+
+  res.json({
+    places: places.map((place) => ({
+      id: place._id,
+      title: place.title,
+      image: place.image,
+      category: place.category.name, // Display the category name
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder, // Include the entire user object if needed
+      bids: place.bids, // Include the array of bid IDs
+      activationState: place.activationState,
+    })),
+  });
+};
+
 const deleteNotif = async () => {
   try {
     const deletedCount = await Notification.deleteMany({});
@@ -599,3 +641,4 @@ exports.bidItem = bidItem;
 exports.getAllItemsMarket = getAllItemsMarket;
 exports.deactivatePlace = deactivatePlace;
 exports.getDeactivatedItemsAdmin = getDeactivatedItemsAdmin;
+exports.getNewArrivals = getNewArrivals;
