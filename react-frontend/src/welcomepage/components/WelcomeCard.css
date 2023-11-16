@@ -1,0 +1,58 @@
+/* WelcomeCard.css */
+
+.w3-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -16px; /* Adjust if needed */
+    width: 150vh;
+  }
+  
+  .w3-col {
+    flex: 0 0 25%; /* Adjust as needed for desired column width */
+    padding: 0 16px; /* Adjust if needed */
+  }
+  
+.alilpad {
+    margin-right: 4.5vh;
+}
+
+  .w3-container {
+    padding: 16px;
+  }
+  
+  .w3-center {
+    text-align: center;
+  }
+  
+  .w3-padding-64 {
+    padding: 64px;
+  }
+  
+  .w3-xlarge {
+    font-size: 24px; /* Adjust as needed */
+  }
+  
+  .w3-bottombar {
+    border-bottom: 2px solid #333; /* Adjust color as needed */
+  }
+  
+  /* Custom styles for different sections */
+  .w3-light-green {
+    background-color: #aaffaa; /* Adjust color as needed */
+  }
+  
+  .w3-green {
+    background-color: #6bff6b; /* Adjust color as needed */
+  }
+  
+  .w3-dark-green {
+    background-color: #0bfb0b; /* Adjust color as needed */
+  }
+  
+  .w3-black {
+    background-color: #000; /* Adjust color as needed */
+    color: #fff; /* Adjust text color as needed */
+  }
+  
+  /* Add additional styles as needed */
+  

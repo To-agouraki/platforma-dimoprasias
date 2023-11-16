@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import Card from "../../shared/components/UIElements/Card";
 import "./PageCategories.css";
 
 const PageCategories = () => {
@@ -26,26 +27,26 @@ const PageCategories = () => {
   }, [sendRequest]);
 
   return (
-    <div className="upper-centered-content">
+    <Card >
       <ErrorModal error={nError} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
       <h2>Explore Categories</h2>
-      <div className="pcategory-list">
+      <div className="pcategory-navigation">
         {categories.map((category) => (
-          <div className="pcategory-item-wrapper" key={category._id}>
+          <div className="pcategory-links" key={category._id}>
             <Link to={`/category/${category._id}`}>
               <div className="pcategory-item">
                 <img
                   src={`http://localhost:5000/${category.image}`}
                   alt={category.name}
                 />
-                <p className="link-text">{category.name}</p>
+                <p style={{ color: "darkgoldenrod" }}>{category.name}</p>
               </div>
             </Link>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };
 
