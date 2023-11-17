@@ -34,7 +34,7 @@ const PageCategories = () => {
       <div className="pcategory-navigation">
         {categories.map((category) => (
           <div className="pcategory-links" key={category._id}>
-            <Link to={`/category/${category._id}`}>
+            <Link to={`/categoryProducts/${category._id}`}>
               <div className="pcategory-item">
                 <img
                   src={`http://localhost:5000/${category.image}`}

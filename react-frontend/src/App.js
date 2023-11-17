@@ -17,13 +17,14 @@ import CategoriesPage from "./adminOnly/pages/CategoriesPage";
 import NewCategory from "./adminOnly/pages/NewCategory";
 import UpdateCategory from "./adminOnly/pages/UpdateCategory";
 import UserMainPage from "./user/pages/UserMainPage";
-import NoUserDashboard from "./user/components/NoUserDashboard";
+//import NoUserDashboard from "./user/components/NoUserDashboard";
 import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
 import DeactivatedItems from "./adminOnly/pages/DeactivateItems";
 import AllItems from "./adminOnly/pages/AllItems";
 import ExpiredItems from "./adminOnly/pages/ExpiredItems";
 import SystemStatistics from "./adminOnly/pages/SystemStatistics";
 import WelcomePage from "./welcomepage/pages/WelcomePage";
+import ItemsCategory from "./welcomepage/pages/ItemsCategory";
 
 let logoutTimer;
 
@@ -119,11 +120,6 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/updateNormalUser/:userId" element={<UpdateNormalUser />}></Route>
         <Route path="/deactivatedItems" element={<DeactivatedItems />}></Route>
         <Route path="/systemStatistics" element={<SystemStatistics />}></Route>
-
-
-
-        
-
       </React.Fragment>
     );
   } else if (token) {
@@ -150,6 +146,7 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/auth" element={<Auth />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
         <Route path="/adminAuth" element={<AdminLogIn />}></Route>
+        <Route path="/categoryProducts/:categoryId" element={<ItemsCategory />}></Route>
       </React.Fragment>
     );
   }

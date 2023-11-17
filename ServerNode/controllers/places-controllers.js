@@ -66,8 +66,6 @@ const getPlaceById = async (req, res, next) => {
   });
 };
 
-// function getPlaceById() { ... }
-// const getPlaceById = function() { ... }
 
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
@@ -631,6 +629,25 @@ const deleteNotif = async () => {
   }
 };
 
+const getPlacesByCategory = async (req, res, next) => {
+  const categoryId = req.params.categoryId;
+
+  try {
+    const places = await Place.find({
+      activationState: true,
+      category: categoryId, // Assuming 'category' is a reference to the Category model
+    });
+
+    res.json({ places });
+  } catch (error) {
+    console.error('Error fetching places by category:', error);
+    const err = new HttpError('Fetch places by category failed.', 500);
+    return next(err);
+  }
+};
+
+
+exports.getPlacesByCategory = getPlacesByCategory;
 exports.getPlacesMarket = getPlacesMarket;
 exports.getPlaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;

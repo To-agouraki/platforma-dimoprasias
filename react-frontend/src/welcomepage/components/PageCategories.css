@@ -4,6 +4,8 @@
   display: flex;
   overflow-x: auto;
   gap: 16px;
+  width: 145vh; /* Set the desired width */
+  overflow: auto; /* Add scroll option if items exceed the width */
 }
 
 .pcategory-links {
@@ -16,7 +18,7 @@
 }
 
 .pcategory-item {
-  width: 100%;
+  width: 200px; /* Adjust width of each item */
   height: 100%;
   text-align: center;
   cursor: pointer;
@@ -26,8 +28,8 @@
 }
 
 .pcategory-item img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 23vh;
+  height: 23vh;
   object-fit: cover;
   border-radius: 50%; /* Round the image corners */
   border: 2px solid #333; /* Darker border for visibility */
@@ -35,7 +37,7 @@
 }
 
 .pcategory-item p {
-  color: #333;
+  color: darkgoldenrod; /* Set text color to dark goldenrod */
 }
 
 a {

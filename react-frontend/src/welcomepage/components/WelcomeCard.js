@@ -1,5 +1,4 @@
 import React from "react";
-import Card from "../../shared/components/UIElements/Card";
 import "./WelcomeCard.css";
 
 const WelcomeCard = () => {
@@ -10,17 +9,17 @@ const WelcomeCard = () => {
       </div>
       <div className="w3-col l3 m6 w3-light-green w3-container w3-padding-16">
         <h3>Find or Create an item</h3>
-        <p>Place your Bid for that item</p>
+        <p>Be the buyer or be the Seller</p>
       </div>
 
       <div className="w3-col l3 m6 w3-green w3-container w3-padding-16">
         <h3>Win the item you want</h3>
-        <p>Additional description goes here...</p>
+        <p>Place you bid and beat the the opposition</p>
       </div>
 
       <div className="w3-col l3 m6 w3-dark-green w3-container w3-padding-16">
-        <h3>Another Section</h3>
-        <p>Additional description goes here...</p>
+        <h3>Sell your created items</h3>
+        <p>Add the timer and wait for bidder to win your item </p>
       </div>
     </div>
   );

@@ -29,15 +29,9 @@
     color: inherit;
   }
   
-  .banner-image {
-    height: 250px; /* Adjust the height as needed */
-    background-size: cover;
-    background-position: center;
-  }
-  
   .banner-content {
     background-color: #9ef4a6;
-    padding: 20px;
+    padding: 30px;
     text-align: center;
   }
   
