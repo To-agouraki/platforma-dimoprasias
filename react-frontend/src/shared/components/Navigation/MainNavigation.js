@@ -14,7 +14,7 @@ import NotificationsModal from "../Notification/NotificationsModal";
 import { useHttpClient } from "../../hooks/http-hook";
 
 const MainNavigation = (props) => {
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { sendRequest } = useHttpClient();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
   const [hasNewNotification, setHasNewNotification] = useState(false); // Add state for new notifications
@@ -139,6 +139,34 @@ const MainNavigation = (props) => {
     // Add any additional logic you need here
   };
 
+  const markAsReadHandler = async (event, notificationId) => {
+    event.stopPropagation(); // Prevent the click event from reaching the parent div
+    console.log(
+      "Mark as Read clicked for notification with id:",
+      notificationId
+    );
+    try {
+      // Assuming sendRequest returns a Promise
+      await sendRequest(
+        `http://localhost:5000/api/users/updateNotification/${notificationId}`,
+        "PATCH"
+      );
+
+      setMessages((prevMessages) => {
+        const updatedMessages = prevMessages.filter(
+          (message) => message.notificationId !== notificationId
+        );
+
+        // Save updated messages to local storage
+        localStorage.setItem("messages", JSON.stringify(updatedMessages));
+
+        return updatedMessages;
+      });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
   return (
     <React.Fragment>
       <NotificationsModal
@@ -164,6 +192,14 @@ const MainNavigation = (props) => {
               >
                 <p>{message.message}</p>
                 <p>Date: {new Date(message.timestamp).toLocaleString()}</p>
+                <button
+                  className="mark-as-read-button"
+                  onClick={(event) =>
+                    markAsReadHandler(event, message.notificationId)
+                  }
+                >
+                  Mark as Read
+                </button>
               </div>
             ))
           ) : (

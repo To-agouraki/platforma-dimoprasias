@@ -70,4 +70,17 @@
   }
   
  
-  
+  /****************/
+  /* Add this to your CSS file */
+.mark-as-read-button {
+  background-color: #4caf50; /* Green background color */
+  color: white; /* White text color */
+  padding: 10px 15px; /* Padding */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.mark-as-read-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}

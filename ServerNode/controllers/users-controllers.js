@@ -326,28 +326,56 @@ const getBiddersItems = async (req, res, next) => {
   }
 };
 
-
 const getUnreadNotifications = async (req, res, next) => {
   const userId = req.params.uid;
 
   try {
     // Find unread notifications for the given userId
-    const unreadNotifications = await Notification.find({ userId, isread: false });
+    const unreadNotifications = await Notification.find({
+      userId,
+      isread: false,
+    });
 
     if (unreadNotifications.length === 0) {
-      return res.status(200).json({ message: 'No unread notifications for the user.' });
+      return res
+        .status(200)
+        .json({ message: "No unread notifications for the user." });
     }
 
-    
     console.log(unreadNotifications);
     res.status(200).json({ notifications: unreadNotifications });
   } catch (error) {
     // Handle errors, e.g., database error
-    console.error('Error fetching unread notifications:', error);
-    res.status(500).json({ message: 'Failed to fetch unread notifications.' });
+    console.error("Error fetching unread notifications:", error);
+    res.status(500).json({ message: "Failed to fetch unread notifications." });
   }
 };
 
+const setMarkAsRead = async (req, res, next) => {
+  const notificationId = req.params.nid;
+
+  try {
+    // Find unread notification for the given notificationId
+    const readNotification = await Notification.findById(notificationId);
+
+    if (!readNotification) {
+      return next(new HttpError("Could not find the notification", 500));
+    }
+
+    try {
+      readNotification.isread = true;
+      await readNotification.save();
+    } catch (error) {
+      console.log("Mark as read error", error);
+    }
+
+    res.status(200).json({ notifications: readNotification });
+  } catch (error) {
+    // Handle errors, e.g., database error
+    console.error("Error marking notification as read:", error);
+    res.status(500).json({ message: "Failed to mark notification as read." });
+  }
+};
 
 exports.getUnreadNotifications = getUnreadNotifications;
 exports.getUsers = getUsers;
@@ -356,3 +384,4 @@ exports.login = login;
 exports.getOnetUsers = getOnetUsers;
 exports.updateUser = updateUser;
 exports.getBiddersItems = getBiddersItems;
+exports.setMarkAsRead = setMarkAsRead;

@@ -364,7 +364,7 @@ const getAllExpiredItems = async (req, res, next) => {
     );
   }
 
-  console.log(places);
+  //console.log(places);
 
   res.json({
     places: places.map((place) => ({

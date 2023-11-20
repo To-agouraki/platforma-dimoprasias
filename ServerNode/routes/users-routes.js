@@ -30,6 +30,11 @@ router.patch(
   usersController.updateUser
 );
 
+router.patch(
+  "/updateNotification/:nid",
+  usersController.setMarkAsRead
+);
+
 router.post("/login", usersController.login);
 
 router.get("/getuser/:uid", usersController.getOnetUsers);
