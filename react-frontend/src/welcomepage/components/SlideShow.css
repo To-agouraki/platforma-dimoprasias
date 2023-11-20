@@ -1,0 +1,80 @@
+/* SlideShow.css */
+
+.slideshow-container {
+  position: relative;
+  width: 150vh;
+  height: 30vh;
+  margin: auto;
+  background-color: #a59f9f;
+  padding: 20px;
+}
+
+.mySlides {
+  display: none;
+  text-align: center;
+}
+
+.active {
+  display: block;
+}
+
+.Slidemessage-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 50px; /* Increased padding for the message container */
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.Slidemessage {
+  font-size: 30px; /* Increased font size for the message */
+  color: #333;
+}
+
+.button1-container,
+.button2-container {
+  position: absolute;
+  top: 50%;
+  width: 1.6%; /* Adjust width to 50% for each container */
+  display: flex;
+  justify-content: flex-end; /* Use flex-end for button1-container */
+  transform: translateY(-50%);
+}
+
+.button2-container {
+  left: 4%; /* Align to the left for button2-container */
+}
+
+.button1-container {
+  right: 4%; /* Align to the right for button1-container */
+}
+
+.prev,
+.next {
+  font-size: 36px;
+  cursor: pointer;
+  z-index: 1; /* Ensure buttons are clickable */
+}
+
+.dot-container {
+  text-align: center;
+  margin-top: 170px;
+}
+
+.dot {
+  height: 15px;
+  width: 15px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+  cursor: pointer;
+}
+
+.active.dot {
+  background-color: #717171;
+}

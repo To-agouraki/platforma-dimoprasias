@@ -1,13 +1,16 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import PageCategories from "../components/PageCategories";
 import NewArrivals from "../components/NewArrivals";
 import WelcomeCard from "../components/WelcomeCard";
+import Slideshow from "../components/Slideshow";
 import "./WelcomePage.css";
 
 const WelcomePage = () => {
-  console.log("kasod");
   return (
     <div className="testia">
+      <Slideshow></Slideshow>
+      <br></br>
       <WelcomeCard></WelcomeCard>
       <br></br>
       <PageCategories></PageCategories>
@@ -15,16 +18,14 @@ const WelcomePage = () => {
       <NewArrivals></NewArrivals>
       <br></br>
       <div class="banner">
-        <a href="https://www.ebay.com/">
-          <div
-            class="banner-image"
-          ></div>
+        <Link to={`/market`}>
+          <div class="banner-image"></div>
           <div class="banner-content">
             <h2>Check all the items</h2>
-            <p>Perfect combination: warrantied quality, low cost, high tech</p>
-            <button>Browse iPhones</button>
+            <p>Perfect combination of all the user created products</p>
+            <button>Browse All Items</button>
           </div>
-        </a>
+        </Link>
       </div>
       <br></br>
     </div>
