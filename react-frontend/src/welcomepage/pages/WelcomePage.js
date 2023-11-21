@@ -4,6 +4,7 @@ import PageCategories from "../components/PageCategories";
 import NewArrivals from "../components/NewArrivals";
 import WelcomeCard from "../components/WelcomeCard";
 import Slideshow from "../components/Slideshow";
+import PopularBids from "../components/PopularBids";
 import "./WelcomePage.css";
 
 const WelcomePage = () => {
@@ -16,6 +17,8 @@ const WelcomePage = () => {
       <PageCategories></PageCategories>
       <br></br>
       <NewArrivals></NewArrivals>
+      <br></br>
+      <PopularBids></PopularBids>
       <br></br>
       <div class="banner">
         <Link to={`/market`}>

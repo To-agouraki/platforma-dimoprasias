@@ -1,0 +1,41 @@
+/* PopularBids.css */
+
+.popular-bids {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .bid-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+  }
+  
+  .bid-item {
+    width: 200px;
+    height: 300px;
+    border: 1px solid #ddd;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+  }
+  
+  .bid-item img {
+    width: 100%;
+    height: 70%;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .bid-details {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  button {
+    margin-top: auto;
+  }
+  
