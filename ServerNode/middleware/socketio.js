@@ -1,7 +1,6 @@
 const socketIo = require("socket.io");
 
 let io;
-
 const activeSockets = {};
 
 function initIo(server) {
@@ -11,40 +10,27 @@ function initIo(server) {
     },
   });
 
-  let useridd;
-
   io.on("connection", (socket) => {
-    socket.on("userConnected", (data) => {
-      const userId = data.userId;
-      useridd = data.userId;
-      activeSockets[userId] = socket;
-     // io.to(data.userId).emit("notification", { message: `Welcome to the platform!${data.userId}` });
-      console.log(`User ${userId} connected`);
+    // Extract user ID from the handshake query
+    const userId = socket.handshake.query.userId;
+
+    // Store the socket in activeSockets
+    activeSockets[userId] = socket;
+
+    // Emit a welcome message to the connected user
+    io.to(userId).emit("notification", {
+      message: `Welcome to the platform, ${userId}!`,
     });
 
-   // socket.join(useridd);
+    console.log(`User ${userId} connected`);
 
-    
+    // Handle socket disconnect
     socket.on("disconnect", () => {
       // Remove the disconnected socket from activeSockets
-      const userId = getUserIdBySocket(socket);
-      if (userId) {
-        delete activeSockets[userId];
-        console.log(`User ${userId} disconnected`);
-      }
+      delete activeSockets[userId];
+      console.log(`User ${userId} disconnected`);
     });
   });
-}
-
-function getUserIdBySocket(socket) {
-  // Find user ID by socket from activeSockets
-  const entries = Object.entries(activeSockets);
-  for (const [userId, activeSocket] of entries) {
-    if (activeSocket === socket) {
-      return userId;
-    }
-  }
-  return null;
 }
 
 function getIo() {

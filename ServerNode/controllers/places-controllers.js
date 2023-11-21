@@ -66,7 +66,6 @@ const getPlaceById = async (req, res, next) => {
   });
 };
 
-
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
   let places;
@@ -320,7 +319,6 @@ const deactivatePlace = async (req, res, next) => {
     return next(err);
   }
 
-
   let expiredplace;
   try {
     expiredplace = await Place.find({
@@ -331,7 +329,6 @@ const deactivatePlace = async (req, res, next) => {
     const err = new HttpError("Something went wrong, could not update", 500);
     return next(err);
   }
-
 
   if (expiredplace && expiredplace.length > 0) {
     const error = new HttpError(
@@ -403,38 +400,102 @@ const bidItem = async (req, res, next) => {
       await Place.findByIdAndUpdate(itemId, {
         highestBid: amount,
         highestBidder: userId,
+        $addToSet: { bids: bid._id }, // Add the bid ID to the bids array
       });
 
+      //console.log("existingHighestBid:", existingHighestBid);
+      //console.log("userId:", userId);
+
       // Check if there was a previous highest bidder
-      if (existingHighestBid && existingHighestBid.bidder !== userId) {
+      if (existingHighestBid && existingHighestBid.bidder != userId) {
         const replacedUserId = existingHighestBid.bidder;
         const itemID = existingHighestBid.place;
         const newBidAmount = amount;
 
-        // Create a new notification
-        const notification = new Notification({
-          userId: replacedUserId, // User ID of the replaced highest bidder
-          message: `You have been replaced as the highest bidder for item ${itemID}.`,
+        const item = await Place.findById(itemID);
+        console.log(item);
+        const itemName = item ? item.title : "unknown item";
+
+        // Create a new notification for the replaced user
+        const replacedUserNotification = new Notification({
+          userId: replacedUserId,
+          message: `You have been replaced as the highest bidder for item ${itemName}  the user ${replacedUserId}.`,
           data: { itemId: itemID, newBidAmount: newBidAmount },
         });
 
         // Save the notification to the database
-        await notification.save();
+        await replacedUserNotification.save();
 
         const io = getIo();
         const socket = activeSockets[replacedUserId];
-        console.log(replacedUserId);
 
         if (socket) {
           // Join the room and emit the notification after joining
           socket.join(replacedUserId);
           io.to(replacedUserId).emit("notification", {
-            message: `You have been replaced as the highest bidder for item ${itemID}`,
+            message: `You have been replaced as the highest bidder for item ${itemName}.`,
             timestamp: new Date().toISOString(),
-            notificationId: notification._id,
+            notificationId: replacedUserNotification._id,
           });
         } else {
           console.log(`Socket for User ${replacedUserId} not found`);
+        }
+
+        // Create a new notification for the new highest bidder
+        const newHighestBidderNotification = new Notification({
+          userId: userId,
+          message: `Congratulations! You are now the highest bidder for item ${itemName}.`,
+          data: { itemId: itemID, newBidAmount: newBidAmount },
+        });
+
+        // Save the notification to the database
+        await newHighestBidderNotification.save();
+
+        const newBidderSocket = activeSockets[userId];
+
+        if (newBidderSocket) {
+          // Join the room and emit the notification after joining
+          newBidderSocket.join(userId);
+          io.to(userId).emit("notification", {
+            message: `Congratulations! You are now the highest bidder for item ${itemName}.`,
+            timestamp: new Date().toISOString(),
+            notificationId: newHighestBidderNotification._id,
+          });
+        } else {
+          console.log(`Socket for User ${userId} not found`);
+        }
+      } else {
+        // No previous highest bidder, user is bidding for the first time
+        const itemID = existingHighestBid.place;
+        const newBidAmount = amount;
+
+        const item = await Place.findById(itemID);
+        console.log(item);
+        const itemName = item ? item.title : "unknown item";
+
+        // Create a new notification for the user bidding for the first time
+        const newUserBidNotification = new Notification({
+          userId: userId,
+          message: `Congratulations! You have successfully placed a bid of ${newBidAmount} for item ${itemName}.`,
+          data: { itemId: itemID, newBidAmount: newBidAmount },
+        });
+
+        // Save the notification to the database
+        await newUserBidNotification.save();
+
+        const io = getIo();
+        const newUserBidSocket = activeSockets[userId];
+
+        if (newUserBidSocket) {
+          // Join the room and emit the notification after joining
+          newUserBidSocket.join(userId);
+          io.to(userId).emit("notification", {
+            message: `Congratulations! You have successfully placed a bid of ${newBidAmount} for item ${itemName}.`,
+            timestamp: new Date().toISOString(),
+            notificationId: newUserBidNotification._id,
+          });
+        } else {
+          console.log(`Socket for User ${userId} not found`);
         }
       }
 
@@ -604,7 +665,6 @@ const getNewArrivals = async (req, res, next) => {
     );
   }
 
-
   res.json({
     places: places.map((place) => ({
       id: place._id,
@@ -640,12 +700,45 @@ const getPlacesByCategory = async (req, res, next) => {
 
     res.json({ places });
   } catch (error) {
-    console.error('Error fetching places by category:', error);
-    const err = new HttpError('Fetch places by category failed.', 500);
+    console.error("Error fetching places by category:", error);
+    const err = new HttpError("Fetch places by category failed.", 500);
     return next(err);
   }
 };
 
+const getPopularItems = async (req, res, next) => {
+  try {
+    // Aggregate the data to find the most popular items
+    const popularItems = await BidJunctionTable.aggregate([
+      {
+        $group: {
+          _id: "$place",
+          totalBids: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { totalBids: -1 },
+      },
+      {
+        $limit: 4, // You can adjust this limit based on your requirement
+      },
+    ]);
+
+    // Extract the item IDs from the result
+    const itemIds = popularItems.map((item) => item._id);
+
+    // Fetch additional details of the items from the Place collection
+    const items = await Place.find({ _id: { $in: itemIds } });
+    console.log(items);
+
+    // res.json({ popularItems: items });
+  } catch (error) {
+    console.error("Error fetching popular items:", error);
+    res.status(500).json({ message: "Failed to fetch popular items." });
+  }
+};
+
+getPopularItems();
 
 exports.getPlacesByCategory = getPlacesByCategory;
 exports.getPlacesMarket = getPlacesMarket;

@@ -177,7 +177,7 @@ const MainNavigation = (props) => {
         footer={
           <React.Fragment>
             <Button inverse onClick={cancelDeleteHandler}>
-              Cancel
+              Close
             </Button>
           </React.Fragment>
         }

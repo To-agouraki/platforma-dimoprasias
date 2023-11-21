@@ -408,18 +408,6 @@ const getStatistics = async (req, res, next) => {
 
     const totalCategories = await Category.countDocuments();
 
-    console.log(
-      totalItems,
-      activatedItems,
-      deactivatedItems,
-      expiredItems,
-      nonExpiredItems,
-      totalUsers,
-      usersWithPlaces,
-      usersWithBids,
-      totalCategories
-    );
-
     res.json({
       totalItems,
       activatedItems,
