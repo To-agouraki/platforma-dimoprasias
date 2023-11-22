@@ -1,20 +1,21 @@
 /* PopularBids.css */
 
 .popular-bids {
-    width: 100%;
+    width: 150vh;
     margin-top: 20px;
   }
   
   .bid-list {
     display: flex;
+    justify-content: space-between;
     overflow-x: auto;
     gap: 16px;
   }
   
   .bid-item {
-    width: 200px;
-    height: 300px;
-    border: 1px solid #ddd;
+    width: 260px;
+    height: 500px;
+    border: 1px solid #0c0c0c;
     padding: 16px;
     text-align: center;
     cursor: pointer;
@@ -24,10 +25,10 @@
   }
   
   .bid-item img {
-    width: 100%;
-    height: 70%;
-    object-fit: cover;
-    border-bottom: 1px solid #ddd;
+    width: 230px;
+    height: 40%;
+    border-bottom: 1px solid #8d2121;
+    object-fit:fill;
   }
   
   .bid-details {
@@ -36,6 +37,43 @@
   }
   
   button {
+    margin-top: auto;
+  }
+  
+  /*************/
+  .bid-details {
+    padding: 10px;
+    text-align: left;
+    flex-grow: 1;
+  }
+  
+  .bid-details p {
+    margin: 8px 0;
+  }
+  
+  .bid-details h3 {
+    margin-bottom: 12px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .bid-details .details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom:1px solid rgb(141, 150, 141);
+  }
+  
+  .bid-details .details-row p {
+    flex-grow: 1;
+    margin-right: 8px;
+  }
+  
+  .bid-details .details-row p:last-child {
+    margin-right: 0;
+  }
+  
+  .bid-details .details-row button {
     margin-top: auto;
   }
   

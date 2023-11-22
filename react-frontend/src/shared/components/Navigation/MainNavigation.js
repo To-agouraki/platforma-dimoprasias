@@ -228,13 +228,13 @@ const MainNavigation = (props) => {
         </h1>
         {auth.isLoggedIn ? (
           hasNewNotification ? (
-            <Button onClick={showNotificationModal}>
-              <FontAwesomeIcon icon={faBell} shake size="xl" />{" "}
-            </Button>
+            <button className="NotifButton" onClick={showNotificationModal}>
+              <FontAwesomeIcon icon={faBell} shake size="2xl" />{" "}
+            </button>
           ) : (
-            <Button onClick={showNotificationModal}>
-              <FontAwesomeIcon icon={faBell} size="xl" />{" "}
-            </Button>
+            <button className="NotifButton" onClick={showNotificationModal}>
+              <FontAwesomeIcon icon={faBell} size="2xl" />{" "}
+            </button>
           )
         ) : null}
 

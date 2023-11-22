@@ -15,6 +15,8 @@ router.get("/market/:uid", placesControllers.getPlacesMarket);
 
 router.get("/market/loggedout/general", placesControllers.getAllItemsMarket);
 
+router.get("/items/getPopularItems", placesControllers.getPopularItems);
+
 router.get(
   "/deactivatedItems/items",
   placesControllers.getDeactivatedItemsAdmin

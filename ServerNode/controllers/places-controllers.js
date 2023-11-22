@@ -419,7 +419,7 @@ const bidItem = async (req, res, next) => {
         // Create a new notification for the replaced user
         const replacedUserNotification = new Notification({
           userId: replacedUserId,
-          message: `You have been replaced as the highest bidder for item ${itemName}  the user ${replacedUserId}.`,
+          message: `You have been replaced as the highest bidder for item ${itemName}.`,
           data: { itemId: itemID, newBidAmount: newBidAmount },
         });
 
@@ -466,11 +466,11 @@ const bidItem = async (req, res, next) => {
         }
       } else {
         // No previous highest bidder, user is bidding for the first time
-        const itemID = existingHighestBid.place;
+        const itemID = existingHighestBid ? existingHighestBid.place : itemId;
         const newBidAmount = amount;
 
         const item = await Place.findById(itemID);
-        console.log(item);
+        //console.log(item);
         const itemName = item ? item.title : "unknown item";
 
         // Create a new notification for the user bidding for the first time
@@ -720,25 +720,29 @@ const getPopularItems = async (req, res, next) => {
         $sort: { totalBids: -1 },
       },
       {
-        $limit: 4, // You can adjust this limit based on your requirement
+        $limit: 4,
       },
     ]);
 
-    // Extract the item IDs from the result
     const itemIds = popularItems.map((item) => item._id);
 
     // Fetch additional details of the items from the Place collection
-    const items = await Place.find({ _id: { $in: itemIds } });
-    console.log(items);
+    const currentDate = new Date();
 
-    // res.json({ popularItems: items });
+    const items = await Place.find({
+      _id: { $in: itemIds },
+      activationState: { $eq: true },
+      dateTime: { $gte: currentDate }, // Check if the item is not expired
+    }).populate("category");
+
+    res.json({ popularItems: items });
   } catch (error) {
     console.error("Error fetching popular items:", error);
     res.status(500).json({ message: "Failed to fetch popular items." });
   }
 };
 
-getPopularItems();
+//getPopularItems();
 
 exports.getPlacesByCategory = getPlacesByCategory;
 exports.getPlacesMarket = getPlacesMarket;
@@ -752,3 +756,4 @@ exports.getAllItemsMarket = getAllItemsMarket;
 exports.deactivatePlace = deactivatePlace;
 exports.getDeactivatedItemsAdmin = getDeactivatedItemsAdmin;
 exports.getNewArrivals = getNewArrivals;
+exports.getPopularItems = getPopularItems;

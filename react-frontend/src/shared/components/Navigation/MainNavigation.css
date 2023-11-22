@@ -52,6 +52,19 @@
     z-index: 9999;
   }*/
    /* notification */
+
+.NotifButton{
+  background-color: rgb(190, 48, 218); /* Green background color */
+  color: white; /* White text color */
+  padding: 14px 19px; /* Padding */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Cursor on hover */
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+   
   .message-notification {
     background-color: #ffffff;
     border: 1px solid #cccccc;

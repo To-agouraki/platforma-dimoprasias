@@ -1,40 +1,71 @@
 // PopularBids.js
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import "./PopularBids.css"; // You can create a CSS file for styling
 
 const PopularBids = () => {
-  // Dummy data for testing
-  const popularBids = [
-    {
-      id: "1",
-      title: "Item 1",
-      image: "/images/item1.jpg",
-      category: "Category 1",
-    },
-    {
-      id: "2",
-      title: "Item 2",
-      image: "/images/item2.jpg",
-      category: "Category 2",
-    },
-    // Add more items as needed
-  ];
+  const { isLoading, nError, sendRequest, clearError } = useHttpClient();
+  const [popularItems, setPupolarItems] = useState([]);
+
+  useEffect(() => {
+    const fetchNewArrivals = async () => {
+      try {
+        const responseData = await sendRequest(
+          "http://localhost:5000/api/places/items/getPopularItems"
+        );
+        setPupolarItems(responseData.popularItems);
+        console.log(responseData.popularItems);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchNewArrivals();
+  }, [sendRequest]);
+
+  const calculateTimeLeft = (dateTime) => {
+    const now = new Date();
+    const endTime = new Date(dateTime);
+    const timeDiff = endTime - now;
+
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { days, hours, minutes };
+  };
 
   return (
     <div className="popular-bids">
+      <ErrorModal error={nError} onClear={clearError} />
+      {isLoading && <LoadingSpinner asOverlay />}
       <h2>Popular Bids</h2>
       <div className="bid-list">
-        {popularBids.map((item) => (
-          <div className="bid-item" key={item.id}>
+        {popularItems.map((item) => (
+          <div className="bid-item" key={item._id}>
             <img src={`http://localhost:5000/${item.image}`} alt={item.title} />
             <div className="bid-details">
-              <p>Name: {item.title}</p>
-              <p>Category: {item.category}</p>
-              <Link to={`/product/${item.id}`}>
-                <button className="w3-button w3-light-grey w3-block">View Details</button>
-              </Link>
+              <h3>{item.title}</h3>
+              <div className="details-row">
+                <p>Category: {item.category.name}</p>
+              </div>
+              <div className="details-row">
+                <p>Highest Bid: ${item.highestBid}</p>
+              </div>
+              <div className="details-row">
+                <p>Number of bidders: {item.bids.length}</p>
+              </div>
+              <div className="details-row-last">
+                <p>
+                  Time Left: {calculateTimeLeft(item.dateTime).days} days,{" "}
+                  {calculateTimeLeft(item.dateTime).hours} hours
+                </p>
+              </div>
             </div>
           </div>
         ))}

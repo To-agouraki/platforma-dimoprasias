@@ -17,7 +17,6 @@ const WelcomePage = () => {
       <PageCategories></PageCategories>
       <br></br>
       <NewArrivals></NewArrivals>
-      <br></br>
       <PopularBids></PopularBids>
       <br></br>
       <div class="banner">

@@ -18,7 +18,6 @@ const UserPlaces = () => {
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -113,6 +112,7 @@ const UserPlaces = () => {
                   items={filteredData}
                   userId={userId}
                   onDeletePlace={placeDeletedHandler}
+                  deactState={true}
                 />
               </div>
             )}
