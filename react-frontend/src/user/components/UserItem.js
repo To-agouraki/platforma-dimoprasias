@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaCog } from "react-icons/fa";
+//import { FaCog } from "react-icons/fa";
 
 import Avatar from "../../shared/components/UIElements/Avatar";
 import Card from "../../shared/components/UIElements/Card";
@@ -26,8 +26,8 @@ const UserItem = (props) => {
           </div>
         </Link>
         <div>
-          <Link to={`/updateNormalUser/${props.id}`}>
-            User Settings <FaCog className="user-item__settings-icon" />
+          <Link to={`/userInfo/${props.id}`}>
+            User Info 
           </Link>
         </div>
       </Card>

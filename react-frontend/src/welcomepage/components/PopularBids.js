@@ -1,7 +1,6 @@
 // PopularBids.js
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
@@ -50,9 +49,9 @@ const PopularBids = () => {
           <div className="bid-item" key={item._id}>
             <img src={`http://localhost:5000/${item.image}`} alt={item.title} />
             <div className="bid-details">
-              <h3>{item.title}</h3>
+              <h2><strong>{item.title}</strong></h2>
               <div className="details-row">
-                <p>Category: {item.category.name}</p>
+                <p>Category: <strong>{item.category.name}</strong> </p>
               </div>
               <div className="details-row">
                 <p>Highest Bid: ${item.highestBid}</p>

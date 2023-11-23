@@ -37,8 +37,8 @@ const NewArrivals = () => {
           <Link to={`/product/${item.id}`} key={item.id}>
             <div className="product-item">
               <img src={`http://localhost:5000/${item.image}`} alt={item.title} />
-              <p>Name: {item.title}</p>
-              <p>category: {item.category}</p>
+              <p>Name: <strong>{item.title}</strong></p>
+              <p>category: <strong>{item.category}</strong></p>
             </div>
           </Link>
         ))}

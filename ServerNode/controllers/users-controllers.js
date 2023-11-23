@@ -35,7 +35,7 @@ const getOnetUsers = async (req, res, next) => {
 
   try {
     //users = await User.find(u=>u.id === userId)
-    user = await User.findById(userId, "-id -_id -email");
+    user = await User.findById(userId, "-id -_id");
   } catch (error) {
     return next(new HttpError("getting user data failed", 500));
   }

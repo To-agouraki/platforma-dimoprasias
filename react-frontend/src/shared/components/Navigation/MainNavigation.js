@@ -190,7 +190,7 @@ const MainNavigation = (props) => {
                 className="message-notification"
                 onClick={() => handleNotificationClick(message.notificationId)}
               >
-                <p>{message.message}</p>
+                <p dangerouslySetInnerHTML={{ __html: message.message }}></p>
                 <p>Date: {new Date(message.timestamp).toLocaleString()}</p>
                 <button
                   className="mark-as-read-button"

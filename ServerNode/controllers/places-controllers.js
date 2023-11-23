@@ -157,6 +157,30 @@ const createPlace = async (req, res, next) => {
     await createdPlace.save({ session: sess });
     user.places.push(createdPlace);
     await user.save({ session: sess });
+
+    // Create a new notification for the replaced user
+    const createItemNotification = new Notification({
+      userId: creator,
+      message: `The item with name <strong>${title}</strong> has been created succesfully!.`,
+      data: { itemId: createdPlace._id },
+    });
+
+    // Save the notification to the database
+    await createItemNotification.save();
+
+    const io = getIo();
+    const socket = activeSockets[creator];
+
+    if (socket) {
+      // Join the room and emit the notification after joining
+      socket.join(creator);
+      io.to(creator).emit("notification", {
+        message: `The item with name <strong>${title}</strong> has been created succesfully!.`,
+        timestamp: new Date().toISOString(),
+        notificationId: createItemNotification._id,
+      });
+    }
+
     await sess.commitTransaction();
   } catch (error) {
     const err = new HttpError("Creating place failed", 500);
@@ -419,7 +443,7 @@ const bidItem = async (req, res, next) => {
         // Create a new notification for the replaced user
         const replacedUserNotification = new Notification({
           userId: replacedUserId,
-          message: `You have been replaced as the highest bidder for item ${itemName}.`,
+          message: `You have been replaced as the highest bidder for item <strong>${itemName}</strong>.`,
           data: { itemId: itemID, newBidAmount: newBidAmount },
         });
 
@@ -433,7 +457,7 @@ const bidItem = async (req, res, next) => {
           // Join the room and emit the notification after joining
           socket.join(replacedUserId);
           io.to(replacedUserId).emit("notification", {
-            message: `You have been replaced as the highest bidder for item ${itemName}.`,
+            message: `You have been replaced as the highest bidder for item <strong>${itemName}</strong>.`,
             timestamp: new Date().toISOString(),
             notificationId: replacedUserNotification._id,
           });
@@ -444,7 +468,7 @@ const bidItem = async (req, res, next) => {
         // Create a new notification for the new highest bidder
         const newHighestBidderNotification = new Notification({
           userId: userId,
-          message: `Congratulations! You are now the highest bidder for item ${itemName}.`,
+          message: `Congratulations! You are now the highest bidder for item <strong>${itemName}</strong>.`,
           data: { itemId: itemID, newBidAmount: newBidAmount },
         });
 
@@ -457,7 +481,7 @@ const bidItem = async (req, res, next) => {
           // Join the room and emit the notification after joining
           newBidderSocket.join(userId);
           io.to(userId).emit("notification", {
-            message: `Congratulations! You are now the highest bidder for item ${itemName}.`,
+            message: `Congratulations! You are now the highest bidder for item <strong>${itemName}</strong>.`,
             timestamp: new Date().toISOString(),
             notificationId: newHighestBidderNotification._id,
           });
@@ -476,7 +500,7 @@ const bidItem = async (req, res, next) => {
         // Create a new notification for the user bidding for the first time
         const newUserBidNotification = new Notification({
           userId: userId,
-          message: `Congratulations! You have successfully placed a bid of ${newBidAmount} for item ${itemName}.`,
+          message: `Congratulations! You have successfully placed a bid of <strong>${newBidAmount}</strong> for item <strong>${itemName}</strong>.`,
           data: { itemId: itemID, newBidAmount: newBidAmount },
         });
 
@@ -490,7 +514,7 @@ const bidItem = async (req, res, next) => {
           // Join the room and emit the notification after joining
           newUserBidSocket.join(userId);
           io.to(userId).emit("notification", {
-            message: `Congratulations! You have successfully placed a bid of ${newBidAmount} for item ${itemName}.`,
+            message: `Congratulations! You have successfully placed a bid of <strong>${newBidAmount}</strong> for item <strong>${itemName}</strong>.`,
             timestamp: new Date().toISOString(),
             notificationId: newUserBidNotification._id,
           });

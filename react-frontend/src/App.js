@@ -18,13 +18,14 @@ import NewCategory from "./adminOnly/pages/NewCategory";
 import UpdateCategory from "./adminOnly/pages/UpdateCategory";
 import UserMainPage from "./user/pages/UserMainPage";
 //import NoUserDashboard from "./user/components/NoUserDashboard";
-import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
+//import UpdateNormalUser from "./adminOnly/pages/UpdateNormalUser";
 import DeactivatedItems from "./adminOnly/pages/DeactivateItems";
 import AllItems from "./adminOnly/pages/AllItems";
 import ExpiredItems from "./adminOnly/pages/ExpiredItems";
 import SystemStatistics from "./adminOnly/pages/SystemStatistics";
 import WelcomePage from "./welcomepage/pages/WelcomePage";
 import ItemsCategory from "./welcomepage/pages/ItemsCategory";
+import UserInformation from "./adminOnly/pages/UserInformation";
 
 let logoutTimer;
 
@@ -117,7 +118,7 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/categories/new" element={<NewCategory />}></Route>
         <Route path="/categories/:categoryId" element={<UpdateCategory />}></Route>
         <Route path="/categories" element={<CategoriesPage />}></Route>
-        <Route path="/updateNormalUser/:userId" element={<UpdateNormalUser />}></Route>
+        <Route path="/userInfo/:userId" element={<UserInformation />}></Route>
         <Route path="/deactivatedItems" element={<DeactivatedItems />}></Route>
         <Route path="/systemStatistics" element={<SystemStatistics />}></Route>
       </React.Fragment>
@@ -142,7 +143,6 @@ console.log("admin", isAdminLoggedIn);
       <React.Fragment>
         <Route path="/" element={<WelcomePage />} />
         <Route path="*" exact element={<Navigate to="/auth" replace />} />
-        <Route path="/:userId/places" element={<UserPlaces></UserPlaces>} />
         <Route path="/auth" element={<Auth />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
         <Route path="/adminAuth" element={<AdminLogIn />}></Route>

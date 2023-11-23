@@ -174,7 +174,7 @@ const PlaceList = (props) => {
 
       {!props.fromMarket &&
         !props.frombid &&
-        auth.isLoggedIn &&
+        auth.isAdmin &&
         !props.fromExpired && (
           <ChangePageButton state={props.deactState}></ChangePageButton>
         )}
