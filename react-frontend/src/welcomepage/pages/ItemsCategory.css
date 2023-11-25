@@ -26,6 +26,7 @@
   }
   
   .ICcard-content {
+    margin-top: -10px;
     padding: 16px;
     background-color: rgb(85, 100, 100);
   }

@@ -43,7 +43,7 @@ const PopularBids = () => {
     <div className="popular-bids">
       <ErrorModal error={nError} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
-      <h2>Popular Bids</h2>
+      <h2>Popular Items</h2>
       <div className="bid-list">
         {popularItems.map((item) => (
           <div className="bid-item" key={item._id}>

@@ -719,8 +719,9 @@ const getPlacesByCategory = async (req, res, next) => {
   try {
     const places = await Place.find({
       activationState: true,
-      category: categoryId, // Assuming 'category' is a reference to the Category model
-    });
+      category: categoryId,
+      dateTime: { $gte: new Date() },
+    }).collation({ locale: 'en', strength: 2 }).sort({ title: 1 });
 
     res.json({ places });
   } catch (error) {
