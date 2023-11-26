@@ -20,6 +20,8 @@ const placeSchema = new Schema({
   creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
   activationState: { type: Boolean, default: true },
   creationDate: { type: Date, default: Date.now },
+  isWon: { type: Boolean, default: false },
+  isChecked: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model("Place", placeSchema);

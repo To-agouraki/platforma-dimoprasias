@@ -12,7 +12,10 @@ const CountdownPage = (props) => {
   };
 
   const handleCountdownEnd = (value) => {
-    props.getFromCount(value);//getFromcount from placeItem
+    // Check if props.getFromCount is a function before calling it
+    if (typeof props.getFromCount === "function") {
+      props.getFromCount(value);
+    }
   };
 
   useEffect(() => {

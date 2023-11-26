@@ -74,6 +74,7 @@ const getPlacesByUserId = async (req, res, next) => {
     // Populate the 'category' field with the actual category data
     places = await Place.find({
       creator: userId,
+      dateTime: { $gte: new Date() },
       activationState: { $eq: true },
     })
       .populate("category")
@@ -721,7 +722,9 @@ const getPlacesByCategory = async (req, res, next) => {
       activationState: true,
       category: categoryId,
       dateTime: { $gte: new Date() },
-    }).collation({ locale: 'en', strength: 2 }).sort({ title: 1 });
+    })
+      .collation({ locale: "en", strength: 2 })
+      .sort({ title: 1 });
 
     res.json({ places });
   } catch (error) {
@@ -767,7 +770,212 @@ const getPopularItems = async (req, res, next) => {
   }
 };
 
-//getPopularItems();
+const handleExpiredItem = async (req, res, next) => {
+  const itemId = req.params.pid;
+
+  try {
+    // Find the item by itemId
+    const item = await Place.findById(itemId);
+    console.log(item);
+    console.log(item.isChecked);
+    if (!item || item.isChecked) {
+      // Item not found or already checked, handle accordingly
+      return res
+        .status(400)
+        .json({ message: "Item not found or already checked." });
+    }
+
+    // Check if the item has a highestBidder
+    if (item.highestBidder) {
+      // Update item data for the winner
+      await Place.findByIdAndUpdate(itemId, { isWon: true });
+
+      // Add the item to the highestBidder's wonItems
+      await User.findByIdAndUpdate(item.highestBidder, {
+        $push: { wonItems: itemId },
+      });
+
+      // Add the item to the creator's wonItems
+      await User.findByIdAndUpdate(item.creator, {
+        $push: { soldItems: itemId },
+      });
+
+      sendNotification(
+        item.creator,
+        `Your item "${item.title}" was auction off successfully for ${item.highestBid}.`,
+        {
+          itemId: item._id,
+          itemTitle: item.title,
+          winningAmount: item.highestBid,
+          // Add any other relevant data fields
+        }
+      );
+
+      sendNotification(
+        item.highestBidder,
+        `Congratulations! You won the item "${item.title}" .`,
+        {
+          itemId: item._id,
+          itemTitle: item.title,
+          winningAmount: item.highestBid,
+          // Add any other relevant data fields
+        }
+      );
+
+      const otherBidders = await BidJunctionTable.find({
+        place: itemId,
+        bidder: { $ne: item.highestBidder },
+      }).populate("bidder");
+
+      if (otherBidders.length > 0) {
+        // Notify other bidders that they lost
+        otherBidders.forEach((bid) => {
+          sendNotification(
+            bid.bidder._id,
+            `Sorry, you lost the bid for the item "${item.title}".`
+          );
+        });
+      }
+    } else {
+      await Place.findByIdAndUpdate(itemId, { isWon: false });
+      await User.findByIdAndUpdate(item.creator, {
+        $push: { unSoldItems: itemId },
+      });
+
+      sendNotification(
+        item.creator,
+        `Unfortunately, your item "${item.title}" did not receive any bids and will remain with you.`
+      );
+    }
+
+    // Mark the item as checked
+    await Place.findByIdAndUpdate(itemId, { isChecked: true });
+
+    // Respond with success
+    res.status(200).json({ message: "Item processed successfully." });
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error handling expired item:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+const handleExpiredItemsInterval = async () => {
+  try {
+    // Find all expired items that are not yet won and not checked
+    const expiredItems = await Place.find({
+      expirationTime: { $lt: new Date() },
+      isChecked: false,
+    });
+
+    for (const item of expiredItems) {
+      // Check if the item has a highestBidder
+      if (item.highestBidder) {
+        // Update item data for the winner
+        await Place.findByIdAndUpdate(item._id, { isWon: true });
+
+        // Add the item to the highestBidder's wonItems
+        await User.findByIdAndUpdate(item.highestBidder, {
+          $push: { wonItems: item._id },
+        });
+
+        // Add the item to the creator's wonItems
+        await User.findByIdAndUpdate(item.creator, {
+          $push: { soldItems: item._id },
+        });
+
+        sendNotification(
+          item.creator,
+          `Your item "${item.title}" was auction off successfully for ${item.highestBid}.`,
+          {
+            itemId: item._id,
+            itemTitle: item.title,
+            winningAmount: item.highestBid,
+            // Add any other relevant data fields
+          }
+        );
+
+        sendNotification(
+          item.highestBidder,
+          `Congratulations! You won the item "${item.title}" .`,
+          {
+            itemId: item._id,
+            itemTitle: item.title,
+            winningAmount: item.highestBid,
+            // Add any other relevant data fields
+          }
+        );
+
+        const otherBidders = await BidJunctionTable.find({
+          place: item._id,
+          bidder: { $ne: item.highestBidder },
+        }).populate("bidder");
+  
+        if (otherBidders.length > 0) {
+          // Notify other bidders that they lost
+          otherBidders.forEach((bid) => {
+            sendNotification(
+              bid.bidder._id,
+              `Sorry, you lost the bid for the item "${item.title}".`
+            );
+          });
+        }
+
+
+      } else {
+        await Place.findByIdAndUpdate(item._id, { isWon: false });
+        await User.findByIdAndUpdate(item.creator, {
+          $push: { usSoldItems: item._id },
+        });
+
+        sendNotification(
+          item.creator,
+          `Unfortunately, your item "${item.title}" did not receive any bids and will remain with you.`
+        );
+      }
+
+      // Mark the item as checked
+      await Place.findByIdAndUpdate(item._id, { isChecked: true });
+    }
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error handling expired items in interval:", error);
+  }
+};
+
+// Set the interval (e.g., every 5 seconds)
+setInterval(handleExpiredItemsInterval, 5000);
+
+const sendNotification = async (userId, message, data) => {
+  try {
+    const newNotification = await Notification.create({
+      userId: userId,
+      message,
+      data,
+    });
+
+    // You can now implement the actual notification sending logic using sockets
+    const io = getIo();
+    const socket = activeSockets[userId];
+
+    if (socket) {
+      // Join the room and emit the notification after joining
+      socket.join(userId);
+      io.to(userId).emit("notification", {
+        message,
+        data,
+        timestamp: new Date().toISOString(),
+        notificationId: newNotification._id,
+      });
+    } else {
+      console.log(`Socket for User ${userId} not found`);
+    }
+
+    console.log(`Notification sent to user ${userId}: ${message}`);
+  } catch (error) {
+    console.error("Error sending notification:", error);
+  }
+};
 
 exports.getPlacesByCategory = getPlacesByCategory;
 exports.getPlacesMarket = getPlacesMarket;
@@ -782,3 +990,4 @@ exports.deactivatePlace = deactivatePlace;
 exports.getDeactivatedItemsAdmin = getDeactivatedItemsAdmin;
 exports.getNewArrivals = getNewArrivals;
 exports.getPopularItems = getPopularItems;
+exports.handleExpiredItem = handleExpiredItem;

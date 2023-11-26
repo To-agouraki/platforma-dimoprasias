@@ -26,6 +26,8 @@ router.get("/newarrivals/newitems", placesControllers.getNewArrivals);
 
 router.get("/categoryItems/:categoryId", placesControllers.getPlacesByCategory);
 
+router.post("/handleExpiredItem/:pid", placesControllers.handleExpiredItem);
+
 router.use(Authchecking);
 
 router.post(

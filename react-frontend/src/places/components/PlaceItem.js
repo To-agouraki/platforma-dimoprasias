@@ -92,7 +92,7 @@ const PlaceItem = (props) => {
 
   //  let initialDateTimeString = "2023-06-02T18:43:00.000Z";//props.dateTime;
   // let initialDateTime = new Date(initialDateTimeString);
-  let initialDateTime;
+  //let initialDateTime;
   useEffect(() => {
     if (props.dateTime) {
       const originalDateTimeString = props.dateTime;
@@ -100,17 +100,13 @@ const PlaceItem = (props) => {
         "+00:00",
         "Z"
       );
-      initialDateTime = convertedDateTimeString;
-      setTheDateTime(initialDateTime);
+
+      setTheDateTime(convertedDateTimeString);
     }
-  }, [props.dateTime, initialDateTime, theDateTime]);
+  }, [props.dateTime, theDateTime]);
 
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-  // const openMapHandler = () => {
-  // setShowMap(true);
-  //};
 
   const closeMapHandler = () => {
     setShowMap(false);
@@ -159,7 +155,28 @@ const PlaceItem = (props) => {
     // filterItemsByCategory(category);
   };
 
-  console.log(props.activationState);
+  useEffect(() => {
+    if (counterExpire) {
+      const handleExpiredItem = async () => {
+        try {
+          const response = await sendRequest(
+            `http://localhost:5000/api/places/handleExpiredItem/${props.id}`,
+            "POST",
+            null,
+          );
+  
+          // Handle response as needed
+          console.log(response);
+        } catch (error) {
+          // Handle errors appropriately
+          console.error("Error handling expired item:", error);
+        }
+      };
+  
+      handleExpiredItem();
+    }
+  }, [counterExpire, props.id, auth.token, sendRequest]);
+  
 
   return (
     <React.Fragment>
@@ -277,7 +294,9 @@ const PlaceItem = (props) => {
                   Delete
                 </Button>
               )} */}
-              {auth.isLoggedIn && props.activationState !== undefined && (auth.isAdmin || auth.userId === props.creatorId ) ? (
+              {auth.isLoggedIn &&
+              props.activationState !== undefined &&
+              (auth.isAdmin || auth.userId === props.creatorId) ? (
                 props.activationState ? (
                   <Button danger onClick={showDeleteWarningHandler}>
                     Deactivate

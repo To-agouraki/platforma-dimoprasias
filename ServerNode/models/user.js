@@ -10,6 +10,10 @@ const userSchema = new Schema({
   image: { type: String, required: false },
   bids: [{ type: mongoose.Types.ObjectId, ref: "Bidding" }],
   places: [{ type: mongoose.Types.ObjectId, required: true, ref: "Place" }], //establish connections in place==> we can use populate()
+  wonItems: [{ type: mongoose.Types.ObjectId, ref: "Place" }], //establish connections in place==> we can use populate()
+  soldItems: [{ type: mongoose.Types.ObjectId, ref: "Place" }], //establish connections in place==> we can use populate()
+  unSoldItems: [{ type: mongoose.Types.ObjectId, ref: "Place" }],
+
 });
 
 userSchema.plugin(uniqueValidator);
