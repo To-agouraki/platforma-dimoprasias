@@ -40,4 +40,9 @@ router.post("/login", usersController.login);
 router.get("/getuser/:uid", usersController.getOnetUsers);
 router.get("/getuserbids/:uid", usersController.getBiddersItems);
 
+router.get("/getSoldItems/:uid", usersController.getSoldItemsUser);
+router.get("/getunSoldItems/:uid", usersController.getunSoldItemsUser);
+router.get("/getWonItems/:uid", usersController.getwonItemsUser);
+
+
 module.exports = router;

@@ -379,6 +379,67 @@ const setMarkAsRead = async (req, res, next) => {
   }
 };
 
+const getunSoldItemsUser = async (req, res, next)=>{
+  const userId = req.params.uid;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const soldItems = await Place.find({ _id: { $in: user.unSoldItems } });
+
+    console.log(soldItems);
+    //res.json({ unsoldItems });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch unsold items." });
+  }
+}
+
+const getSoldItemsUser = async (req, res, next)=>{
+  const userId = req.params.uid;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const unsoldItems = await Place.find({ _id: { $in: user.soldItems } });
+
+    console.log(unsoldItems);
+    //res.json({ unsoldItems });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch sold items." });
+  }
+
+}
+
+const getwonItemsUser = async (req, res, next)=>{
+  const userId = req.params.uid;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const wonItems = await Place.find({ _id: { $in: user.wonItems } });
+
+    console.log(wonItems);
+    //res.json({ unsoldItems });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch winning items." });
+  }
+}
+
 exports.getUnreadNotifications = getUnreadNotifications;
 exports.getUsers = getUsers;
 exports.signup = signup;
@@ -387,3 +448,6 @@ exports.getOnetUsers = getOnetUsers;
 exports.updateUser = updateUser;
 exports.getBiddersItems = getBiddersItems;
 exports.setMarkAsRead = setMarkAsRead;
+exports.getunSoldItemsUser = getunSoldItemsUser;
+exports.getSoldItemsUser = getSoldItemsUser;
+exports.getwonItemsUser = getwonItemsUser;
