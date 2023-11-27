@@ -194,7 +194,7 @@ const createPlace = async (req, res, next) => {
 const updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors);
+    console.log('from updatePlace' ,errors);
     return next(
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
@@ -247,7 +247,7 @@ const updatePlace = async (req, res, next) => {
     }
   } catch (error) {
     console.log(error);
-    console.log("error has occured with category");
+    console.log("error has occured with category in updateplace");
   }
 
   try {
@@ -379,7 +379,7 @@ const deactivatePlace = async (req, res, next) => {
   try {
     place.activationState = !place.activationState;
   } catch (error) {
-    console.log(error);
+    console.log('error in deactivate item',error);
   }
 
   try {
@@ -438,7 +438,7 @@ const bidItem = async (req, res, next) => {
         const newBidAmount = amount;
 
         const item = await Place.findById(itemID);
-        console.log(item);
+       //console.log('from bid item',item);
         const itemName = item ? item.title : "unknown item";
 
         // Create a new notification for the replaced user
@@ -584,7 +584,6 @@ const getPlacesMarket = async (req, res, next) => {
 
 const getDeactivatedItemsAdmin = async (req, res, next) => {
   let places;
-  console.log("1");
   try {
     // Populate the 'category' field with the actual category data
     places = await Place.find({
@@ -780,9 +779,7 @@ const handleExpiredItem = async (req, res, next) => {
     console.log(item.isChecked);
     if (!item || item.isChecked) {
       // Item not found or already checked, handle accordingly
-      return res
-        .status(400)
-        .json({ message: "Item not found or already checked." });
+      return next();
     }
 
     // Check if the item has a highestBidder
@@ -864,9 +861,14 @@ const handleExpiredItemsInterval = async () => {
   try {
     // Find all expired items that are not yet won and not checked
     const expiredItems = await Place.find({
-      expirationTime: { $lt: new Date() },
+      dateTime: { $lt: new Date() },
       isChecked: false,
     });
+
+    if(!expiredItems){
+      return next();
+    }
+
 
     for (const item of expiredItems) {
       // Check if the item has a highestBidder
@@ -944,7 +946,7 @@ const handleExpiredItemsInterval = async () => {
 };
 
 // Set the interval (e.g., every 5 seconds)
-setInterval(handleExpiredItemsInterval, 5000);
+setInterval(handleExpiredItemsInterval, 1000);
 
 const sendNotification = async (userId, message, data) => {
   try {

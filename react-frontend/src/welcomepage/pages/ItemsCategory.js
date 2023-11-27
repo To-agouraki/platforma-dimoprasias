@@ -8,6 +8,7 @@ import "./ItemsCategory.css";
 const ItemsCategory = () => {
   const { isLoading, sendRequest } = useHttpClient();
   const [items, setItems] = useState([]);
+  const [pageTitle, setPageTitle] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3; // You can adjust the number of items per page
   const categoryId = useParams().categoryId;
@@ -30,6 +31,20 @@ const ItemsCategory = () => {
     setCurrentPage(newPage);
   };
 
+  useEffect(() => {
+    const fetchCategoryName = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/admin/getCategory/${categoryId}`
+        );
+        setPageTitle(responseData.category.name);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCategoryName();
+  }, [sendRequest, categoryId]);
+
   const totalPages = Math.ceil(items.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -37,6 +52,8 @@ const ItemsCategory = () => {
 
   return (
     <div>
+      <h2 className="catPAgeTitle">{pageTitle}</h2>
+
       <div className="ICcontainer">
         {isLoading && (
           <div className="center">
@@ -48,6 +65,7 @@ const ItemsCategory = () => {
             <p>Oops, no items in this category yet!</p>
           </Card>
         )}
+
         {currentItems.length > 0 &&
           currentItems.map((item) => (
             <div className="ICcard" key={item.id}>

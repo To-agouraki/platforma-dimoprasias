@@ -22,27 +22,7 @@ const Notifications = (props) => {
   const [message, setMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
-  useEffect(() => {
-    const socket = io('http://localhost:5000');
 
-    socket.on('connect', () => {
-      setIsConnected(true); // Set connection status to true when connected
-    });
-
-    socket.on('notification', (data) => {
-      setMessage(data.message);
-    });
-
-    console.log(message);
-    // Clean up on component unmount
-    return () => {
-      socket.disconnect();
-    };
-  }, [message]); // Empty dependency array ensures the effect runs once after the initial render
-
-  if (!isConnected) {
-    return <div>Connecting to the server...</div>;
-  }
 
 
 

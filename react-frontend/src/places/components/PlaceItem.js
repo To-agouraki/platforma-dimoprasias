@@ -156,15 +156,18 @@ const PlaceItem = (props) => {
   };
 
   useEffect(() => {
-    if (counterExpire) {
+    if (false) {
       const handleExpiredItem = async () => {
         try {
           const response = await sendRequest(
             `http://localhost:5000/api/places/handleExpiredItem/${props.id}`,
             "POST",
             null,
+            {
+              Authorization: "Bearer " + auth.token,
+            }
           );
-  
+
           // Handle response as needed
           console.log(response);
         } catch (error) {
@@ -172,11 +175,10 @@ const PlaceItem = (props) => {
           console.error("Error handling expired item:", error);
         }
       };
-  
+
       handleExpiredItem();
     }
   }, [counterExpire, props.id, auth.token, sendRequest]);
-  
 
   return (
     <React.Fragment>

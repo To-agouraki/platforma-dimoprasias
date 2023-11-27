@@ -32,6 +32,7 @@ const getUsers = async (req, res, next) => {
 
 const getOnetUsers = async (req, res, next) => {
   const userId = req.params.uid;
+  let user;
 
   try {
     //users = await User.find(u=>u.id === userId)
@@ -284,6 +285,7 @@ const getBiddersItems = async (req, res, next) => {
     })
       .populate({
         path: "place",
+        match: { dateTime: { $gte: new Date() } }, // Exclude expired items
         populate: {
           path: "category",
           select: "name", // Select only the 'name' field from the 'category' document

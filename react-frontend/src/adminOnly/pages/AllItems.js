@@ -1,5 +1,5 @@
 //userPlaces  pale
-import React, { useEffect, useState, useContext,useCallback } from "react";
+import React, { useEffect, useState, useContext } from "react";
 //import { useParams } from "react-router-dom";
 
 import PlaceList from "../../places/components/PlaceList";
@@ -9,7 +9,6 @@ import SearchBar from "../../shared/components/SharedComponent/SearchBar";
 import CategoryFilter from "../../shared/components/SharedComponent/CategoryFilter";
 import { AuthContext } from "../../shared/components/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
-import socket from "../../shared/util/socket";
 
 const AllItems = () => {
   const [loadedPlaces, setLoadedPlaces] = useState([]);
@@ -88,25 +87,7 @@ const AllItems = () => {
 
     setFilteredData(filteredPlaces);
   }, [selectedCategory, searchTerm, loadedPlaces]);
-////////////////////
-//socket
-  const handleNotification = useCallback((data) => {
-    // Handle the notification data here
-    console.log("New Notification:", data.message);
-    // You can update your state or show a notification to the user
-  }, []); // Empty dependency array, no dependencies
 
-  useEffect(() => {
-    // Listen for "notification" events from the server using the imported socket object
-    socket.on("notification", handleNotification);
- 
-    // Clean up the socket connection and event listener when the component unmounts
-    return () => {
-      socket.off("notification", handleNotification);
-      socket.disconnect();
-    };
-  }, [handleNotification]); // Include handleNotification in the dependency array
-//////////////////////////
 
   return (
     <React.Fragment>

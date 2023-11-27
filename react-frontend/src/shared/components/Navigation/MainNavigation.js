@@ -24,7 +24,6 @@ const MainNavigation = (props) => {
     const storedMessages = localStorage.getItem("messages");
     return storedMessages ? JSON.parse(storedMessages) : [];
   });
-  const [isConnected, setIsConnected] = useState(false);
   const auth = useContext(AuthContext);
   const userId = auth.userId;
 
@@ -66,56 +65,59 @@ const MainNavigation = (props) => {
   }, [userId, auth.isLoggedIn, sendRequest]);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
-      query: {
-        userId: userId,
-      },
-    });
-
-    socket.on("connect", () => {
-      setIsConnected(true); // Set connection status to true when connected
-      socket.emit("userConnected", { userId: userId }); // Emit userConnected event after connection
-      console.log("id", userId);
-    });
-
-    socket.on("notification", (data) => {
-      // Extract message, timestamp, and notificationId from the received data
-      const { message, timestamp, notificationId } = data;
-
-      // Update messages state with new notification from socket
-      setMessages((prevMessages) => {
-        const newMessages = [
-          ...prevMessages,
-          { notificationId, message, timestamp },
-        ];
-
-        // Sort notifications by timestamp in descending order
-        const sortedMessages = newMessages.sort(
-          (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
-        );
-
-        // Save sorted messages to localStorage
-        localStorage.setItem("messages", JSON.stringify(sortedMessages));
-
-        return sortedMessages;
+    if (userId) {
+      const socket = io("http://localhost:5000", {
+        query: {
+          userId: userId,
+        },
       });
-
-      setHasNewNotification(true);
-    });
-
-    // Load messages from localStorage on component mount
-    const storedMessages = localStorage.getItem("messages");
-    const initialMessages = storedMessages ? JSON.parse(storedMessages) : [];
-    setMessages(initialMessages);
+  
+      socket.on("connect", () => {
+        if (socket.handshake && socket.handshake.query) {
+          console.log("Connection established with query:", socket.handshake.query);
+        }
+        console.log("User connected with ID:", userId);
+        socket.emit("userConnected", { userId: userId });
+      });
+  
+      socket.on("notification", (data) => {
+        const { message, timestamp, notificationId } = data;
+  
+        setMessages((prevMessages) => {
+          const newMessages = [
+            ...prevMessages,
+            { notificationId, message, timestamp },
+          ];
+  
+          const sortedMessages = newMessages.sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          );
+  
+          localStorage.setItem("messages", JSON.stringify(sortedMessages));
+  
+          return sortedMessages;
+        });
+  
+        setHasNewNotification(true);
+      });
+  
+      socket.on("disconnect", () => {
+        console.log(`User ${userId} disconnected`);
+        // You may want to update your state or perform other cleanup actions here
+      });
+  
+      return () => {
+        socket.disconnect();
+        console.log("Socket disconnected for user:", userId);
+      };
+    }
   }, [userId]);
+  
 
   // Remove userSockets from the dependency array, it's not needed here
 
   const memoizedMessages = useMemo(() => messages, [messages]);
 
-  if (!isConnected) {
-    return <div>Connecting to the server...</div>;
-  }
 
   const openDrawerHandler = () => {
     setDrawerIsOpen(true);

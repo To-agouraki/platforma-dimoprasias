@@ -1,31 +1,10 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import "./AdminDashboard.css";
 import { Link } from "react-router-dom";
-import io from 'socket.io-client';
-const socket = io('http://localhost:5000');
+
 
 const AdminDashboard = () => {
   // State to track which button is being hovered
-
-
-  const [dataFromBackend, setDataFromBackend] = useState('');
-
-  useEffect(() => {
-    // Listen for data from the backend
-    socket.on('notification', (data) => {
-      setDataFromBackend(data);
-    });
-
-    // Clean up on component unmount
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  console.log(dataFromBackend);
-
-
-
   const [hoveredButton, setHoveredButton] = useState(null);
 
   const categoriesDescr =

@@ -50,4 +50,10 @@
   }
   
  
+  .catPAgeTitle {
+    text-align: center;
+    border-bottom: 2px solid #ccc; /* You can change the color as needed */
+    padding-bottom: 10px; /* Adjust as needed */
+    font-size: 30px; /* Adjust as needed */
+  }
   

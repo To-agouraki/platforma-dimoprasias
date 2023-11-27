@@ -12,15 +12,13 @@ function initIo(server) {
 
   io.on("connection", (socket) => {
     // Extract user ID from the handshake query
+
     const userId = socket.handshake.query.userId;
 
     // Store the socket in activeSockets
     activeSockets[userId] = socket;
 
     // Emit a welcome message to the connected user
-    io.to(userId).emit("notification", {
-      message: `Welcome to the platform, ${userId}!`,
-    });
 
     console.log(`User ${userId} connected`);
 
