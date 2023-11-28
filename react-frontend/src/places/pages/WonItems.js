@@ -4,7 +4,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import WonItemsList from "./WonItemsList"; // Adjust the import path as needed
+import WonItem from "../components/WonItem";
 import { AuthContext } from "../../shared/components/context/auth-context";
 
 const WonItems = () => {
@@ -32,7 +32,7 @@ const WonItems = () => {
       {isLoading && <LoadingSpinner asOverlay />}
       <div className="won-items">
         <h2>Won Items</h2>
-        <WonItemsList wonItems={wonItems} />
+        <WonItem wonItems={wonItems} />
       </div>
     </React.Fragment>
   );

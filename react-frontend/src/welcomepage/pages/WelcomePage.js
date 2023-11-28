@@ -19,10 +19,10 @@ const WelcomePage = () => {
       <NewArrivals></NewArrivals>
       <PopularBids></PopularBids>
       <br></br>
-      <div class="banner">
+      <div className="banner">
         <Link to={`/market`}>
-          <div class="banner-image"></div>
-          <div class="banner-content">
+          <div className="banner-image"></div>
+          <div className="banner-content">
             <h2>Check all the items</h2>
             <p>Perfect combination of all the user created products</p>
             <button>Browse All Items</button>

@@ -7,6 +7,7 @@ import React from "react";
 import Button from "../../shared/components/FormElements/Button";
 import TabbedItem from "./TabbedItem";
 import ChangePageButton from "../../shared/components/FormElements/ChangePageButton";
+import PastItemsButton from "../../shared/components/FormElements/PastItemsButton";
 
 const PlaceList = (props) => {
   const [tabbedView, setTabbedView] = useState(false);
@@ -65,13 +66,13 @@ const PlaceList = (props) => {
   if (props.fromDeactivated && props.items.length === 0) {
     return (
       <React.Fragment>
-      <ChangePageButton state={props.deactState}></ChangePageButton>
-      <div className="place-list center">
-        <Card>
-          <h2>No deactivated item found.</h2>
-        </Card>
-      </div>
-    </React.Fragment>
+        <ChangePageButton state={props.deactState}></ChangePageButton>
+        <div className="place-list center">
+          <Card>
+            <h2>No deactivated item found.</h2>
+          </Card>
+        </div>
+      </React.Fragment>
     );
   }
 
@@ -177,6 +178,17 @@ const PlaceList = (props) => {
         auth.isAdmin &&
         !props.fromExpired && (
           <ChangePageButton state={props.deactState}></ChangePageButton>
+        )}
+
+      {!props.fromMarket &&
+        !props.frombid &&
+        !auth.isAdmin &&
+        !props.fromExpired &&
+        auth.isLoggedIn && (
+          <PastItemsButton
+            state={props.deactState}
+            userId={auth.userId}
+          ></PastItemsButton>
         )}
 
       <div className="items-per-page">

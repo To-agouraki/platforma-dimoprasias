@@ -8,6 +8,7 @@ const User = require("../models/user");
 const Place = require("../models/place");
 const BidJunctionTable = require("../models/bidding");
 const Notification = require("../models/notification");
+const Category = require("../models/category");
 
 // const DUMMY_USERS = [
 //   {
@@ -379,7 +380,7 @@ const setMarkAsRead = async (req, res, next) => {
   }
 };
 
-const getunSoldItemsUser = async (req, res, next)=>{
+const getunSoldItemsUser = async (req, res, next) => {
   const userId = req.params.uid;
 
   try {
@@ -389,17 +390,16 @@ const getunSoldItemsUser = async (req, res, next)=>{
       return res.status(404).json({ message: "User not found." });
     }
 
-    const soldItems = await Place.find({ _id: { $in: user.unSoldItems } });
-
-    console.log(soldItems);
-    //res.json({ unsoldItems });
+    const unsoldItems = await Place.find({ _id: { $in: user.unSoldItems } }).populate('category');
+    //console.log(unsoldItems);
+    res.json({ unsoldItems });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to fetch unsold items." });
   }
-}
+};
 
-const getSoldItemsUser = async (req, res, next)=>{
+const getSoldItemsUser = async (req, res, next) => {
   const userId = req.params.uid;
 
   try {
@@ -409,18 +409,17 @@ const getSoldItemsUser = async (req, res, next)=>{
       return res.status(404).json({ message: "User not found." });
     }
 
-    const unsoldItems = await Place.find({ _id: { $in: user.soldItems } });
+    const soldItems = await Place.find({ _id: { $in: user.soldItems } }).populate('category');
+    ;
 
-    console.log(unsoldItems);
-    //res.json({ unsoldItems });
+    res.json({ soldItems });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to fetch sold items." });
   }
+};
 
-}
-
-const getwonItemsUser = async (req, res, next)=>{
+const getwonItemsUser = async (req, res, next) => {
   const userId = req.params.uid;
 
   try {
@@ -438,7 +437,7 @@ const getwonItemsUser = async (req, res, next)=>{
     console.error(err);
     res.status(500).json({ message: "Failed to fetch winning items." });
   }
-}
+};
 
 exports.getUnreadNotifications = getUnreadNotifications;
 exports.getUsers = getUsers;

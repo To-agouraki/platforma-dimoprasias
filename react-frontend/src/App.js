@@ -26,6 +26,7 @@ import SystemStatistics from "./adminOnly/pages/SystemStatistics";
 import WelcomePage from "./welcomepage/pages/WelcomePage";
 import ItemsCategory from "./welcomepage/pages/ItemsCategory";
 import UserInformation from "./adminOnly/pages/UserInformation";
+import PastItems from "./places/pages/PastItems";
 
 let logoutTimer;
 
@@ -135,6 +136,8 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/user/profile" element={<UserProfile />}></Route>
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
+        <Route path="/pastItems/:userId" element={<PastItems />}></Route>
+
       </React.Fragment>
     );
   } else {

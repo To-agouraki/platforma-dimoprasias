@@ -1,0 +1,15 @@
+/* PastItems.css */
+.past-items-container {
+    display: flex;
+    height: 180vh; /* Set the height as needed */
+    overflow: hidden; /* Hide the overflow from the container */
+  }
+  
+  .sold-items,
+  .unsold-items {
+    flex: 1;
+    overflow-y: auto; /* Enable vertical scrollbar if needed */
+    padding: 16px; /* Add padding as needed */
+    box-sizing: border-box; /* Include padding in the total width/height */
+  }
+  

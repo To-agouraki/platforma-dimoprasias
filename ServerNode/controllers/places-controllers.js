@@ -927,7 +927,7 @@ const handleExpiredItemsInterval = async () => {
       } else {
         await Place.findByIdAndUpdate(item._id, { isWon: false });
         await User.findByIdAndUpdate(item.creator, {
-          $push: { usSoldItems: item._id },
+          $push: { unSoldItems: item._id },
         });
 
         sendNotification(

@@ -22,14 +22,14 @@ const PastItemsButton = (props) => {
         {props.state ? (
           <Button
             className="link"
-            to="/deactivatedItems"
+            to={`/pastItems/${props.userId}`}
             onClick={ChangeItemsLink}
           >
-            Deactivated Items
+            Past Items
           </Button>
         ) : (
           <Button className="link" onClick={handleGoBack}>
-            Activated Items
+            Active Items
           </Button>
         )}
       </div>
