@@ -5,7 +5,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import WonItem from "../components/WonItem";
-import { AuthContext } from "../../shared/components/context/auth-context";
+import { useParams } from "react-router-dom";
 
 const WonItems = () => {
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
