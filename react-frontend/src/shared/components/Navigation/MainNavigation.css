@@ -76,6 +76,7 @@
     color: #333333;
     word-wrap: break-word;
     transition: transform 0.3s ease-in-out;
+    color: black;
   }
   
   .message-notification:hover {

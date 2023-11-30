@@ -795,6 +795,8 @@ const handleExpiredItem = async (req, res, next) => {
       // Update item data for the winner
       await Place.findByIdAndUpdate(itemId, { isWon: true });
 
+
+
       // Add the item to the highestBidder's wonItems
       await User.findByIdAndUpdate(item.highestBidder, {
         $push: { wonItems: itemId },
@@ -837,7 +839,7 @@ const handleExpiredItem = async (req, res, next) => {
         otherBidders.forEach((bid) => {
           sendNotification(
             bid.bidder._id,
-            `Sorry, you lost the bid for the item "${item.title}".`
+            `Sorry, you lost the bid for the item <strong>${item.title}</strong>.`
           );
         });
       }
@@ -849,7 +851,7 @@ const handleExpiredItem = async (req, res, next) => {
 
       sendNotification(
         item.creator,
-        `Unfortunately, your item "${item.title}" did not receive any bids and will remain with you.`
+        `Unfortunately, your item <strong>${item.title}</strong> did not receive any bids and will remain with you.`
       );
     }
 
@@ -926,7 +928,7 @@ const handleExpiredItemsInterval = async () => {
           otherBidders.forEach((bid) => {
             sendNotification(
               bid.bidder._id,
-              `Sorry, you lost the bid for the item "${item.title}".`
+              `Sorry, you lost the bid for the item <strong>${item.title}</strong>.`
             );
           });
         }
@@ -940,7 +942,7 @@ const handleExpiredItemsInterval = async () => {
 
         sendNotification(
           item.creator,
-          `Unfortunately, your item "${item.title}" did not receive any bids and will remain with you.`
+          `Unfortunately, your item <strong>${item.title}</strong> did not receive any bids and will remain with you.`
         );
       }
 

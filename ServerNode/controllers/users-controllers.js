@@ -431,7 +431,7 @@ const getwonItemsUser = async (req, res, next) => {
 
     const wonItems = await Place.find({ _id: { $in: user.wonItems } }).populate('category');
 
-    console.log(wonItems);
+    //console.log(wonItems);
     res.json({ wonItems });
   } catch (err) {
     console.error(err);

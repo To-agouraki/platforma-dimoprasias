@@ -27,28 +27,39 @@ const MainNavigation = (props) => {
   const auth = useContext(AuthContext);
   const userId = auth.userId;
 
+  console.log("User ID=>", userId);
+  console.log("is Admin=>", auth.isAdmin);
+  console.log("local storage message=>", messages);
+  console.log("local storage =>", localStorage);
+
   useEffect(() => {
-    if (auth.isLoggedIn) {
+    if (auth.isLoggedIn && !auth.isAdmin) {
       const fetchNotifications = async () => {
         try {
           const responseData = await sendRequest(
             `http://localhost:5000/api/users/getusernotifications/${userId}`
           );
 
-          // Extract relevant data from the response and format it
-          const fetchedNotifications = responseData.notifications.map(
-            (notification) => ({
-              notificationId: notification._id,
-              message: notification.message,
-              timestamp: notification.timestamp,
-            })
-          );
+          let fetchedNotifications = [];
+
+          if (
+            responseData.notifications &&
+            Array.isArray(responseData.notifications)
+          ) {
+            // Extract relevant data from the response and format it
+            fetchedNotifications = responseData.notifications.map(
+              (notification) => ({
+                notificationId: notification._id,
+                message: notification.message,
+                timestamp: notification.timestamp,
+              })
+            );
+          }
 
           // Sort notifications by timestamp in descending order
           const sortedNotifications = fetchedNotifications.sort(
             (a, b) => a.timestamp - b.timestamp
           );
-
           // Update component state with sorted notifications
           setMessages(sortedNotifications);
 
@@ -62,7 +73,7 @@ const MainNavigation = (props) => {
 
       fetchNotifications();
     }
-  }, [userId, auth.isLoggedIn, sendRequest]);
+  }, [userId, auth.isLoggedIn, sendRequest,auth.isAdmin]);
 
   useEffect(() => {
     if (userId) {
@@ -71,53 +82,54 @@ const MainNavigation = (props) => {
           userId: userId,
         },
       });
-  
+
       socket.on("connect", () => {
         if (socket.handshake && socket.handshake.query) {
-          console.log("Connection established with query:", socket.handshake.query);
+          console.log(
+            "Connection established with query:",
+            socket.handshake.query
+          );
         }
         console.log("User connected with ID:", userId);
         socket.emit("userConnected", { userId: userId });
       });
-  
+
       socket.on("notification", (data) => {
         const { message, timestamp, notificationId } = data;
-  
+
         setMessages((prevMessages) => {
           const newMessages = [
             ...prevMessages,
             { notificationId, message, timestamp },
           ];
-  
+
           const sortedMessages = newMessages.sort(
             (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
           );
-  
+
           localStorage.setItem("messages", JSON.stringify(sortedMessages));
-  
+
           return sortedMessages;
         });
-  
+
         setHasNewNotification(true);
       });
-  
+
       socket.on("disconnect", () => {
         console.log(`User ${userId} disconnected`);
         // You may want to update your state or perform other cleanup actions here
       });
-  
+
       return () => {
         socket.disconnect();
         console.log("Socket disconnected for user:", userId);
       };
     }
   }, [userId]);
-  
 
   // Remove userSockets from the dependency array, it's not needed here
 
   const memoizedMessages = useMemo(() => messages, [messages]);
-
 
   const openDrawerHandler = () => {
     setDrawerIsOpen(true);

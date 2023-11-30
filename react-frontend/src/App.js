@@ -71,9 +71,12 @@ console.log("admin", isAdminLoggedIn);
     setToken(null);
     setUserId(null);
     setTokenExpirationDate(null);
-    localStorage.removeItem("userData");
-    localStorage.removeItem("messages");
+   // localStorage.removeItem("userData");
+    //localStorage.removeItem("messages");
+    localStorage.clear();
   }, []);
+
+console.log("from app",localStorage.getItem('messages'));
 
   useEffect(() => {
     if (token && tokenExpirationDate) {
