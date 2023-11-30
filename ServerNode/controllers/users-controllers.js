@@ -429,10 +429,10 @@ const getwonItemsUser = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const wonItems = await Place.find({ _id: { $in: user.wonItems } });
+    const wonItems = await Place.find({ _id: { $in: user.wonItems } }).populate('category');
 
     console.log(wonItems);
-    //res.json({ unsoldItems });
+    res.json({ wonItems });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to fetch winning items." });

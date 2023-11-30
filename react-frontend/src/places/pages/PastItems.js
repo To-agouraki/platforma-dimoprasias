@@ -5,7 +5,6 @@ import UnsoldItems from "../components/UnsoldItems";
 import SoldItems from "../components/SoldItems";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import Card from "../../shared/components/UIElements/Card";
 import PastItemsButton from "../../shared/components/FormElements/PastItemsButton";
 import "./PastItems.css";
 
@@ -55,17 +54,17 @@ const PastItems = () => {
           <div className="sold-items">
             <h2>Sold Items</h2>
 
-            <Card>
+            
               <SoldItems soldItems={soldItems} />
-            </Card>
+           
           </div>
           <div className="unsold-items">
             
             <h2>Unsold Items</h2>
             <PastItemsButton></PastItemsButton>
-            <Card>
+            
               <UnsoldItems unsoldItems={unsoldItems} />
-            </Card>
+            
           </div>
         </div>
       )}

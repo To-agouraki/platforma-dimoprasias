@@ -27,6 +27,7 @@ import WelcomePage from "./welcomepage/pages/WelcomePage";
 import ItemsCategory from "./welcomepage/pages/ItemsCategory";
 import UserInformation from "./adminOnly/pages/UserInformation";
 import PastItems from "./places/pages/PastItems";
+import WonItems from "./places/pages/WonItems";
 
 let logoutTimer;
 
@@ -137,6 +138,8 @@ console.log("admin", isAdminLoggedIn);
         <Route path="/:userId/biddedItems" element={<BiddedItems />}></Route>
         <Route path="/market" element={<ItemMarket />}></Route>
         <Route path="/pastItems/:userId" element={<PastItems />}></Route>
+        <Route path="/wonItems/:userId" element={<WonItems />}></Route>
+
 
       </React.Fragment>
     );

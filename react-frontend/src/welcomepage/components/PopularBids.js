@@ -17,6 +17,7 @@ const PopularBids = () => {
           "http://localhost:5000/api/places/items/getPopularItems"
         );
         setPupolarItems(responseData.popularItems);
+        console.log("items =>",responseData.popularItems.length);
         console.log(responseData.popularItems);
       } catch (error) {
         console.log(error);

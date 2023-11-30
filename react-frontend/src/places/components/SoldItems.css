@@ -2,14 +2,16 @@
 .sold-items-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content:space-evenly;
 }
 
 .sold-item {
   border: 1px solid #ccc;
   width: 250px; /* Adjust the width as needed */
+  height: 100vhpx; /* Set a fixed height for all items */
   margin: 16px;
   text-align: center;
+  overflow: hidden; /* Hide content that exceeds the fixed height */
 }
 
 .imgforpast {
@@ -17,4 +19,8 @@
   height: 25vh;
   margin-bottom: 10px;
   border-bottom: 1px solid black;
+}
+
+.margbot{
+  margin-bottom: 20px;
 }

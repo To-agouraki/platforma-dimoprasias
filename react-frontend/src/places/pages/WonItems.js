@@ -1,6 +1,6 @@
 // WonItems.js
 
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
@@ -10,12 +10,15 @@ import { useParams } from "react-router-dom";
 const WonItems = () => {
   const { isLoading, nError, sendRequest, clearError } = useHttpClient();
   const [wonItems, setWonItems] = useState([]);
+  const userId = useParams().userId;
+
+
 
   useEffect(() => {
     const fetchWonItems = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/wonitems/${"123"}`
+          `http://localhost:5000/api/users/getWonItems/${userId}`
         );
         setWonItems(responseData.wonItems);
       } catch (error) {
@@ -24,14 +27,14 @@ const WonItems = () => {
     };
 
     fetchWonItems();
-  }, [sendRequest]);
+  }, [sendRequest,userId]);
 
   return (
     <React.Fragment>
       <ErrorModal error={nError} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
       <div className="won-items">
-        <h2>Won Items</h2>
+        <h2 className="center">Won Items</h2>
         <WonItem wonItems={wonItems} />
       </div>
     </React.Fragment>

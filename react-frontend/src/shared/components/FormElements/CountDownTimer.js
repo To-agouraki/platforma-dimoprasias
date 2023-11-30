@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ErrorMessage from "./ErrorMessage";
 
 const CountdownTimer = ({
   initialDateTime,
@@ -9,6 +10,10 @@ const CountdownTimer = ({
     initialDateTime ? new Date(initialDateTime) : null
   );
   const [remainingTime, setRemainingTime] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+
 
   useEffect(() => {
     let intervalId;
@@ -57,7 +62,7 @@ const CountdownTimer = ({
         onDateTimeChange(selectedDateTime);
       }
     } else {
-      alert(
+      setErrorMessage(
         "Please select a date and time later than the current date and time."
       );
     }
@@ -72,9 +77,11 @@ const CountdownTimer = ({
           <input
             type="datetime-local"
             min={new Date().toISOString().slice(0, 16)}
-            onChange={handleDateTimeChange}
+            onChange={handleDateTimeChange} 
           />
           {remainingTime && <div>{remainingTime}</div>}
+          <br></br>
+          {errorMessage && <ErrorMessage message={errorMessage}></ErrorMessage>}
         </>
       )}
     </div>

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const { getIo } = require("../middleware/socketio");
 const { activeSockets } = require("../middleware/socketio");
+const moment = require("moment");
 
 const HttpError = require("../models/http-error");
 const Place = require("../models/place");
@@ -118,6 +119,11 @@ const createPlace = async (req, res, next) => {
 
   const { title, description, category, dateTime, creator } = req.body;
   let image = req.file.path;
+
+  // Check if the dateTime is in the past (expired)
+  if (moment(dateTime).isBefore(moment())) {
+    return next(new HttpError("Selected date and time has already passed.", 422));
+  }
 
   // Retrieve the category ObjectId based on the category name
   const foundCategory = await Category.findOne({ name: category });
@@ -744,7 +750,7 @@ const getPopularItems = async (req, res, next) => {
         },
       },
       {
-        $sort: { totalBids: -1 },
+        $sort: { totalBids: -1,_id: 1  },
       },
       {
         $limit: 4,
@@ -761,6 +767,8 @@ const getPopularItems = async (req, res, next) => {
       activationState: { $eq: true },
       dateTime: { $gte: currentDate }, // Check if the item is not expired
     }).populate("category");
+
+   //console.log('items=>',items.length);
 
     res.json({ popularItems: items });
   } catch (error) {
