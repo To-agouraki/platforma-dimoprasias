@@ -55,7 +55,7 @@ const SoldItems = (props) => {
           <p>Creation Date: <strong>{formatCreationDate(item.creationDate)}</strong></p>
           <p>Expiration Time: <strong>{formatCreationDate(item.dateTime)}</strong></p>
           <p>Bids Placed For Item: <strong>{item.bids.length}</strong></p>
-          <p>Highest Bid: <strong>${item.highestBid}</strong></p>
+          <p>Highest Bid: <strong>€{item.highestBid}</strong></p>
           
         </div>
         </Card>

@@ -29,16 +29,20 @@ const MainNavigation = (props) => {
 
   console.log("User ID=>", userId);
   console.log("is Admin=>", auth.isAdmin);
+  console.log("is user loggedin=>", auth.isLoggedIn);
   console.log("local storage message=>", messages);
   console.log("local storage =>", localStorage);
 
   useEffect(() => {
     if (auth.isLoggedIn && !auth.isAdmin) {
+      setMessages([]);
+
       const fetchNotifications = async () => {
         try {
           const responseData = await sendRequest(
             `http://localhost:5000/api/users/getusernotifications/${userId}`
           );
+          console.log("resposedata", responseData);
 
           let fetchedNotifications = [];
 
@@ -65,7 +69,9 @@ const MainNavigation = (props) => {
 
           console.log(sortedNotifications);
           localStorage.setItem("messages", JSON.stringify(sortedNotifications));
-          setHasNewNotification(true);
+          if (sortedNotifications.length > 0) {
+            setHasNewNotification(true);
+          }
         } catch (error) {
           console.log(error);
         }
@@ -73,7 +79,7 @@ const MainNavigation = (props) => {
 
       fetchNotifications();
     }
-  }, [userId, auth.isLoggedIn, sendRequest,auth.isAdmin]);
+  }, [userId, auth.isLoggedIn, sendRequest, auth.isAdmin]);
 
   useEffect(() => {
     if (userId) {
@@ -240,7 +246,7 @@ const MainNavigation = (props) => {
         <h1 className="main-navigation__title">
           <Link to="/">Auction Platform</Link>
         </h1>
-        {auth.isLoggedIn ? (
+        {auth.isLoggedIn && !auth.isAdmin ? (
           hasNewNotification ? (
             <button className="NotifButton" onClick={showNotificationModal}>
               <FontAwesomeIcon icon={faBell} shake size="2xl" />{" "}

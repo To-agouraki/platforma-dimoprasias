@@ -293,6 +293,11 @@ const getBiddersItems = async (req, res, next) => {
         },
       })
       .exec();
+      
+      if (biddedItems.length === 0) {
+        // No bidded items found for the user
+        return res.json({ message: "No bidded items found for the user." });
+      }
 
     //console.log(biddedItems);
 

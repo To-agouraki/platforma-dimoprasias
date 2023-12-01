@@ -122,7 +122,9 @@ const createPlace = async (req, res, next) => {
 
   // Check if the dateTime is in the past (expired)
   if (moment(dateTime).isBefore(moment())) {
-    return next(new HttpError("Selected date and time has already passed.", 422));
+    return next(
+      new HttpError("Selected date and time has already passed.", 422)
+    );
   }
 
   // Retrieve the category ObjectId based on the category name
@@ -200,7 +202,7 @@ const createPlace = async (req, res, next) => {
 const updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('from updatePlace' ,errors);
+    console.log("from updatePlace", errors);
     return next(
       new HttpError("Invalid inputs passed, please check your data.", 422)
     );
@@ -385,7 +387,7 @@ const deactivatePlace = async (req, res, next) => {
   try {
     place.activationState = !place.activationState;
   } catch (error) {
-    console.log('error in deactivate item',error);
+    console.log("error in deactivate item", error);
   }
 
   try {
@@ -444,7 +446,7 @@ const bidItem = async (req, res, next) => {
         const newBidAmount = amount;
 
         const item = await Place.findById(itemID);
-       //console.log('from bid item',item);
+        //console.log('from bid item',item);
         const itemName = item ? item.title : "unknown item";
 
         // Create a new notification for the replaced user
@@ -750,7 +752,7 @@ const getPopularItems = async (req, res, next) => {
         },
       },
       {
-        $sort: { totalBids: -1,_id: 1  },
+        $sort: { totalBids: -1, _id: 1 },
       },
       {
         $limit: 4,
@@ -768,7 +770,7 @@ const getPopularItems = async (req, res, next) => {
       dateTime: { $gte: currentDate }, // Check if the item is not expired
     }).populate("category");
 
-   //console.log('items=>',items.length);
+    //console.log('items=>',items.length);
 
     res.json({ popularItems: items });
   } catch (error) {
@@ -794,8 +796,6 @@ const handleExpiredItem = async (req, res, next) => {
     if (item.highestBidder) {
       // Update item data for the winner
       await Place.findByIdAndUpdate(itemId, { isWon: true });
-
-
 
       // Add the item to the highestBidder's wonItems
       await User.findByIdAndUpdate(item.highestBidder, {
@@ -875,10 +875,13 @@ const handleExpiredItemsInterval = async () => {
       isChecked: false,
     });
 
-    if(!expiredItems){
-      return next();
+    if (expiredItems.length >0) {
+      console.log("expired itesm from interval  fuction =>", expiredItems);
     }
 
+    if (!expiredItems) {
+      return next();
+    }
 
     for (const item of expiredItems) {
       // Check if the item has a highestBidder
@@ -922,7 +925,7 @@ const handleExpiredItemsInterval = async () => {
           place: item._id,
           bidder: { $ne: item.highestBidder },
         }).populate("bidder");
-  
+
         if (otherBidders.length > 0) {
           // Notify other bidders that they lost
           otherBidders.forEach((bid) => {
@@ -932,8 +935,6 @@ const handleExpiredItemsInterval = async () => {
             );
           });
         }
-
-
       } else {
         await Place.findByIdAndUpdate(item._id, { isWon: false });
         await User.findByIdAndUpdate(item.creator, {
@@ -946,8 +947,9 @@ const handleExpiredItemsInterval = async () => {
         );
       }
 
-      // Mark the item as checked
+      console.log("Processing item ID:", item._id);
       await Place.findByIdAndUpdate(item._id, { isChecked: true });
+      console.log("Item ID marked as checked:", item.isChecked);
     }
   } catch (error) {
     // Handle errors appropriately
@@ -956,7 +958,7 @@ const handleExpiredItemsInterval = async () => {
 };
 
 // Set the interval (e.g., every 5 seconds)
-setInterval(handleExpiredItemsInterval, 1000);
+setInterval(handleExpiredItemsInterval, 5000);
 
 const sendNotification = async (userId, message, data) => {
   try {

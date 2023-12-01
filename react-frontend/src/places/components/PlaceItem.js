@@ -55,7 +55,7 @@ const PlaceItem = (props) => {
         isMounted = false; // Component is unmounted, cancel async operations if still pending
       };
     }
-  }, [sendRequest, props.highestBidder]);
+  }, [sendRequest, props.highestBidder,counterExpire]);
 
   let sentence;
 
@@ -156,7 +156,7 @@ const PlaceItem = (props) => {
   };
 
   useEffect(() => {
-    if (false) {
+    if (counterExpire) {
       const handleExpiredItem = async () => {
         try {
           const response = await sendRequest(
@@ -222,8 +222,8 @@ const PlaceItem = (props) => {
       >
         {props.activationState ? (
           <p>
-            Do you want to proceed and delete this place? Please note that it
-            can't be undone thereafter.
+            Do you want to proceed and deactivate this item? Please note that this item will 
+            no longer be visible after that.
           </p>
         ) : (
           <p>
