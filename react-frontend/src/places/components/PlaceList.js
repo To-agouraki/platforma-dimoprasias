@@ -90,9 +90,7 @@ const PlaceList = (props) => {
     return (
       <div className="place-list center">
         <Card>
-          <h2>
-            No Items found in the Market, wait for users to add items for bid
-          </h2>
+          <h2>Oh it seems that the users have not added any items yet!</h2>
         </Card>
       </div>
     );
@@ -142,12 +140,18 @@ const PlaceList = (props) => {
     !auth.isAdmin
   ) {
     return (
-      <div className="place-list center">
-        <Card>
-          <h2>No Items found.</h2>
-          <Button to="/places/new">Share an Item</Button>
-        </Card>
-      </div>
+      <React.Fragment>
+        <PastItemsButton
+          state={props.deactState}
+          userId={auth.userId}
+        ></PastItemsButton>
+        <div className="place-list center">
+          <Card>
+            <h2>No Items found.</h2>
+            <Button to="/places/new">Share an Item</Button>
+          </Card>
+        </div>
+      </React.Fragment>
     );
   } else if (props.items.length === 0 && props.userId !== auth.userId) {
     return (

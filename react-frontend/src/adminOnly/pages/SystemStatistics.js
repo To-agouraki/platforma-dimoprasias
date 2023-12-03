@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import Charts from "../components/Charts";
 
 import "./SystemStatistics.css";
 
@@ -70,6 +71,7 @@ const SystemStatistics = () => {
           {/* Add more statistics as needed */}
         </div>
       )}
+      <Charts></Charts>
     </div>
   );
 };

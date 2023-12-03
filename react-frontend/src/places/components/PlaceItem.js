@@ -31,6 +31,7 @@ const PlaceItem = (props) => {
     setIsCollapsed((view) => !view);
   };
 
+
   useEffect(() => {
     // Check if highestBidder prop exists and is truthy
     if (props.highestBidder) {
@@ -57,20 +58,69 @@ const PlaceItem = (props) => {
     }
   }, [sendRequest, props.highestBidder,counterExpire]);
 
+
+  useEffect(() => {
+    if (counterExpire) {
+      const fetchData = async () => {
+        try {
+          const response = await sendRequest(
+            `http://localhost:5000/api/places/${props.id}`
+          );
+  
+          // Assuming the response has the updated item data
+          const updatedItem = response.place;
+  
+          // Now you can extract the correct highestBidder and highestBid
+          const updatedHighestBidder = updatedItem.highestBidder;
+          const updatedHighestBid = updatedItem.highestBid;
+  
+          // Update the component state with the correct data
+          setHighestBidder(updatedHighestBidder);
+          setHighestBidAmount(updatedHighestBid);
+  
+          // Log the updated data for verification
+          console.log("Updated Highest Bidder:", updatedHighestBidder);
+          console.log("Updated Highest Bid:", updatedHighestBid);
+  
+          // Fetch the user data for the highest bidder
+          const userResponse = await sendRequest(
+            `http://localhost:5000/api/users/getuser/${updatedHighestBidder}`
+          );
+  
+          const highestBidderName = userResponse.user.name;
+          console.log("Highest Bidder's Name:", highestBidderName);
+  
+          // Update the state with the highest bidder's name
+          setHighestBidder(highestBidderName);
+        } catch (error) {
+          // Handle errors appropriately
+          console.error("Error fetching updated item data:", error);
+        }
+      };
+  
+      fetchData();
+    }
+  }, [counterExpire, props.id, sendRequest]);
+  
+  
+
   let sentence;
 
-  if (props.highestBid === 0) {
-    sentence = (
-      <h3>No one won the item, the item will remain with its creator</h3>
-    );
-  } else {
-    sentence = (
-      <h3>
-        The item was won by the user {highestBidder} for the amount of{" "}
-        {props.highestBid}
-      </h3>
-    );
+  if (counterExpire) {
+    if (highestbidAmount === 0) {
+      sentence = (
+        <h3>No one won the item, the item will remain with its creator</h3>
+      );
+    } else {
+      sentence = (
+        <h3>
+          The item was won by the user {highestBidder} for the amount of{" "}
+          {highestbidAmount}
+        </h3>
+      );
+    }
   }
+  
 
   const handleCounterExpire = () => {
     setCounterExpire(true);
@@ -147,38 +197,37 @@ const PlaceItem = (props) => {
   };
 
   const handleCategoryClick = (category) => {
-    // You can implement your filtering logic here.
-    // For example, you can call a function passed from the parent component
-    // to handle the filtering based on the clicked category.
-    // This function could update the state to display only items with the selected category.
-    // Assuming you have a function called filterItemsByCategory in your parent component:
     // filterItemsByCategory(category);
   };
 
-  useEffect(() => {
-    if (counterExpire) {
-      const handleExpiredItem = async () => {
-        try {
-          const response = await sendRequest(
-            `http://localhost:5000/api/places/handleExpiredItem/${props.id}`,
-            "POST",
-            null,
-            {
-              Authorization: "Bearer " + auth.token,
-            }
-          );
 
-          // Handle response as needed
-          console.log(response);
-        } catch (error) {
-          // Handle errors appropriately
-          console.error("Error handling expired item:", error);
-        }
-      };
+  /* itan gia manual handle for expired item but interval covers that i guess */
+  // useEffect(() => {
+  //   if (counterExpire) {
+  //     const handleExpiredItem = async () => {
+  //       try {
+  //         const response = await sendRequest(
+  //           `http://localhost:5000/api/places/handleExpiredItem/${props.id}`,
+  //           "POST",
+  //           null,
+  //           {
+  //             Authorization: "Bearer " + auth.token,
+  //           }
+  //         );
 
-      handleExpiredItem();
-    }
-  }, [counterExpire, props.id, auth.token, sendRequest]);
+  //         // Handle response as needed
+  //         console.log(response);
+  //       } catch (error) {
+  //         // Handle errors appropriately
+  //         console.error("Error handling expired item:", error);
+  //       }
+  //     };
+
+  //     handleExpiredItem();
+  //   }
+  // }, [counterExpire, props.id, auth.token, sendRequest]);
+
+
 
   return (
     <React.Fragment>
@@ -298,8 +347,8 @@ const PlaceItem = (props) => {
               )} */}
               {auth.isLoggedIn &&
               props.activationState !== undefined &&
-              (auth.isAdmin || auth.userId === props.creatorId) ? (
-                props.activationState ? (
+              (auth.isAdmin || auth.userId === props.creatorId) && !counterExpire ? (
+                props.activationState  ? (
                   <Button danger onClick={showDeleteWarningHandler}>
                     Deactivate
                   </Button>

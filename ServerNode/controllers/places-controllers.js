@@ -875,12 +875,8 @@ const handleExpiredItemsInterval = async () => {
       isChecked: false,
     });
 
-    if (expiredItems.length >0) {
-      console.log("expired itesm from interval  fuction =>", expiredItems);
-    }
-
-    if (!expiredItems) {
-      return next();
+    if (expiredItems.length == 0) {
+      return;
     }
 
     for (const item of expiredItems) {
@@ -901,7 +897,7 @@ const handleExpiredItemsInterval = async () => {
 
         sendNotification(
           item.creator,
-          `Your item "${item.title}" was auction off successfully for ${item.highestBid}.`,
+          `Your item <strong>${item.title}</strong> was auction off successfully for <strong>${item.highestBid}</strong>.`,
           {
             itemId: item._id,
             itemTitle: item.title,
@@ -912,7 +908,7 @@ const handleExpiredItemsInterval = async () => {
 
         sendNotification(
           item.highestBidder,
-          `Congratulations! You won the item "${item.title}" .`,
+          `Congratulations! You won the item <strong>${item.title}</strong> .`,
           {
             itemId: item._id,
             itemTitle: item.title,

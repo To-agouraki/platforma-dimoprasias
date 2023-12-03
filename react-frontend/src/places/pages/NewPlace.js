@@ -105,9 +105,9 @@ const NewPlace = () => {
       formData.append("creator", auth.userId);
       formData.append("image", formState.inputs.image.value);
 
-      for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+      // for (const pair of formData.entries()) {
+      //   console.log(pair[0], pair[1]);
+      // }
       await sendRequest("http://localhost:5000/api/places", "POST", formData, {
         Authorization: "Bearer " + auth.token,
       });

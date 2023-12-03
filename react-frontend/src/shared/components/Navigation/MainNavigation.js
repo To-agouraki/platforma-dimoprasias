@@ -27,11 +27,11 @@ const MainNavigation = (props) => {
   const auth = useContext(AuthContext);
   const userId = auth.userId;
 
-  console.log("User ID=>", userId);
-  console.log("is Admin=>", auth.isAdmin);
-  console.log("is user loggedin=>", auth.isLoggedIn);
-  console.log("local storage message=>", messages);
-  console.log("local storage =>", localStorage);
+  // console.log("User ID=>", userId);
+  // console.log("is Admin=>", auth.isAdmin);
+  // console.log("is user loggedin=>", auth.isLoggedIn);
+  // console.log("local storage message=>", messages);
+  // console.log("local storage =>", localStorage);
 
   useEffect(() => {
     if (auth.isLoggedIn && !auth.isAdmin) {

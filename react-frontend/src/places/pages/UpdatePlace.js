@@ -8,7 +8,7 @@ import Card from "../../shared/components/UIElements/Card";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import ErrorMessage from "../../shared/components/FormElements/ErrorMessage";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
-import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+//import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
@@ -21,7 +21,7 @@ import "./PlaceForm.css";
 
 const UpdatePlace = () => {
   const auth = useContext(AuthContext);
-  const { isLoading, nError, sendRequest, clearError } = useHttpClient();
+  const { isLoading, nError, sendRequest } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);

@@ -50,7 +50,7 @@ const CountdownTimer = ({
     return () => {
       clearInterval(intervalId);
     };
-  }, [targetDateTime]);
+  }, [targetDateTime,onCountdownEnd]);
 
   const handleDateTimeChange = (event) => {
     const selectedDateTime = new Date(event.target.value);
