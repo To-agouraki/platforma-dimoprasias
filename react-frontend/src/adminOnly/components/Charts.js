@@ -1,39 +1,105 @@
-// Import necessary components from Recharts
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Legend } from "recharts";
+import "./PieCharts.css";
 
-// Dummy data (replace this with your actual data)
-const data = [
-  { name: "Video Games", value: 20 },
-  { name: "Electronics", value: 30 },
-  { name: "Books", value: 15 },
-  { name: "gay", value: 25 },
-  { name: "homo", value: 11 },
-  // Add more categories and values as needed
-];
+const Charts = (props) => {
+  // Use state to store data
+  const [activeItemsData, setActiveItemsData] = useState([]);
+  const [allItemsData, setAllItemsData] = useState([]);
+  const [expiredItemsData, setExpiredItemsData] = useState([]);
 
-const Charts = () => {
+  useEffect(() => {
+    // Update state when props change
+    if (props.categoryCounters) {
+      setActiveItemsData(props.categoryCounters.activeItemsCategoryNames || []);
+      setAllItemsData(props.categoryCounters.allItemsCategoryNames || []);
+      setExpiredItemsData(
+        props.categoryCounters.expiredItemsCategoryNames || []
+      );
+    }
+  }, [props.categoryCounters]);
+
   return (
     <React.Fragment>
-        <h2>hahahah</h2>
-    <PieChart width={400} height={400}>
-      
-      <Pie
-        data={data}
-        cx={200}
-        cy={200}
-        outerRadius={80}
-        fill="#8884d8"
-        label
-      >
-        {/* Define colors for each category */}
-        {data.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={`#${Math.floor(Math.random() * 16777215).toString(16)}`} />
-        ))}
-      </Pie>
-      {/* Add a legend */}
-      <Legend />
-    </PieChart>
+      <div className="pieChartContent">
+        <div className="pieChartContainer">
+          <h2>Active Items</h2>
+          <PieChart width={300} height={300}>
+            <Pie
+              data={activeItemsData}
+              cx={150}
+              cy={150}
+              outerRadius={60}
+              fill="#8884d8"
+              dataKey="value"
+              nameKey="name"
+              label
+            >
+              {activeItemsData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={`#${Math.floor(
+                    Math.random() * 16777215
+                  ).toString(16)}`}
+                />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+        </div>
+
+        <div className="pieChartContainer">
+          <h2>All Items</h2>
+          <PieChart width={300} height={300}>
+            <Pie
+              data={allItemsData}
+              cx={150}
+              cy={150}
+              outerRadius={60}
+              fill="#8884d8"
+              dataKey="value"
+              nameKey="name"
+              label
+            >
+              {allItemsData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={`#${Math.floor(
+                    Math.random() * 16777215
+                  ).toString(16)}`}
+                />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+        </div>
+
+        <div className="pieChartContainer">
+          <h2>Expired Items</h2>
+          <PieChart width={300} height={300}>
+            <Pie
+              data={expiredItemsData}
+              cx={150}
+              cy={150}
+              outerRadius={60}
+              fill="#8884d8"
+              dataKey="value"
+              nameKey="name"
+              label
+            >
+              {expiredItemsData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={`#${Math.floor(
+                    Math.random() * 16777215
+                  ).toString(16)}`}
+                />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+        </div>
+      </div>
     </React.Fragment>
   );
 };

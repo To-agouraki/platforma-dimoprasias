@@ -248,7 +248,6 @@ const updateCategory = async (req, res, next) => {
   }
 };
 
-
 const updateNormalUser = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -408,6 +407,10 @@ const getStatistics = async (req, res, next) => {
 
     const totalCategories = await Category.countDocuments();
 
+    const CategoryItemsCount = await getCategoryItemCounts();
+
+   // console.log(CategoryItemsCount);
+
     res.json({
       totalItems,
       activatedItems,
@@ -418,10 +421,94 @@ const getStatistics = async (req, res, next) => {
       usersWithPlaces,
       usersWithBids,
       totalCategories,
+      CategoryItemsCount,
     });
   } catch (error) {
     const err = new HttpError("Could not fetch statistics.", 500);
     return next(err);
+  }
+};
+
+const getCategoryNameById = async (categoryId) => {
+  try {
+    const category = await Category.findById(categoryId);
+    return category ? category.name : "Unknown Category";
+  } catch (error) {
+    console.error(`Error getting category name for ID ${categoryId}:`, error);
+    return "Unknown Category";
+  }
+};
+
+// Now you can use this function in your getCategoryItemCounts function
+const getCategoryItemCounts = async () => {
+  try {
+    // Fetch all items from the Place collection
+    const allItems = await Place.find();
+
+    // Initialize category counters
+    const allItemsCounters = {};
+    const activeItemsCounters = {};
+    const expiredItemsCounters = {};
+
+    // Iterate through the items, updating category counters and categorizing items
+    allItems.forEach((item) => {
+      const categoryId = item.category;
+      const itemDateTime = item.dateTime;
+
+      // Update category counters for all items
+      if (categoryId) {
+        allItemsCounters[categoryId] = (allItemsCounters[categoryId] || 0) + 1;
+      }
+
+      // Check if the item is active or expired and update counters accordingly
+      if (itemDateTime) {
+        const now = new Date();
+        if (itemDateTime >= now) {
+          // Active item
+          activeItemsCounters[categoryId] =
+            (activeItemsCounters[categoryId] || 0) + 1;
+        } else {
+          // Expired item
+          expiredItemsCounters[categoryId] =
+            (expiredItemsCounters[categoryId] || 0) + 1;
+        }
+      }
+    });
+
+    // Get category names asynchronously
+    const allItemsCategoryNames = await Promise.all(
+      Object.entries(allItemsCounters).map(async ([categoryId, count]) => ({
+        name: await getCategoryNameById(categoryId),
+        value: count,
+      }))
+    );
+
+    const activeItemsCategoryNames = await Promise.all(
+      Object.entries(activeItemsCounters).map(async ([categoryId, count]) => ({
+        name: await getCategoryNameById(categoryId),
+        value: count,
+      }))
+    );
+
+    const expiredItemsCategoryNames = await Promise.all(
+      Object.entries(expiredItemsCounters).map(async ([categoryId, count]) => ({
+        name: await getCategoryNameById(categoryId),
+        value: count,
+      }))
+    );
+
+    //console.log("All items category counts:", allItemsCategoryNames);
+    //console.log("Active items category counts:", activeItemsCategoryNames);
+    //console.log("Expired items category counts:", expiredItemsCategoryNames);
+
+    return {
+      allItemsCategoryNames,
+      activeItemsCategoryNames,
+      expiredItemsCategoryNames,
+    };
+  } catch (error) {
+    console.error("Error getting item counts:", error);
+    return {};
   }
 };
 

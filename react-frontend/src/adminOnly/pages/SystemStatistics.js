@@ -9,6 +9,8 @@ import "./SystemStatistics.css";
 const SystemStatistics = () => {
   const { isLoading, error, sendRequest } = useHttpClient();
   const [statistics, setStatistics] = useState({});
+  const [categoryCounters, setCategoryCounters] = useState({});
+
 
   useEffect(() => {
     const fetchStatistics = async () => {
@@ -17,6 +19,8 @@ const SystemStatistics = () => {
           "http://localhost:5000/api/admin/statistics"
         );
         setStatistics(responseData);
+        setCategoryCounters(responseData.CategoryItemsCount);
+        console.log(responseData.CategoryItemsCount)
       } catch (error) {
         console.log(error); // Handle error
       }
@@ -71,7 +75,7 @@ const SystemStatistics = () => {
           {/* Add more statistics as needed */}
         </div>
       )}
-      <Charts></Charts>
+      <Charts categoryCounters={categoryCounters}></Charts>
     </div>
   );
 };
