@@ -24,12 +24,12 @@ const Charts = (props) => {
       <div className="pieChartContent">
         <div className="pieChartContainer">
           <h2>Active Items</h2>
-          <PieChart width={300} height={300}>
+          <PieChart width={300} height={340}>
             <Pie
               data={activeItemsData}
               cx={150}
               cy={150}
-              outerRadius={60}
+              outerRadius={90}
               fill="#8884d8"
               dataKey="value"
               nameKey="name"
@@ -50,12 +50,12 @@ const Charts = (props) => {
 
         <div className="pieChartContainer">
           <h2>All Items</h2>
-          <PieChart width={300} height={300}>
+          <PieChart width={300} height={340}>
             <Pie
               data={allItemsData}
               cx={150}
               cy={150}
-              outerRadius={60}
+              outerRadius={90}
               fill="#8884d8"
               dataKey="value"
               nameKey="name"
@@ -76,12 +76,12 @@ const Charts = (props) => {
 
         <div className="pieChartContainer">
           <h2>Expired Items</h2>
-          <PieChart width={300} height={300}>
+          <PieChart width={300} height={340}>
             <Pie
               data={expiredItemsData}
               cx={150}
               cy={150}
-              outerRadius={60}
+              outerRadius={90}
               fill="#8884d8"
               dataKey="value"
               nameKey="name"

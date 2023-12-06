@@ -1,0 +1,15 @@
+/* TimeSeriesLineChart.css */
+
+.timeSeriesLineChartContainer {
+    width: 80%; /* Adjust the width as needed */
+    margin: auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .lineChart {
+    margin-top: 20px;
+  }
+  
+  

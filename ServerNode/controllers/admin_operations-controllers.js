@@ -382,6 +382,27 @@ const getAllExpiredItems = async (req, res, next) => {
   });
 };
 
+// middleware/getPlacesData.js
+
+const getPlacesData = async () => {
+  try {
+    // Fetch all places
+    const allPlaces = await Place.find();
+
+    // Extract id, title, and creationDate from each place
+    const placesData = allPlaces.map((place) => ({
+      id: place._id,
+      title: place.title,
+      creationDate: place.creationDate,
+    }));
+
+    // Return the extracted data
+    return placesData;
+  } catch (error) {
+    throw new Error("Error fetching places data");
+  }
+};
+
 const getStatistics = async (req, res, next) => {
   try {
     const totalItems = await Place.countDocuments();
@@ -409,7 +430,9 @@ const getStatistics = async (req, res, next) => {
 
     const CategoryItemsCount = await getCategoryItemCounts();
 
-   // console.log(CategoryItemsCount);
+    const placesCreationDate = await getPlacesData();
+
+    // console.log(CategoryItemsCount);
 
     res.json({
       totalItems,
@@ -422,6 +445,7 @@ const getStatistics = async (req, res, next) => {
       usersWithBids,
       totalCategories,
       CategoryItemsCount,
+      placesCreationDate,
     });
   } catch (error) {
     const err = new HttpError("Could not fetch statistics.", 500);
