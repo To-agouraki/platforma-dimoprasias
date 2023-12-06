@@ -4,6 +4,7 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import Charts from "../components/Charts";
 import TimeSeriesLineChart from "../components/TimeSeriesLineChart";
+import UserActivityBarChart from "../components/UserActivityBarChart";
 
 import "./SystemStatistics.css";
 
@@ -12,29 +13,7 @@ const SystemStatistics = () => {
   const [statistics, setStatistics] = useState({});
   const [categoryCounters, setCategoryCounters] = useState({});
   const [placeCreationDate, setPlaceCreationDate] = useState([]);
-
-  const dummyPlacesData = [
-    { id: 1, name: "Place 1", creationDate: "2023-01-01T10:00:00" },
-    { id: 2, name: "Place 2", creationDate: "2023-01-01T11:30:00" },
-    { id: 3, name: "Place 3", creationDate: "2023-01-02T08:45:00" },
-    { id: 4, name: "Place 4", creationDate: "2024-01-02T14:20:00" },
-    { id: 5, name: "Place 5", creationDate: "2023-01-03T09:10:00" },
-    { id: 6, name: "Place 6", creationDate: "2023-01-03T15:45:00" },
-    { id: 51, name: "Place 5", creationDate: "2023-01-03T09:10:00" },
-    { id: 61, name: "Place 6", creationDate: "2023-01-03T15:45:00" },
-    { id: 7, name: "Place 7", creationDate: "2023-01-04T12:30:00" },
-    { id: 8, name: "Place 8", creationDate: "2023-01-04T18:15:00" },
-    { id: 9, name: "Place 9", creationDate: "2023-01-05T07:20:00" },
-    { id: 61, name: "Place 6", creationDate: "2023-01-03T15:45:00" },
-    { id: 7, name: "Place 7", creationDate: "2023-01-04T12:30:00" },
-    { id: 8, name: "Place 8", creationDate: "2023-01-04T18:15:00" },
-    { id: 9, name: "Place 9", creationDate: "2023-01-05T07:20:00" },
-    { id: 10, name: "Place 10", creationDate: "2023-01-05T13:50:00" },
-    { id: 11, name: "Place 11", creationDate: "2023-01-06T11:05:00" },
-    { id: 12, name: "Place 12", creationDate: "2023-01-06T16:40:00" },
-    { id: 13, name: "Place 13", creationDate: "2023-01-06T16:40:01" },
-    // Add more places with different creation dates
-  ];
+  const [usersActivities, setUsersActivities] = useState([]);
 
   useEffect(() => {
     const fetchStatistics = async () => {
@@ -45,6 +24,7 @@ const SystemStatistics = () => {
         setStatistics(responseData);
         setCategoryCounters(responseData.CategoryItemsCount);
         setPlaceCreationDate(responseData.placesCreationDate);
+        setUsersActivities(responseData.usersActivities);
       } catch (error) {
         console.log(error); // Handle error
       }
@@ -99,11 +79,15 @@ const SystemStatistics = () => {
           {/* Add more statistics as needed */}
         </div>
       )}
+      <br></br>
       <Charts categoryCounters={categoryCounters}></Charts>
-      <h3>Line Chart</h3>
-
+      <br></br>
       <br></br>
       <TimeSeriesLineChart placesData={placeCreationDate} />
+      <br></br>
+      <UserActivityBarChart
+        userActivitiesData={usersActivities}
+      ></UserActivityBarChart>
     </div>
   );
 };

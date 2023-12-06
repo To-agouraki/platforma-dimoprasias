@@ -36,13 +36,13 @@ const TimeSeriesLineChart = (props) => {
     <div className="timeSeriesLineChartContainer">
       <h2>Place Creation Over Time</h2>
       <div className="lineChart">
-        <LineChart width={800} height={400} data={dataForLineChart}>
+        <LineChart width={1200} height={400} data={dataForLineChart}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="count" stroke="#8884d8" />
+          <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={2} />
         </LineChart>
       </div>
     </div>

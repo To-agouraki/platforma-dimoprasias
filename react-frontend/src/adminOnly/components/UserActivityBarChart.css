@@ -1,0 +1,15 @@
+/* TimeSeriesLineChart.css */
+.timeSeriesLineChartContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Add the following styles to SystemStatistics.css or your preferred stylesheet */
+  .userActivityBarChartContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px; /* Adjust as needed */
+  }
+  

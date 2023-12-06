@@ -10,6 +10,7 @@ const Place = require("../models/place");
 const Category = require("../models/category"); // Assuming you've imported the Category model
 const BidJunctionTable = require("../models/bidding");
 const { param } = require("../routes/users-routes");
+const { getUsers } = require("./users-controllers");
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -403,6 +404,28 @@ const getPlacesData = async () => {
   }
 };
 
+const getUsersActivities = async () => {
+  try {
+    // Fetch all users
+    const allUsers = await User.find();
+
+    // Extract user activity data
+    const userActivityData = allUsers.map((user) => ({
+      name: user.name,
+      bids: user.bids?.length || 0,
+      places: user.places?.length || 0,
+      soldItems: user.soldItems?.length || 0,
+      unSoldItems: user.unSoldItems?.length || 0,
+      wonItems: user.wonItems?.length || 0,
+    }));
+
+    return userActivityData;
+  } catch (error) {
+    console.error("Error fetching user activity data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const getStatistics = async (req, res, next) => {
   try {
     const totalItems = await Place.countDocuments();
@@ -432,6 +455,10 @@ const getStatistics = async (req, res, next) => {
 
     const placesCreationDate = await getPlacesData();
 
+  
+
+    const usersActivities = await getUsersActivities();
+    console.log(usersActivities);
     // console.log(CategoryItemsCount);
 
     res.json({
@@ -446,6 +473,7 @@ const getStatistics = async (req, res, next) => {
       totalCategories,
       CategoryItemsCount,
       placesCreationDate,
+      usersActivities,
     });
   } catch (error) {
     const err = new HttpError("Could not fetch statistics.", 500);
@@ -472,12 +500,14 @@ const getCategoryItemCounts = async () => {
     // Initialize category counters
     const allItemsCounters = {};
     const activeItemsCounters = {};
-    const expiredItemsCounters = {};
+    const unsoldItemsCounters = {};
+    const soldItemsCounters = {};
 
     // Iterate through the items, updating category counters and categorizing items
     allItems.forEach((item) => {
       const categoryId = item.category;
       const itemDateTime = item.dateTime;
+      const highestbid = item.highestBid;
 
       // Update category counters for all items
       if (categoryId) {
@@ -491,10 +521,13 @@ const getCategoryItemCounts = async () => {
           // Active item
           activeItemsCounters[categoryId] =
             (activeItemsCounters[categoryId] || 0) + 1;
-        } else {
+        } else if (itemDateTime <= now && highestbid == 0) {
           // Expired item
-          expiredItemsCounters[categoryId] =
-            (expiredItemsCounters[categoryId] || 0) + 1;
+          unsoldItemsCounters[categoryId] =
+            (unsoldItemsCounters[categoryId] || 0) + 1;
+        } else {
+          soldItemsCounters[categoryId] =
+            (soldItemsCounters[categoryId] || 0) + 1;
         }
       }
     });
@@ -514,8 +547,15 @@ const getCategoryItemCounts = async () => {
       }))
     );
 
-    const expiredItemsCategoryNames = await Promise.all(
-      Object.entries(expiredItemsCounters).map(async ([categoryId, count]) => ({
+    const unsoldItemsCategoryNames = await Promise.all(
+      Object.entries(unsoldItemsCounters).map(async ([categoryId, count]) => ({
+        name: await getCategoryNameById(categoryId),
+        value: count,
+      }))
+    );
+
+    const soldItemsCategoryNames = await Promise.all(
+      Object.entries(soldItemsCounters).map(async ([categoryId, count]) => ({
         name: await getCategoryNameById(categoryId),
         value: count,
       }))
@@ -528,13 +568,16 @@ const getCategoryItemCounts = async () => {
     return {
       allItemsCategoryNames,
       activeItemsCategoryNames,
-      expiredItemsCategoryNames,
+      unsoldItemsCategoryNames,
+      soldItemsCategoryNames,
     };
   } catch (error) {
     console.error("Error getting item counts:", error);
     return {};
   }
 };
+
+
 
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;
