@@ -32,9 +32,11 @@ const PlaceItem = (props) => {
   };
 
 
+
   useEffect(() => {
     // Check if highestBidder prop exists and is truthy
     if (props.highestBidder) {
+      console.log('the useEffect with the mount thingy');
       let isMounted = true; // Track if the component is mounted
 
       const fetchUserData = async () => {
@@ -73,6 +75,11 @@ const PlaceItem = (props) => {
           // Now you can extract the correct highestBidder and highestBid
           const updatedHighestBidder = updatedItem.highestBidder;
           const updatedHighestBid = updatedItem.highestBid;
+          if (updatedHighestBid === 0 && !updatedHighestBidder) {
+            // No need to process further, exit the function
+            console.log("No highest bidder and bid is 0. Exiting function.");
+            return;
+          }
   
           // Update the component state with the correct data
           setHighestBidder(updatedHighestBidder);

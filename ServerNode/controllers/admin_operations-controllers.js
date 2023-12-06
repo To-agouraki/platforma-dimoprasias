@@ -455,11 +455,7 @@ const getStatistics = async (req, res, next) => {
 
     const placesCreationDate = await getPlacesData();
 
-  
-
     const usersActivities = await getUsersActivities();
-    console.log(usersActivities);
-    // console.log(CategoryItemsCount);
 
     res.json({
       totalItems,
@@ -576,8 +572,6 @@ const getCategoryItemCounts = async () => {
     return {};
   }
 };
-
-
 
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;
