@@ -293,11 +293,11 @@ const getBiddersItems = async (req, res, next) => {
         },
       })
       .exec();
-      
-      if (biddedItems.length === 0) {
-        // No bidded items found for the user
-        return res.json({ message: "No bidded items found for the user." });
-      }
+
+    if (biddedItems.length === 0) {
+      // No bidded items found for the user
+      return res.json({ message: "No bidded items found for the user." });
+    }
 
     //console.log(biddedItems);
 
@@ -395,7 +395,11 @@ const getunSoldItemsUser = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const unsoldItems = await Place.find({ _id: { $in: user.unSoldItems } }).populate('category');
+    const unsoldItems = await Place.find({
+      _id: { $in: user.unSoldItems },
+    })
+      .populate("category")
+      .sort({ dateTime: 1 });
     //console.log(unsoldItems);
     res.json({ unsoldItems });
   } catch (err) {
@@ -414,9 +418,12 @@ const getSoldItemsUser = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const soldItems = await Place.find({ _id: { $in: user.soldItems } }).populate('category');
-    ;
-
+    const soldItems = await Place.find({
+      _id: { $in: user.soldItems },
+    })
+      .populate("category")
+      .sort({ dateTime: 1 });
+      
     res.json({ soldItems });
   } catch (err) {
     console.error(err);
@@ -434,7 +441,9 @@ const getwonItemsUser = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const wonItems = await Place.find({ _id: { $in: user.wonItems } }).populate('category');
+    const wonItems = await Place.find({ _id: { $in: user.wonItems } }).populate(
+      "category"
+    );
 
     //console.log(wonItems);
     res.json({ wonItems });

@@ -37,10 +37,10 @@ const UserActivityBarChart = (props) => {
   // Get the users to display on the current page
   const usersOnPage = userActivitiesData.slice(startIndex, endIndex);
 
-  // Handle pagination controls
-  const goToPage = (page) => {
-    setCurrentPage(page);
-  };
+  // // Handle pagination controls
+  // const goToPage = (page) => {
+  //   setCurrentPage(page);
+  // };
 
   const goToPreviousPage = () => {
     setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -65,6 +65,7 @@ const UserActivityBarChart = (props) => {
             <YAxis />
             <Tooltip />
             <Legend />
+            <Bar dataKey="places" fill="#8234d8" name="Items Created" />
             <Bar dataKey="bids" fill="#8884d8" name="Number of Bids" />
             <Bar
               dataKey="createdPlaces"
@@ -88,7 +89,7 @@ const UserActivityBarChart = (props) => {
             <button onClick={goToPreviousPage} disabled={currentPage === 1}>
               Previous
             </button>
-            <span>Page {currentPage}</span>
+            <span> Page {currentPage} </span>
             <button
               onClick={goToNextPage}
               disabled={

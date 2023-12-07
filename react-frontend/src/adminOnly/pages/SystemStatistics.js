@@ -57,11 +57,11 @@ const SystemStatistics = () => {
             <p>{statistics.expiredItems}</p>
           </div>
           <div className="statistic-item">
-            <h3>Non-Expired Items</h3>
+            <h3>Active Market Items</h3>
             <p>{statistics.nonExpiredItems}</p>
           </div>
           <div className="statistic-item">
-            <h3>Users Registed</h3>
+            <h3>Users Registered</h3>
             <p>{statistics.totalUsers}</p>
           </div>
           <div className="statistic-item">
