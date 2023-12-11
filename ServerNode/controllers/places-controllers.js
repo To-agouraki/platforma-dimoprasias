@@ -744,15 +744,30 @@ const getPlacesByCategory = async (req, res, next) => {
 const getPopularItems = async (req, res, next) => {
   try {
     // Aggregate the data to find the most popular items
-    const popularItems = await BidJunctionTable.aggregate([
+    const currentDate = new Date();
+
+    const popularItems = await Place.aggregate([
       {
-        $group: {
-          _id: "$place",
-          totalBids: { $sum: 1 },
+        $match: {
+          activationState: true,
+          dateTime: { $gte: currentDate },
         },
       },
       {
-        $sort: { totalBids: -1, _id: 1 },
+        $lookup: {
+          from: "biddings", // The name of the Bidding model collection
+          localField: "bids",
+          foreignField: "_id",
+          as: "bids",
+        },
+      },
+      {
+        $addFields: {
+          bidCount: { $size: "$bids" },
+        },
+      },
+      {
+        $sort: { bidCount: -1 },
       },
       {
         $limit: 4,
@@ -762,15 +777,11 @@ const getPopularItems = async (req, res, next) => {
     const itemIds = popularItems.map((item) => item._id);
 
     // Fetch additional details of the items from the Place collection
-    const currentDate = new Date();
-
     const items = await Place.find({
       _id: { $in: itemIds },
-      activationState: { $eq: true },
+      activationState: true,
       dateTime: { $gte: currentDate }, // Check if the item is not expired
     }).populate("category");
-
-    //console.log('items=>',items.length);
 
     res.json({ popularItems: items });
   } catch (error) {

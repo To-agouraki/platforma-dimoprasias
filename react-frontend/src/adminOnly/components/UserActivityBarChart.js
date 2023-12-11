@@ -67,11 +67,6 @@ const UserActivityBarChart = (props) => {
             <Legend />
             <Bar dataKey="places" fill="#8234d8" name="Items Created" />
             <Bar dataKey="bids" fill="#8884d8" name="Number of Bids" />
-            <Bar
-              dataKey="createdPlaces"
-              fill="#82ca9d"
-              name="Number of Created Places"
-            />
             <Bar dataKey="wonItems" fill="#ffc658" name="Number of Won Items" />
             <Bar
               dataKey="soldItems"

@@ -13,6 +13,13 @@ const AdminDashboard = () => {
     "With this button you can see the users of system (apart from the admin) were you can edit them or the items they created. ";
   const itemDescr =
     "With his button you can check all the items where you edit and delete but not create them since the admin does not create items";
+   const Deacti =
+    "With his button you can check all the Deactivated items where you can again reactivated them";
+    const expired =
+    "With his button you can check all the items that are expired and see which were sold or unsold";
+    const stats =
+    "With his button you can check all the Statistics of the system";
+
 
   return (
     <div className="admin-dashboard">
@@ -46,7 +53,7 @@ const AdminDashboard = () => {
           <Link
             to="/deactivatedItems"
             className="dashboard-button"
-            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseEnter={() => setHoveredButton(Deacti)}
             onMouseLeave={() => setHoveredButton(null)}
           >
             Deactivated Items
@@ -54,7 +61,7 @@ const AdminDashboard = () => {
           <Link
             to="/allitems/expired"
             className="dashboard-button"
-            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseEnter={() => setHoveredButton(expired)}
             onMouseLeave={() => setHoveredButton(null)}
           >
           Expired Items
@@ -62,7 +69,7 @@ const AdminDashboard = () => {
           <Link
             to="/systemStatistics"
             className="dashboard-button"
-            onMouseEnter={() => setHoveredButton(itemDescr)}
+            onMouseEnter={() => setHoveredButton(stats)}
             onMouseLeave={() => setHoveredButton(null)}
           >
           Statistics
