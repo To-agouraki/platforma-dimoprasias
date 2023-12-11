@@ -286,7 +286,6 @@ const getBiddersItems = async (req, res, next) => {
     })
       .populate({
         path: "place",
-        match: { dateTime: { $gte: new Date() } }, // Exclude expired items
         populate: {
           path: "category",
           select: "name", // Select only the 'name' field from the 'category' document
@@ -299,10 +298,15 @@ const getBiddersItems = async (req, res, next) => {
       return res.json({ message: "No bidded items found for the user." });
     }
 
-    //console.log(biddedItems);
+    // Filter out expired items
+    const nonExpiredBiddedItems = biddedItems.filter((item) => {
+      return item.place && item.place.dateTime >= new Date();
+    });
+
+    console.log(nonExpiredBiddedItems);
 
     res.json({
-      items: biddedItems.map((item) => ({
+      items: nonExpiredBiddedItems.map((item) => ({
         _id: item._id,
         amount: item.amount,
         place: {
@@ -333,6 +337,7 @@ const getBiddersItems = async (req, res, next) => {
     return next(err);
   }
 };
+
 
 const getUnreadNotifications = async (req, res, next) => {
   const userId = req.params.uid;
