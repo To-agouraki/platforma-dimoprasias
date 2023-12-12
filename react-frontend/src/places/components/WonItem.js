@@ -12,6 +12,7 @@ const WonItem = (props) => {
       <div className="center">
         <Card>
           <h2 className="noitemmeesage">No won items available.</h2>
+          <h3>Find the items in the market,place your bid and win the item you want</h3>
           <Button to="/market">Go To Market.</Button>
         </Card>
       </div>

@@ -19,10 +19,16 @@ const formatCreationDate = (creationDate) => {
 
 const UnsoldItems = (props) => {
   const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
 
   const handleMonthChange = (event) => {
     const selectedMonth = parseInt(event.target.value);
-    setSelectedMonth(selectedMonth);
+    setSelectedMonth(selectedMonth || null);
+  };
+
+  const handleYearChange = (event) => {
+    const selectedYear = parseInt(event.target.value);
+    setSelectedYear(selectedYear || null);
   };
 
   const unsoldItems = props.unsoldItems;
@@ -30,15 +36,15 @@ const UnsoldItems = (props) => {
   const maxHeightRef = useRef(0);
 
   useEffect(() => {
-    // Find the maximum height among all sold items
-    const soldItemElements = document.querySelectorAll(".sold-item");
+    // Find the maximum height among all unsold items
+    const unsoldItemElements = document.querySelectorAll(".sold-item");
 
-    soldItemElements.forEach((el) => {
+    unsoldItemElements.forEach((el) => {
       maxHeightRef.current = Math.max(maxHeightRef.current, el.offsetHeight);
     });
 
-    // Set the maximum height for all sold items
-    soldItemElements.forEach((el) => {
+    // Set the maximum height for all unsold items
+    unsoldItemElements.forEach((el) => {
       el.style.height = `${maxHeightRef.current}px`;
     });
   }, [unsoldItems]);
@@ -51,12 +57,16 @@ const UnsoldItems = (props) => {
     );
   }
 
-  const filteredSoldItems = selectedMonth
-    ? props.unsoldItems.filter((item) => {
-        const itemMonth = new Date(item.dateTime).getMonth() + 1; // Adding 1 because months are zero-indexed
-        return itemMonth === selectedMonth;
-      })
-    : props.unsoldItems;
+  const filteredUnsoldItems = unsoldItems.filter((item) => {
+    const itemMonth = new Date(item.dateTime).getMonth() + 1; // Adding 1 because months are zero-indexed
+    const itemYear = new Date(item.dateTime).getFullYear();
+
+    const isMonthMatch = selectedMonth === null || itemMonth === selectedMonth;
+    const isYearMatch = selectedYear === null || itemYear === selectedYear;
+
+    // If both selectedMonth and selectedYear are null, include all items
+    return isMonthMatch && isYearMatch;
+  });
 
   return (
     <div>
@@ -79,18 +89,32 @@ const UnsoldItems = (props) => {
         <option value={11}>November</option>
         <option value={12}>December</option>
       </select>
+      <select
+        className="year-select"
+        value={selectedYear !== null ? selectedYear : ""}
+        onChange={handleYearChange}
+      >
+        <option value={null}>All Years</option>
+        <option value={2021}>2021</option>
+        <option value={2022}>2022</option>
+        <option value={2023}>2023</option>
+        <option value={2024}>2024</option>
+        <option value={2025}>2025</option>
+        <option value={2026}>2026</option>
+        {/* Include options for years based on your use case */}
+      </select>
       <br></br>
       <br></br>
       <div className="sold-items-container">
-        {filteredSoldItems.length === 0 ? (
+        {filteredUnsoldItems.length === 0 ? (
           <Card>
-            <p>No items available for the selected month.</p>
+            <p>No items available for the selected month and year.</p>
           </Card>
         ) : (
-          filteredSoldItems.map((item) => (
-            <div className="margbot">
+          filteredUnsoldItems.map((item) => (
+            <div className="margbot" key={item._id}>
               <Card>
-                <div className="sold-item" key={item._id}>
+                <div className="sold-item">
                   <img
                     className="imgforpast"
                     src={`http://localhost:5000/${item.image}`}

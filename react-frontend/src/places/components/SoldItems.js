@@ -23,15 +23,23 @@ const SoldItems = (props) => {
   const { sendRequest } = useHttpClient();
   const [soldItems, setSoldItems] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
 
   const handleMonthChange = (event) => {
     const selectedMonth = parseInt(event.target.value);
-    setSelectedMonth(selectedMonth);
+    setSelectedMonth(selectedMonth || null);
+  };
+
+  const handleYearChange = (event) => {
+    const selectedYear = parseInt(event.target.value);
+    setSelectedYear(selectedYear || null);
   };
 
   useEffect(() => {
     const fetchSoldItemsData = async () => {
       try {
+        // Your existing logic for fetching sold items
+
         const updatedSoldItems = await Promise.all(
           props.soldItems.map(async (item) => {
             // Fetch user data for highestBidder
@@ -56,14 +64,33 @@ const SoldItems = (props) => {
     if (props.soldItems && props.soldItems.length > 0) {
       fetchSoldItemsData();
     }
-  }, [props.soldItems, sendRequest]);
+  }, [props.soldItems, sendRequest, selectedMonth, selectedYear]);
 
-  const filteredSoldItems = selectedMonth
-    ? soldItems.filter((item) => {
-        const itemMonth = new Date(item.dateTime).getMonth() + 1; // Adding 1 because months are zero-indexed
-        return itemMonth === selectedMonth;
-      })
-    : soldItems;
+  useEffect(() => {
+    // Equalize the height of item boxes
+    const soldItemElements = document.querySelectorAll(".sold-item");
+    let maxHeight = 0;
+
+    soldItemElements.forEach((el) => {
+      const height = el.getBoundingClientRect().height;
+      maxHeight = Math.max(maxHeight, height);
+    });
+
+    soldItemElements.forEach((el) => {
+      el.style.height = `${maxHeight}px`;
+    });
+  }, [soldItems]);
+
+  const filteredSoldItems = soldItems.filter((item) => {
+    const itemMonth = new Date(item.dateTime).getMonth() + 1; // Adding 1 because months are zero-indexed
+    const itemYear = new Date(item.dateTime).getFullYear();
+
+    const isMonthMatch = selectedMonth === null || itemMonth === selectedMonth;
+    const isYearMatch = selectedYear === null || itemYear === selectedYear;
+
+    // If both selectedMonth and selectedYear are null, include all items
+    return isMonthMatch && isYearMatch;
+  });
 
   return (
     <div>
@@ -86,12 +113,26 @@ const SoldItems = (props) => {
         <option value={11}>November</option>
         <option value={12}>December</option>
       </select>
+      <select
+        className="year-select"
+        value={selectedYear !== null ? selectedYear : ""}
+        onChange={handleYearChange}
+      >
+        <option value={null}>All Years</option>
+        <option value={2021}>2021</option>
+        <option value={2022}>2022</option>
+        <option value={2023}>2023</option>
+        <option value={2024}>2024</option>
+        <option value={2025}>2025</option>
+        <option value={2026}>2026</option>
+        {/* Include options for years based on your use case */}
+      </select>
       <br></br>
       <br></br>
       <div className="sold-items-container">
         {filteredSoldItems.length === 0 ? (
           <Card>
-            <p>No items available for the selected month.</p>
+            <p>No items available for the selected month and year.</p>
           </Card>
         ) : (
           filteredSoldItems.map((item) => (
