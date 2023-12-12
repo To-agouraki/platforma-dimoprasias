@@ -19,7 +19,7 @@ const WelcomeCard = () => {
 
       <div className="w3-col l3 m6 w3-dark-green w3-container w3-padding-16">
         <h3>Sell your created items</h3>
-        <p>Add the timer and wait for bidder to win your item </p>
+        <p>Add the timer and wait for the bidders to win your item </p>
       </div>
     </div>
   );

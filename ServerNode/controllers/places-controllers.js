@@ -559,6 +559,7 @@ const getPlacesMarket = async (req, res, next) => {
       creator: { $ne: userId },
       activationState: { $eq: true },
     })
+      .collation({ locale: "en", strength: 2 }) // Case-insensitive collation
       .populate("category")
       .sort({ title: 1 })
       .exec();
@@ -638,6 +639,7 @@ const getAllItemsMarket = async (req, res, next) => {
       dateTime: { $gte: new Date() },
       activationState: { $eq: true },
     })
+      .collation({ locale: "en", strength: 2 })
       .populate("category")
       .sort({ title: 1 })
       .exec();

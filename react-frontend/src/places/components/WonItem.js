@@ -31,7 +31,7 @@ const WonItem = (props) => {
           <p>
             Category: <strong>{item.category.name}</strong>
           </p>
-          <p>Highest Bid: ${item.highestBid}</p>
+          <p>Highest Bid: €{item.highestBid}</p>
           {/* Add more information as needed */}
         </div>
       ))}

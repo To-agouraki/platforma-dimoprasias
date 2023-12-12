@@ -15,8 +15,9 @@ const UserDashboard = () => {
     "With this button you can see the item you created and also edit them but only if the time doesnt run out. ";
 
     const bidsDescr ="With this button you can check how the items you have bidded are going , see if another user has bid a bigger amount than you.";
-    const profileDescr ="With this button you can see your profie and change you profile picture to something of your liking other the standar the system gives you.";
-    const newItemDescr ="With thus button you can create an item of your own and the other users of the app can bid to win it after the tune you set runs out";
+    const profileDescr ="With this button you can see your profie and change you profile picture to something of your liking other than the standard the system gives you.";
+    const newItemDescr ="With this button you can create an item of your own and the other users of the app can place a bid to win.";
+    const wonItemDescr ="In this Page you will see the items you have won from the auction, after the timer runs out and you recieve the winning notification you will find any item you have won here.";
 
   return (
     <div className="admin-dashboard">
@@ -62,6 +63,14 @@ const UserDashboard = () => {
             onMouseLeave={() => setHoveredButton(null)}
           >
             New Item
+          </Link>
+          <Link
+            to={`/wonItems/${auth.userId}`}
+            className="dashboard-button"
+            onMouseEnter={() => setHoveredButton(wonItemDescr)}
+            onMouseLeave={() => setHoveredButton(null)}
+          >
+            Won Items
           </Link>
         </div>
       </div>

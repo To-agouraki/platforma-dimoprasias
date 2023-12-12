@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import Button from "../../shared/components/FormElements/Button";
 import "./PopularBids.css"; // You can create a CSS file for styling
 
 const PopularBids = () => {
@@ -65,6 +66,7 @@ const PopularBids = () => {
                   Time Left: {calculateTimeLeft(item.dateTime).days} days,{" "}
                   {calculateTimeLeft(item.dateTime).hours} hours
                 </p>
+                <Button to='/kapoulol' >Place Bid</Button>
               </div>
             </div>
           </div>

@@ -90,7 +90,7 @@ const PlaceList = (props) => {
     return (
       <div className="place-list center">
         <Card>
-          <h2>Oh it seems that the users have not added any items yet!</h2>
+          <h2>Counld not find the item you are looking for.</h2>
         </Card>
       </div>
     );
