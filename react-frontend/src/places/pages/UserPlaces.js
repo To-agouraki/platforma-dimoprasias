@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../shared/components/context/auth-context";
 
 import PlaceList from "../components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
@@ -17,6 +18,7 @@ const UserPlaces = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -46,19 +48,27 @@ const UserPlaces = () => {
   };
 
   const userId = useParams().userId;
+  console.log(auth.isAdmin, "admin");
 
   useEffect(() => {
-    const fetchPlaces = async () => {
+    const fetchUserPlaces = async () => {
       try {
-        const responseData = await sendRequest(
-          `http://localhost:5000/api/places/user/${userId}`
-        );
+        let url;
+        if (!auth.isAdmin) {
+          url = `http://localhost:5000/api/places/user/${userId}`;
+          // Fetch all items for admin
+        } else {
+          url = `http://localhost:5000/api/places/user/allitems/${userId}`; // Fetch user-specific items
+        }
+        const responseData = await sendRequest(url);
         setLoadedPlaces(responseData.places);
         setFilteredData(responseData.places);
-      } catch (err) {}
+      } catch (err) {
+        // Handle errors
+      }
     };
-    fetchPlaces();
-  }, [sendRequest, userId]);
+    fetchUserPlaces();
+  }, [sendRequest, userId, auth.isAdmin]);
 
   const placeDeletedHandler = (deletedPlaceId) => {
     setFilteredData((prevFilteredData) =>
@@ -113,6 +123,7 @@ const UserPlaces = () => {
                   userId={userId}
                   onDeletePlace={placeDeletedHandler}
                   deactState={true}
+                  fromUserPlace={true}
                 />
               </div>
             )}

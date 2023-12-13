@@ -11,6 +11,8 @@ router.get("/:pid", placesControllers.getPlaceById);
 
 router.get("/user/:uid", placesControllers.getPlacesByUserId);
 
+router.get("/user/allitems/:uid", placesControllers.getAllPlacesByUserId);
+
 router.get("/market/:uid", placesControllers.getPlacesMarket);
 
 router.get("/market/loggedout/general", placesControllers.getAllItemsMarket);

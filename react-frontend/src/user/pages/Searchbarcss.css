@@ -1,0 +1,41 @@
+/* Add these styles to your existing CSS file or create a new one */
+
+.search-containerUser {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-labelUser {
+    font-size: 16px;
+    margin-right: 10px;
+  }
+  
+  .search-inputUser {
+    flex-grow: 0.2;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Adjustments for better visual separation if needed */
+  /* You can customize the colors, spacing, and other properties according to your design */
+  .labelUser {
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-containerUser {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Add some styling for the loading spinner */
+  .centerUser {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  

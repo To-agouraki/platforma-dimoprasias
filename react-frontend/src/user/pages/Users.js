@@ -3,12 +3,12 @@ import UsersList from "../components/UsersList";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import "./Searchbarcss.css";
 
 const Users = () => {
-  //const [isLoading, setIsLoading] = useState(false);
-  //const [nError, setNError] = useState();
-  const { isLoading, nError, sendRequest, clearError } = useHttpClient(); //gia kapio logo liturga {} anti gia []
-  const [loadedUsers, setLoadedUsers] = useState();
+  const { isLoading, nError, sendRequest, clearError } = useHttpClient();
+  const [loadedUsers, setLoadedUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,46 +17,44 @@ const Users = () => {
           "http://localhost:5000/api/users"
         );
         setLoadedUsers(responseData.users);
-        console.log(responseData.users);
       } catch (error) {}
     };
     fetchUsers();
   }, [sendRequest]);
 
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredUsers = loadedUsers.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <React.Fragment>
       <ErrorModal error={nError} onClear={clearError} />
+      <div className="search-containerUser center">
+        <label className="search-labelUser" htmlFor="search">
+          Search by name:
+        </label>
+        <input
+          className="search-inputUser"
+          type="text"
+          id="search"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
       {isLoading && (
         <div className="center">
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
+      {!isLoading && loadedUsers.length > 0 && (
+        <UsersList items={filteredUsers} />
+      )}
     </React.Fragment>
   );
 };
 
 export default Users;
-
-//logic without the custom hook
-
-// useEffect(() => {
-//   const sendRequest = async () => {
-//     setIsLoading(true);
-//     try {
-//       const response = await fetch("http://localhost:5000/api/users");
-//       const responseData = await response.json();
-
-//       if (!response.ok) {
-//         //ok prop exist on the respone obj
-//         throw new Error(responseData.message);
-//       }
-//       console.log(responseData.users);
-//       setLoadedUsers(responseData.users);
-//     } catch (error) {
-//       setNError(error.message);
-//     }
-//     setIsLoading(false);
-//   };
-//   sendRequest();
-// }, []);

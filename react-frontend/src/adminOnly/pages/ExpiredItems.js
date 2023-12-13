@@ -2,13 +2,14 @@
 import React, { useEffect, useState, useContext } from "react";
 //import { useParams } from "react-router-dom";
 
-import PlaceList from "../../places/components/PlaceList";
+//import PlaceList from "../../places/components/PlaceList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import SearchBar from "../../shared/components/SharedComponent/SearchBar";
 import CategoryFilter from "../../shared/components/SharedComponent/CategoryFilter";
 import { AuthContext } from "../../shared/components/context/auth-context";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import ExpiredList from "../components/ExpiredList";
 
 const ExpiredItems = () => {
   const [loadedPlaces, setLoadedPlaces] = useState([]);
@@ -112,7 +113,7 @@ const ExpiredItems = () => {
                 <div className="search-container">
                   <SearchBar onFilter={handleSearchFilter} />
                 </div>
-                <PlaceList
+                <ExpiredList
                   items={filteredData}
                   userId={userId}
                   fromMarket={true}

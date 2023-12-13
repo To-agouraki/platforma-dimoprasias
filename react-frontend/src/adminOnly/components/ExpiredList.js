@@ -1,15 +1,14 @@
-import "./PlaceList.css";
+import "../../places/components/PlaceList.css"
 import { AuthContext } from "../../shared/components/context/auth-context";
 import { useContext, useState, useEffect } from "react";
-import PlaceItem from "./PlaceItem";
 import Card from "../../shared/components/UIElements/Card";
 import React from "react";
-import Button from "../../shared/components/FormElements/Button";
-import TabbedItem from "./TabbedItem";
 import ChangePageButton from "../../shared/components/FormElements/ChangePageButton";
 import PastItemsButton from "../../shared/components/FormElements/PastItemsButton";
+import ExpiredItem from "./ExpiredItem";
+import ExpiredTabbed from "./ExpiredTabbed";
 
-const PlaceList = (props) => {
+const ExpiredList = (props) => {
   const [tabbedView, setTabbedView] = useState(false);
   const [usersPerPage, setUsersPerPage] = useState(3);
   const auth = useContext(AuthContext);
@@ -54,29 +53,7 @@ const PlaceList = (props) => {
     setCombinedData(updatedCombinedData);
   };
 
-  if (props.frombid && props.items.length === 0) {
-    return (
-      <div className="place-list center">
-        <Card>
-          <h2>No Bids found</h2>
-        </Card>
-      </div>
-    );
-  }
-  if (props.fromDeactivated && props.items.length === 0) {
-    return (
-      <React.Fragment>
-        <ChangePageButton state={props.deactState}></ChangePageButton>
-        <div className="place-list center">
-          <Card>
-            <h2>No deactivated item found.</h2>
-          </Card>
-        </div>
-      </React.Fragment>
-    );
-  }
-
-  if (props.fromExpired && props.items.length === 0) {
+  if (props.items.length === 0) {
     return (
       <div className="place-list center">
         <Card>
@@ -86,79 +63,16 @@ const PlaceList = (props) => {
     );
   }
 
-  if (props.fromMarket && props.items.length === 0) {
-    return (
-      <div className="place-list center">
-        <Card>
-          <h2>Counld not find the item you are looking for.</h2>
-        </Card>
-      </div>
-    );
-  }
-
-  if (
-    typeof props.items === "undefined" &&
-    props.userId === auth.userId &&
-    !auth.isAdmin
-  ) {
-    return (
-      <div className="place-list center">
-        <Card>
-          <h2>No Items found.</h2>
-          <Button to="/places/new">Share an Item</Button>
-        </Card>
-      </div>
-    );
-  }
-
-  if (typeof props.items === "undefined") {
-    return (
-      <div className="place-list center">
-        <Card>
-          <h2>User has not added any item yet.</h2>
-        </Card>
-      </div>
-    );
-  }
-
   if (auth.isAdmin && props.items.length === 0) {
     return (
       <React.Fragment>
+        <ChangePageButton state={false}></ChangePageButton>
         <div className="place-list center">
           <Card>
             <h2>No Items Found.</h2>
           </Card>
         </div>
       </React.Fragment>
-    );
-  }
-
-  if (
-    props.items.length === 0 &&
-    props.userId === auth.userId &&
-    !auth.isAdmin
-  ) {
-    return (
-      <React.Fragment>
-        <PastItemsButton
-          state={props.deactState}
-          userId={auth.userId}
-        ></PastItemsButton>
-        <div className="place-list center">
-          <Card>
-            <h2>No Items found.</h2>
-            <Button to="/places/new">Share an Item</Button>
-          </Card>
-        </div>
-      </React.Fragment>
-    );
-  } else if (props.items.length === 0 && props.userId !== auth.userId) {
-    return (
-      <div className="place-list center">
-        <Card>
-          <h2>User has not added any item yet .</h2>
-        </Card>
-      </div>
     );
   }
 
@@ -178,7 +92,7 @@ const PlaceList = (props) => {
 
       {!props.fromMarket &&
         !props.frombid &&
-        auth.isAdmin && !props.fromUserPlace &&
+        auth.isAdmin &&
         !props.fromExpired && (
           <ChangePageButton state={props.deactState}></ChangePageButton>
         )}
@@ -212,7 +126,7 @@ const PlaceList = (props) => {
       <ul className="place-list">
         {currentItems.map((item) =>
           tabbedView ? (
-            <TabbedItem
+            <ExpiredTabbed
               key={item.id}
               id={item.id}
               image={item.image}
@@ -232,7 +146,7 @@ const PlaceList = (props) => {
               isCollapsed={item.isCollapsed}
             />
           ) : (
-            <PlaceItem
+            <ExpiredItem
               key={item.id}
               id={item.id}
               image={item.image}
@@ -270,4 +184,4 @@ const PlaceList = (props) => {
   );
 };
 
-export default PlaceList;
+export default ExpiredList;

@@ -108,6 +108,67 @@ const getPlacesByUserId = async (req, res, next) => {
   });
 };
 
+const getAllPlacesByUserId = async (req, res, next) => {
+  const userId = req.params.uid;
+  let nonExpiredPlaces, expiredPlaces;
+
+  try {
+    // Fetch non-expired places
+    nonExpiredPlaces = await Place.find({
+      creator: userId,
+      dateTime: { $gte: new Date() }, // Non-expired condition
+      activationState: { $eq: true },
+    })
+      .populate("category")
+      .exec();
+
+    // Fetch expired places
+    expiredPlaces = await Place.find({
+      creator: userId,
+      dateTime: { $lt: new Date() }, // Expired condition
+      activationState: { $eq: true },
+    })
+      .populate("category")
+      .exec();
+  } catch (error) {
+    const err = new HttpError("Fetch places failed.", 404);
+    return next(err);
+  }
+
+  if ((!nonExpiredPlaces || nonExpiredPlaces.length === 0) && (!expiredPlaces || expiredPlaces.length === 0)) {
+    return next(
+      new HttpError("Could not find places for the provided user id.", 404)
+    );
+  }
+
+  // Sort non-expired places by name
+  nonExpiredPlaces.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+
+  // Sort expired places by name
+  expiredPlaces.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+
+  // Combine non-expired and expired places with non-expired items first
+  const combinedPlaces = [...nonExpiredPlaces, ...expiredPlaces];
+
+  res.json({
+    places: combinedPlaces.map((place) => ({
+      id: place._id,
+      title: place.title,
+      description: place.description,
+      image: place.image,
+      category: place.category.name,
+      dateTime: place.dateTime,
+      highestBid: place.highestBid,
+      highestBidder: place.highestBidder,
+      bids: place.bids,
+      creator: place.creator,
+      activationState: place.activationState,
+    })),
+  });
+};
+
+
+
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -1014,3 +1075,4 @@ exports.getDeactivatedItemsAdmin = getDeactivatedItemsAdmin;
 exports.getNewArrivals = getNewArrivals;
 exports.getPopularItems = getPopularItems;
 exports.handleExpiredItem = handleExpiredItem;
+exports.getAllPlacesByUserId = getAllPlacesByUserId;
