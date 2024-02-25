@@ -135,17 +135,24 @@ const getAllPlacesByUserId = async (req, res, next) => {
     return next(err);
   }
 
-  if ((!nonExpiredPlaces || nonExpiredPlaces.length === 0) && (!expiredPlaces || expiredPlaces.length === 0)) {
+  if (
+    (!nonExpiredPlaces || nonExpiredPlaces.length === 0) &&
+    (!expiredPlaces || expiredPlaces.length === 0)
+  ) {
     return next(
       new HttpError("Could not find places for the provided user id.", 404)
     );
   }
 
   // Sort non-expired places by name
-  nonExpiredPlaces.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+  nonExpiredPlaces.sort((a, b) =>
+    a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
+  );
 
   // Sort expired places by name
-  expiredPlaces.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: 'base' }));
+  expiredPlaces.sort((a, b) =>
+    a.title.localeCompare(b.title, undefined, { sensitivity: "base" })
+  );
 
   // Combine non-expired and expired places with non-expired items first
   const combinedPlaces = [...nonExpiredPlaces, ...expiredPlaces];
@@ -166,8 +173,6 @@ const getAllPlacesByUserId = async (req, res, next) => {
     })),
   });
 };
-
-
 
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
@@ -754,11 +759,7 @@ const getNewArrivals = async (req, res, next) => {
     return next(err);
   }
 
-  if (!places || places.length === 0) {
-    return next(
-      new HttpError("Could not find places for the provided user id.", 404)
-    );
-  }
+ 
 
   res.json({
     places: places.map((place) => ({
